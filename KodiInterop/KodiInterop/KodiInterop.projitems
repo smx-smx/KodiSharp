@@ -6,14 +6,17 @@
     <SharedGUID>238583ec-0d95-445e-9718-ec67f64a8141</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>KodiInterop</Import_RootNamespace>
+    <Import_RootNamespace>Smx.KodiInterop</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\Notification.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiBridge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonEvalMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PythonInterop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PythonModules.cs" />
   </ItemGroup>
 </Project>
