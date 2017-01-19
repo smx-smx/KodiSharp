@@ -1,11 +1,13 @@
 ﻿using RGiesecke.DllExport;
 using System.Runtime.InteropServices;
 using Smx.KodiInterop;
-using Smx.KodiInterop.Builtins;
 using Smx.KodiInterop.Messages;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+
+using Smx.KodiInterop.Builtins;
+using KodiSystem = Smx.KodiInterop.Builtins.SystemBuiltins;
 
 namespace TestPlugin {
 	public class TestPlugin

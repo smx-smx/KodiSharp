@@ -12,7 +12,13 @@
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\Control.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Notification.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\Settings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\Skin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\System.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builtins\Weather.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KodiApiVersionAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiBridge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonEvalMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCMessage.cs" />

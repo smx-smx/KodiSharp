@@ -93,7 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ILMerge.props" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\default.py">

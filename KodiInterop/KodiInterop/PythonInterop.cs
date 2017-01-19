@@ -8,10 +8,10 @@ namespace Smx.KodiInterop
 {
     class PythonInterop
     {
-		public static List<string> EscapeArguments(List<object> arguments) {
+		public static List<string> EscapeArguments(List<object> arguments, bool quote = true) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
-				if (argument is string) {
+				if (argument is string && quote == true) {
 					textArguments.Add('"' + argument.ToString() + '"');
 				} else {
 					textArguments.Add(argument.ToString());
@@ -41,8 +41,12 @@ namespace Smx.KodiInterop
 			});
 		}
 
+		public static void CallBuiltin(string builtinName) {
+			CallBuiltin(builtinName, new List<string> { });
+		}
+
 		public static void CallBuiltin(string builtinName, List<object> arguments) {
-			List<string> textArguments = EscapeArguments(arguments);
+			List<string> textArguments = EscapeArguments(arguments, false);
 			CallBuiltin(builtinName, textArguments);
 		}
     }
