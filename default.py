@@ -2,8 +2,10 @@
 ## Copyright (C) 2017 Smx <smxdev4@gmail.com>
 ##
 import os
+import sys
 import json
 import threading
+import traceback
 from ctypes import *
 
 # Load all XBMC Apis so C# can use them
@@ -38,19 +40,33 @@ StopRPC = lib.StopRPC
 StopRPC.argtypes = []
 StopRPC.restype = c_bool
 
+def on_exception(exc):
+	print "--- Caught Exception ---"
+	exc_type, exc_value, exc_traceback = sys.exc_info()
+	lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+	print ''.join('!! ' + line for line in lines)
+	print "------------------------"
+	xbmc.executebuiltin('Notification(KodiSharp, An error occured. Please check the log for more information')
+
+def exception_hook(exctype, value, traceback):
+	on_exception(value)
+
+sys.excepthook = exception_hook
+
 # Thread to handle incoming C# requests
 def message_receiver():
 	t = threading.currentThread()
 	while getattr(t, "do_run", True):
+		exitcode = 0
 		# Will be blocking in C# context
 		try:
 			message = GetMessage()
-			print "I got the message of type: %s" % type(message)
-			print message
 			message = json.loads(message)
-		except Exception as e:
-			print "Something went wrong, err: %s" % e
-			break
+			print message
+		except Exception as exc:
+			on_exception(exc)
+			exitcode = 1
+			t.do_run = False
 
 		if message.get('type'):
 			if message['type'] == 'exit':
@@ -60,10 +76,16 @@ def message_receiver():
 
 		code = message.get('code')
 		if code:
-			eval(code)
-		
+			try:
+				eval(code)
+			except Exception as exc:
+				on_exception(exc)
+				exitcode = 1
+				t.do_run = False
+
+
 		sendRet = PutMessage(json.dumps({
-			"exitcode": 0
+			"exitcode": exitcode
 		}))
 
 thread = threading.Thread(target = message_receiver)
