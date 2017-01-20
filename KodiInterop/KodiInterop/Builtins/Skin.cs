@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    class Skin
+    class SkinBuiltins
     {
 		/// <summary>
 		///	Resets the specified skin setting.

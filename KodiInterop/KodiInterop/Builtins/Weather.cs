@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    class Weather
+    class WeatherBuiltins
     {
 		/// <summary>
 		/// Switch to next weather location

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    class Control
+    class ControlBuiltins
     {
 		/// <summary>
 		/// Restarts Kodi (only implemented under Windows and Linux)

@@ -8,7 +8,7 @@ namespace Smx.KodiInterop.Builtins
 	/// <summary>
 	/// Interacts with System Functionalities
 	/// </summary>
-    public class Builtins
+    public class SystemBuiltins
     {
 		/// <summary>
 		/// Starts the screensaver

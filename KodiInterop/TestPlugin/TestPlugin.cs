@@ -7,7 +7,6 @@ using System;
 using System.Threading;
 
 using Smx.KodiInterop.Builtins;
-using KodiSystem = Smx.KodiInterop.Builtins.SystemBuiltins;
 
 namespace TestPlugin {
 	public class TestPlugin
@@ -21,6 +20,7 @@ namespace TestPlugin {
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.AnsiBStr)]
 		public static string PluginMain() {
+			SystemBuiltins.Exec(@"C:\Windows\explorer.exe");
 			new Notification {
 				Header = "My Notification",
 				Message = "Hello World from C#",
