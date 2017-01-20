@@ -21,11 +21,11 @@ namespace TestPlugin {
 		[return: MarshalAs(UnmanagedType.AnsiBStr)]
 		public static string PluginMain() {
 			SystemBuiltins.Exec(@"C:\Windows\explorer.exe");
-			new Notification {
-				Header = "My Notification",
-				Message = "Hello World from C#",
-				Duration = TimeSpan.FromSeconds(10)
-			}.Show();
+			UiBuiltins.Notification(
+				header: "My Notification",
+				message: "Hello World from C#",
+				duration: TimeSpan.FromSeconds(10)
+			);
 			return "Hello, Python";
 		}
 	}

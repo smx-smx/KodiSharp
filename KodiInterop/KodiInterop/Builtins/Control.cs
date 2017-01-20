@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    class ControlBuiltins
+	public class ControlBuiltins
     {
 		/// <summary>
 		/// Restarts Kodi (only implemented under Windows and Linux)
@@ -61,6 +61,16 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		public static void RefreshRSS() {
 			PythonInterop.CallBuiltin("RefreshRSS");
+		}
+
+		/// <summary>
+		/// Seeks to the specified relative amount of seconds within the current playing media.
+		/// A negative value will seek backward and a positive value forward.
+		/// </summary>
+		/// <param name="position"></param>
+		[KodiMinApiVersion(15)]
+		public static void Seek(TimeSpan position) {
+			PythonInterop.CallBuiltin("Seek", new List<object> { position.TotalSeconds });
 		}
 	}
 }

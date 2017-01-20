@@ -7,6 +7,13 @@ namespace Smx.KodiInterop.Builtins
     class SkinBuiltins
     {
 		/// <summary>
+		/// Reloads the current skin – useful for Skinners to use after they upload modified skin files (saves power cycling)
+		/// </summary>
+		public static void ReloadSkin() {
+			PythonInterop.CallBuiltin("ReloadSkin");
+		}
+
+		/// <summary>
 		///	Resets the specified skin setting.
 		///	If it's a bool value (i.e. set via SetBool or ToggleSetting) then the setting is reset to false.
 		///	If it's a string (Set via SetString, SetImage, or SetPath) then it is set to empty.
@@ -144,6 +151,13 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		public static void ToggleDebug() {
 			PythonInterop.CallBuiltin("Skin.ToggleDebug");
+		}
+
+		/// <summary>
+		/// Unloads the current skin
+		/// </summary>
+		public static void UnloadSkin() {
+			PythonInterop.CallBuiltin("UnloadSkin");
 		}
 	}
 }
