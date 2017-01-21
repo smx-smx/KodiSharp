@@ -21,7 +21,11 @@ namespace TestPlugin {
 		[return: MarshalAs(UnmanagedType.AnsiBStr)]
 		public static string PluginMain() {
 			PyConsole.WriteLine("Hello Python");
-			string opResult = PythonInterop.EvalResult("1 + 2");
+
+			PythonInterop.EvalToVar("sum", "1 + 2");
+			string opResult = PythonInterop.GetVariable("sum");
+			PythonInterop.DestroyVariable("sum");
+
 			PyConsole.WriteLine("Result: " + opResult);
 			UiBuiltins.Notification(
 				header: "My Notification",

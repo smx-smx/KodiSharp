@@ -32,17 +32,25 @@ namespace Smx.KodiInterop
 		}
 
 		public static string CallFunction(string moduleName, string functionName, List<string> arguments) {
-			return EvalResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
+			return EvalToResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
+		}
+
+		public static string GetVariable(string variableName) {
+			return EvalToResult(string.Format("Variables['{0}']", variableName));
 		}
 
 		public static void DestroyVariable(string variableName) {
-			Eval(string.Format("del Variables.{0}", variableName));
+			Eval(string.Format("del Variables['{0}']", variableName));
 		}
 
-		public static string EvalResult(string code) {
-			string replyString = Eval(string.Format("Variables['LastResult'] = {0}", code));
+		public static string EvalToResult(string code) {
+			string replyString = EvalToVar("LastResult", code);
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
 			return reply.Result;
+		}
+
+		public static string EvalToVar(string variableName, string code) {
+			return Eval(string.Format("Variables['{0}'] = {1}", variableName, code));
 		}
 
 		public static string Eval(string code) {
