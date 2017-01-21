@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    class SkinBuiltins
+    public static class SkinBuiltins
     {
 		/// <summary>
 		/// Reloads the current skin – useful for Skinners to use after they upload modified skin files (saves power cycling)

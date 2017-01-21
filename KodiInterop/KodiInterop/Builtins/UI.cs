@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    public class UiBuiltins
+    public static class UiBuiltins
     {
 		/// <summary>
 		/// Will display a notification dialog with the specified header and message

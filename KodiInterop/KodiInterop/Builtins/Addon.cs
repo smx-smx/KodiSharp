@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-	public class AddonBuiltins
+	public static class AddonBuiltins
     {
 		/// <summary>
 		/// Will install the addon with the given id.
@@ -28,6 +28,20 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="id"></param>
 		public static void OpenSettings(int id) {
 			PythonInterop.CallBuiltin("Addon.OpenSettings", new List<object> { id });
+		}
+
+		/// <summary>
+		/// Triggers a scan of local add-on directories.
+		/// </summary>
+		public static void UpdateLocalAddons() {
+			PythonInterop.CallBuiltin("UpdateLocalAddons");
+		}
+
+		/// <summary>
+		/// Triggers a forced update of enabled add-on repositories.
+		/// </summary>
+		public static void UpdateAddonRepos() {
+			PythonInterop.CallBuiltin("UpdateAddonRepos");
 		}
 	}
 }

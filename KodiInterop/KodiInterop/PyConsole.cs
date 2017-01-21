@@ -15,9 +15,15 @@ namespace Smx.KodiInterop
 				}
 			}
 		}
+
+		/// <summary>
+		/// Writes the text representation of the specified object to kodi.log with "print"
+		/// </summary>
+		/// <param name="value"></param>
 		public static void Print(object value) {
 			string valueStr = PythonInterop.EscapeArgument(value.ToString());
 			PythonInterop.Eval(string.Format("print {0}", valueStr));
+
 		}
 
 		public static void FancyPrint(string value) {
@@ -39,7 +45,11 @@ namespace Smx.KodiInterop
 			PythonInterop.Eval(string.Format("sys.stdout.write({0} + {1})", valueStr, newlineStr));
 		}
 
-		public static void Write(object value) {
+		/// <summary>
+		/// Writes the text representation of the specified object to kodi.log with "sys.stdout.write"
+		/// </summary>
+		/// <param name="value"></param>
+		public static void Write(object value) {)
 			string valueStr = PythonInterop.EscapeArgument(value);
 			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
 		}

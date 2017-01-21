@@ -8,7 +8,7 @@ namespace Smx.KodiInterop.Builtins
 	/// <summary>
 	/// Interacts with System Functionalities
 	/// </summary>
-    public class SystemBuiltins
+    public static class SystemBuiltins
     {
 		/// <summary>
 		/// Starts the screensaver
@@ -123,6 +123,29 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		public static void Powerdown() {
 			PythonInterop.CallBuiltin("System.Powerdown");
+		}
+
+		/// <summary>
+		/// Enables/disables debug mode
+		/// </summary>
+		[KodiMinApiVersion(12)]
+		public static void ToggleDebug() {
+			PythonInterop.CallBuiltin("ToggleDebug");
+		}
+
+		/// <summary>
+		/// Takes a Screenshot. Only .png files are supported
+		/// </summary>
+		/// <param name="filenameAndPath">filename (including the path)</param>
+		/// <param name="sync">whether to run synchronously</param>
+		public static void TakeScreenshot(string filenameAndPath = null, bool? sync = null) {
+			List<object> arguments = new List<object>();
+			if (filenameAndPath != null)
+				arguments.Add(filenameAndPath);
+			if (sync != null)
+				arguments.Add(sync);
+
+			PythonInterop.CallBuiltin("TakeScreenshot", arguments);
 		}
 
 		/// <summary>
