@@ -15,6 +15,9 @@ import xbmcplugin
 import xbmcaddon
 import xbmcvfs
 
+Variables = {
+	"LastResult": ""
+}
 
 me = os.path.abspath(os.path.dirname(__file__))
 lib = cdll.LoadLibrary(os.path.join(me, "KodiInterop/TestPlugin/bin/x86/Debug", "TestPlugin.dll")) # Hardcoding this for now
@@ -74,10 +77,10 @@ def message_receiver():
 				# Stop thread at next loop
 				t.do_run = False
 
-		code = message.get('code')
-		if code:
+		exec_code = message.get('exec_code')
+		if exec_code:
 			try:
-				eval(code)
+				eval(compile(exec_code, '<string>', 'exec'))
 			except Exception as exc:
 				on_exception(exc)
 				exitcode = 1
@@ -85,7 +88,8 @@ def message_receiver():
 
 
 		sendRet = PutMessage(json.dumps({
-			"exitcode": exitcode
+			"result" : Variables['LastResult'],
+			"exit_code": exitcode
 		}))
 
 thread = threading.Thread(target = message_receiver)

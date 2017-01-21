@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Messages {
 	public class PythonEvalMessage : RPCMessage {
-		[JsonProperty(PropertyName = "code")]
+		[JsonProperty(PropertyName = "exec_code")]
 		public string Code { get; set; }
 	}
 }

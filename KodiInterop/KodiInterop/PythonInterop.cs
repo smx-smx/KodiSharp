@@ -1,39 +1,65 @@
-﻿using Smx.KodiInterop;
+﻿using Newtonsoft.Json;
+using Smx.KodiInterop;
 using Smx.KodiInterop.Messages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Smx.KodiInterop
 {
-    class PythonInterop
+    public static class PythonInterop
     {
+		public static string EscapeArgument(object argument, bool quote = true, bool rawstr = true) {
+			string ret = "";
+			if (quote) {
+				if (rawstr)
+					return "r'" + argument.ToString() + "'";
+				else
+					return '"' + argument.ToString() + '"';
+			} else {
+				return argument.ToString();
+			}
+		}
+
 		public static List<string> EscapeArguments(List<object> arguments, bool quote = true) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
-				if (argument is string && quote == true) {
-					textArguments.Add('"' + argument.ToString() + '"');
-				} else {
-					textArguments.Add(argument.ToString());
-				}
+				textArguments.Add(EscapeArgument(argument, quote));
 			}
 			return textArguments;
 		}
 
-		public static void CallFunction(string moduleName, string functionName, List<string> arguments) {
+		public static string CallFunction(string moduleName, string functionName, List<string> arguments) {
+			return EvalResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
+		}
+
+		public static void DestroyVariable(string variableName) {
+			Eval(string.Format("del Variables.{0}", variableName));
+		}
+
+		public static string EvalResult(string code) {
+			string replyString = Eval(string.Format("Variables['LastResult'] = {0}", code));
+			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			return reply.Result;
+		}
+
+		public static string Eval(string code) {
 			PythonEvalMessage msg = new PythonEvalMessage {
-				Code = string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray()))
+				Code = code
 			};
-			KodiBridge.SendMessage(msg);
+
+			return KodiBridge.SendMessage(msg);
 		}
 
-		public static void CallFunction(string moduleName, string functionName, List<object> arguments) {
+		public static string CallFunction(string moduleName, string functionName, List<object> arguments) {
 			List<string> textArguments = EscapeArguments(arguments);
-			CallFunction(moduleName, functionName, textArguments);
+			return CallFunction(moduleName, functionName, textArguments);
 		}
 
-		public static void CallBuiltin(string builtinName, List<string> arguments) {
-			CallFunction(PythonModules.Xbmc, "executebuiltin", new List<object> {
+		public static string  CallBuiltin(string builtinName, List<string> arguments) {
+			return CallFunction(PythonModules.Xbmc, "executebuiltin", new List<object> {
 				string.Format("{0}({1})",
 					builtinName,
 					string.Join(",", arguments.ToArray())
@@ -41,13 +67,13 @@ namespace Smx.KodiInterop
 			});
 		}
 
-		public static void CallBuiltin(string builtinName) {
-			CallBuiltin(builtinName, new List<string> { });
+		public static string CallBuiltin(string builtinName) {
+			return CallBuiltin(builtinName, new List<string> { });
 		}
 
-		public static void CallBuiltin(string builtinName, List<object> arguments) {
+		public static string CallBuiltin(string builtinName, List<object> arguments) {
 			List<string> textArguments = EscapeArguments(arguments, false);
-			CallBuiltin(builtinName, textArguments);
+			return CallBuiltin(builtinName, textArguments);
 		}
     }
 }

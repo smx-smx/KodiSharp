@@ -20,7 +20,9 @@ namespace TestPlugin {
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.AnsiBStr)]
 		public static string PluginMain() {
-			SystemBuiltins.Exec(@"C:\Windows\explorer.exe");
+			PyConsole.WriteLine("Hello Python");
+			string opResult = PythonInterop.EvalResult("1 + 2");
+			PyConsole.WriteLine("Result: " + opResult);
 			UiBuiltins.Notification(
 				header: "My Notification",
 				message: "Hello World from C#",

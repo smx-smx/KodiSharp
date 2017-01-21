@@ -31,8 +31,6 @@ namespace Smx.KodiInterop {
 		/// <param name="message">message object to send</param>
 		/// <returns></returns>
 		public static string SendMessage(RPCMessage message) {
-			string reply = null;
-
 			string messageString = JsonConvert.SerializeObject(message);
 			Debug.WriteLine(messageString);
 
@@ -42,8 +40,8 @@ namespace Smx.KodiInterop {
 			Debug.WriteLine("Waiting Reply...");
 			ReplyReady.WaitOne();
 
-			Debug.WriteLine(reply);
-			return reply;
+			Debug.WriteLine(LastReply);
+			return LastReply;
 		}
 
 		/// <summary>
