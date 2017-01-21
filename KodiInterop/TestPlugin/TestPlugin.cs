@@ -18,8 +18,7 @@ namespace TestPlugin {
 		}
 
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.AnsiBStr)]
-		public static string PluginMain() {
+		public static int PluginMain() {
 			PyConsole.WriteLine("Hello Python");
 
 			PythonInterop.EvalToVar("sum", "1 + 2");
@@ -32,7 +31,7 @@ namespace TestPlugin {
 				message: "Hello World from C#",
 				duration: TimeSpan.FromSeconds(10)
 			);
-			return "Hello, Python";
+			return 0;
 		}
 	}
 }

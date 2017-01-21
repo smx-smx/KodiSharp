@@ -36,7 +36,7 @@ PutMessage.restype = c_bool
 # Plugin entrypoint
 Main = lib.PluginMain
 Main.argtypes = []
-Main.restype = c_char_p
+Main.restype = c_int
 
 # Causes C# to send the quit signal to this script
 StopRPC = lib.StopRPC
@@ -97,7 +97,7 @@ thread.start()
 
 # Invoke PluginMain from C#
 ret = Main()
-print ret
+print "PluginMain returned %d" % ret
 
 # Ask C# to stop RPC. This will cause the message_receiver thread to stop
 StopRPC()
