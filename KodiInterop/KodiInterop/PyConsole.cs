@@ -49,7 +49,7 @@ namespace Smx.KodiInterop
 		/// Writes the text representation of the specified object to kodi.log with "sys.stdout.write"
 		/// </summary>
 		/// <param name="value"></param>
-		public static void Write(object value) {)
+		public static void Write(object value) {
 			string valueStr = PythonInterop.EscapeArgument(value);
 			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
 		}
