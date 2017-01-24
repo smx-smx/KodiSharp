@@ -9,19 +9,23 @@ using System;
 using System.Diagnostics;
 
 namespace Smx.KodiInterop {
-	public class KodiBridge {
+	public static class KodiBridge {
 		public static string LastMessage = null;
 		public static string LastReply = null;
 
 		private static AutoResetEvent MessageReady = new AutoResetEvent(false);
 		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
 
+		public static void SaveException(Exception ex) {
+			string message = PythonInterop.EscapeArgument(ex.ToString(), rawstr: false);
+			PyConsole.Write(message, escape: false);
+		}
 
 		/// <summary>
 		/// Instructs python to abort message fetching
 		/// </summary>
 		private static void CloseRPC() {
-			RPCMessage amsg = new RPCMessage { MessageType = "exit" }; //quick hack
+			RPCMessage amsg = new RPCMessage { MessageType = "exit" };
 			SendMessage(amsg);
 		}
 

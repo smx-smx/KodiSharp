@@ -11,15 +11,22 @@ namespace Smx.KodiInterop
 {
     public static class PythonInterop
     {
+		private const string LastResultVarName = "LastResult";
+		//WIP: Sync with Python variables value
+		private static Dictionary<string, PyVariable> _variables = new Dictionary<string, PyVariable> {
+			{ LastResultVarName, new PyVariable(LastResultVarName) }
+		};
+
 		public static string EscapeArgument(object argument, bool quote = true, bool rawstr = true) {
-			string ret = "";
+			string text = Regex.Replace(argument.ToString(), "\r?\n", "\\" + Environment.NewLine);
+				 
 			if (quote) {
 				if (rawstr)
-					return "r'" + argument.ToString() + "'";
+					return "r'" + text + "'";
 				else
-					return '"' + argument.ToString() + '"';
+					return '"' + text + '"';
 			} else {
-				return argument.ToString();
+				return text;
 			}
 		}
 
@@ -44,7 +51,7 @@ namespace Smx.KodiInterop
 		}
 
 		public static string EvalToResult(string code) {
-			string replyString = EvalToVar("LastResult", code);
+			string replyString = EvalToVar(LastResultVarName, code);
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
 			return reply.Result;
 		}

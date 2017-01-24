@@ -6,7 +6,7 @@ namespace Smx.KodiInterop
 {
     public static class PyConsole
     {
-		public static string NewLine {
+		private static string NewLine {
 			get	{
 				if(Environment.NewLine.Length > 1) {
 					return @"\r\n";
@@ -23,7 +23,6 @@ namespace Smx.KodiInterop
 		public static void Print(object value) {
 			string valueStr = PythonInterop.EscapeArgument(value.ToString());
 			PythonInterop.Eval(string.Format("print {0}", valueStr));
-
 		}
 
 		public static void FancyPrint(string value) {
@@ -39,18 +38,23 @@ namespace Smx.KodiInterop
 			Write(printStr);
 		}
 
-		public static void WriteLine(string value) {
-			string valueStr = PythonInterop.EscapeArgument(value);
-			string newlineStr = PythonInterop.EscapeArgument(NewLine, quote: true, rawstr: false);
-			PythonInterop.Eval(string.Format("sys.stdout.write({0} + {1})", valueStr, newlineStr));
+		public static void WriteLine(string value, bool escape = true) {
+			string valueStr = value;
+			if (escape)
+				valueStr = PythonInterop.EscapeArgument(valueStr);
+			valueStr += PythonInterop.EscapeArgument(NewLine, quote: true, rawstr: false);
+			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
 		}
 
 		/// <summary>
 		/// Writes the text representation of the specified object to kodi.log with "sys.stdout.write"
 		/// </summary>
 		/// <param name="value"></param>
-		public static void Write(object value) {
-			string valueStr = PythonInterop.EscapeArgument(value);
+		public static void Write(object value, bool escape = true) {
+			string valueStr = value.ToString();
+			if (escape)
+				valueStr = PythonInterop.EscapeArgument(valueStr);
+
 			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
 		}
 	}
