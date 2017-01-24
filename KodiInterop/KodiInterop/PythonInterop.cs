@@ -17,23 +17,25 @@ namespace Smx.KodiInterop
 			{ LastResultVarName, new PyVariable(LastResultVarName) }
 		};
 
-		public static string EscapeArgument(object argument, bool quote = true, bool rawstr = true) {
-			string text = Regex.Replace(argument.ToString(), "\r?\n", "\\" + Environment.NewLine);
-				 
-			if (quote) {
-				if (rawstr)
-					return "r'" + text + "'";
-				else
+		public static string EscapeArgument(object argument, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
+			string text = argument.ToString();
+
+			switch (escapeMethod) {
+				case EscapeMethod.Quotes:
+					text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
 					return '"' + text + '"';
-			} else {
-				return text;
+				case EscapeMethod.RawString:
+					return "r'" + text + "'";
+				case EscapeMethod.None:
+				default:
+					return text;
 			}
 		}
 
-		public static List<string> EscapeArguments(List<object> arguments, bool quote = true) {
+		public static List<string> EscapeArguments(List<object> arguments, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
-				textArguments.Add(EscapeArgument(argument, quote));
+				textArguments.Add(EscapeArgument(argument, escapeMethod));
 			}
 			return textArguments;
 		}
@@ -87,7 +89,7 @@ namespace Smx.KodiInterop
 		}
 
 		public static string CallBuiltin(string builtinName, List<object> arguments) {
-			List<string> textArguments = EscapeArguments(arguments, false);
+			List<string> textArguments = EscapeArguments(arguments, EscapeMethod.None);
 			return CallBuiltin(builtinName, textArguments);
 		}
     }

@@ -17,8 +17,7 @@ namespace Smx.KodiInterop {
 		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
 
 		public static void SaveException(Exception ex) {
-			string message = PythonInterop.EscapeArgument(ex.ToString(), rawstr: false);
-			PyConsole.Write(message, escape: false);
+			PyConsole.Write(ex.ToString());
 		}
 
 		/// <summary>
