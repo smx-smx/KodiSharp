@@ -8,6 +8,8 @@ using System.Threading;
 
 using Smx.KodiInterop.Builtins;
 using System.Diagnostics;
+using System.Reflection;
+using System.IO;
 
 namespace TestPlugin {
 	public class TestPlugin
@@ -23,11 +25,27 @@ namespace TestPlugin {
 			throw new Exception("I should appear in kodi.log");
 		}
 
+		//http://stackoverflow.com/a/1373295
+		static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args) {
+			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
+			if (!File.Exists(assemblyPath)) return null;
+			Assembly assembly = Assembly.LoadFrom(assemblyPath);
+			return assembly;
+		}
+
+		static void SetAssemblyResolver() {
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
+		}
+
 		/// <summary>
 		/// Plugin Main Logic
 		/// </summary>
 		/// <returns></returns>
 		public static int Main() {
+			SetAssemblyResolver();
+
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
 
