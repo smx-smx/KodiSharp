@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Weather.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EscapeMethod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KodiAddon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiApiVersionAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiBridge.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocalizedString.cs" />
