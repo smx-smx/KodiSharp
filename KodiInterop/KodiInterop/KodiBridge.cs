@@ -16,6 +16,9 @@ namespace Smx.KodiInterop {
 		private static AutoResetEvent MessageReady = new AutoResetEvent(false);
 		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
 		
+		/// <summary>
+		/// The currently running addon
+		/// </summary>
 		public static KodiAddon RunningAddon;
 
 		public static void SaveException(Exception ex) {
@@ -54,8 +57,8 @@ namespace Smx.KodiInterop {
 		/// </summary>
 		/// <param name="message"></param>
 		/// <returns></returns>
-		[DllExport("PythonMessage", CallingConvention=CallingConvention.Cdecl)]
-		private static bool PythonMessage([MarshalAs(UnmanagedType.AnsiBStr)] string message) {
+		[DllExport("PutMessage", CallingConvention=CallingConvention.Cdecl)]
+		private static bool PutMessage([MarshalAs(UnmanagedType.AnsiBStr)] string message) {
 			LastReply = message;
 			ReplyReady.Set();
 			return true;

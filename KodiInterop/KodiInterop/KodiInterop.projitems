@@ -37,8 +37,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)SpecialPaths.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\ListItem.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Xbmc\" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\Path.cs" />
   </ItemGroup>
 </Project>

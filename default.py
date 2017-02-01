@@ -29,7 +29,7 @@ GetMessage.argtypes = []
 GetMessage.restype = c_char_p
 
 # Send the command result in JSON format
-PutMessage = lib.PythonMessage
+PutMessage = lib.PutMessage
 PutMessage.argtypes = [c_char_p]
 PutMessage.restype = c_bool
 

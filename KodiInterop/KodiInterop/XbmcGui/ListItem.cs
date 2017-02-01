@@ -11,6 +11,16 @@ namespace Smx.KodiInterop.XbmcGui
 		public string Url { get; private set; }
 		public bool IsFolder { get; private set; }
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="label">Item's left label</param>
+		/// <param name="label2">Item's right label</param>
+		/// <param name="iconImage">Deprecated. Use setArt</param>
+		/// <param name="thumbnailImage">Deprecated. Use setArt</param>
+		/// <param name="path">path, activated when item is clicked.</param>
+		/// <param name="url">The destination url</param>
+		/// <param name="isFolder"></param>
 		public ListItem(
 			string label = null,
 			string label2 = null,
