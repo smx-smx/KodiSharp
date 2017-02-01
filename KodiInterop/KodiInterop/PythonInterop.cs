@@ -12,12 +12,19 @@ namespace Smx.KodiInterop
 {
     public static class PythonInterop
     {
+		#region Variables
 		private const string LastResultVarName = "LastResult";
-		//WIP: Sync with Python variables value
-		private static Dictionary<string, PyVariable> _variables = new Dictionary<string, PyVariable> {
-			{ LastResultVarName, new PyVariable(LastResultVarName) }
-		};
 
+		public static string GetVariable(string variableName) {
+			return EvalToResult(string.Format("Variables['{0}']", variableName));
+		}
+
+		public static void DestroyVariable(string variableName) {
+			Eval(string.Format("del Variables['{0}']", variableName));
+		}
+		#endregion
+
+		#region Escape
 		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			string text = argument.ToString();
 
@@ -38,7 +45,6 @@ namespace Smx.KodiInterop
 			if (argument is PyVariable)
 				return (argument as PyVariable).PyName;
 
-
 			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
 				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
 				return '"' + text + '"';
@@ -46,11 +52,9 @@ namespace Smx.KodiInterop
 			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
 				return "r'" + text + "'";
 			}
-			//if (escapeMethod.HasFlag(EscapeFlags.None)) { 
-			return text;
-			//}
-		}
 
+			return text;
+		}
 
 		public static List<string> EscapeArguments(List<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
@@ -59,7 +63,9 @@ namespace Smx.KodiInterop
 			}
 			return textArguments;
 		}
+		#endregion
 
+		#region FunctionCall
 		public static string CallFunction(string moduleName, string functionName, List<string> arguments) {
 			return EvalToResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
 		}
@@ -68,44 +74,12 @@ namespace Smx.KodiInterop
 			CallFunction(pythonFunction.Module,	pythonFunction.Function, arguments);
 		}
 
-		public static string GetVariable(string variableName) {
-			return EvalToResult(string.Format("Variables['{0}']", variableName));
-		}
-
-		public static void DestroyVariable(string variableName) {
-			Eval(string.Format("del Variables['{0}']", variableName));
-		}
-
-		public static string EvalToResult(string code) {
-			return EvalToVar(LastResultVarName, code);
-		}
-
-		public static string EvalToVar(string variableName, string code) {
-			Console.WriteLine(variableName + " = " + code);
-			return Eval(string.Format("Variables['{0}'] = {1}", variableName, code));
-		}
-
-		public static string EvalToVar(string variableName, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
-			List<string> textArguments = EscapeArguments(arguments, escapeMethod);
-			return EvalToVar(variableName, string.Format(codeFormat, textArguments.ToArray()));
-		}
-
-		public static string Eval(string code) {
-			PythonEvalMessage msg = new PythonEvalMessage {
-				Code = code
-			};
-
-			string replyString = KodiBridge.SendMessage(msg);
-			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
-			return reply.Result;
-		}
-
 		public static string CallFunction(string moduleName, string functionName, List<object> arguments) {
 			List<string> textArguments = EscapeArguments(arguments);
 			return CallFunction(moduleName, functionName, textArguments);
 		}
 
-		public static string  CallBuiltin(string builtinName, List<string> arguments) {
+		public static string CallBuiltin(string builtinName, List<string> arguments) {
 			return CallFunction(PyModules.Xbmc, "executebuiltin", new List<object> {
 				string.Format("{0}({1})",
 					builtinName,
@@ -122,5 +96,32 @@ namespace Smx.KodiInterop
 			List<string> textArguments = EscapeArguments(arguments, EscapeFlags.None);
 			return CallBuiltin(builtinName, textArguments);
 		}
-    }
+		#endregion
+
+		#region Eval
+		public static string Eval(string code) {
+			PythonEvalMessage msg = new PythonEvalMessage {
+				Code = code
+			};
+
+			string replyString = KodiBridge.SendMessage(msg);
+			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			return reply.Result;
+		}
+
+		public static string EvalToVar(string variableName, string code) {
+			Console.WriteLine(variableName + " = " + code);
+			return Eval(string.Format("Variables['{0}'] = {1}", variableName, code));
+		}
+
+		public static string EvalToVar(string variableName, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
+			List<string> textArguments = EscapeArguments(arguments, escapeMethod);
+			return EvalToVar(variableName, string.Format(codeFormat, textArguments.ToArray()));
+		}
+
+		public static string EvalToResult(string code) {
+			return EvalToVar(LastResultVarName, code);
+		}
+		#endregion
+	}
 }

@@ -66,6 +66,7 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="varName">Name of the variable</param>
 		/// <param name="evalCode">Code that will be evaluated as the variable value/content</param>
+		/// <param name="isObject">Indicates the variable will store non-serializable data</param>
 		public PyVariable(string varName, string evalCode = null, bool isObject = false) {
 			this.Name = varName;
 			this.IsObject = isObject;
