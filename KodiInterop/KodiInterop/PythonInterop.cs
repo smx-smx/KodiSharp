@@ -70,8 +70,8 @@ namespace Smx.KodiInterop
 			return EvalToResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
 		}
 
-		public static void CallFunction(PythonFunction pythonFunction, List<object> arguments) {
-			CallFunction(pythonFunction.Module,	pythonFunction.Function, arguments);
+		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments) {
+			return CallFunction(pythonFunction.Module,	pythonFunction.Function, arguments);
 		}
 
 		public static string CallFunction(string moduleName, string functionName, List<object> arguments) {
