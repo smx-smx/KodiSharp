@@ -22,8 +22,15 @@ namespace Smx.KodiInterop
 			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
 		}
 
+		public int Handle { get; private set; }
+		public string BaseUrl { get; private set; }
+
 		public KodiAddon() {
 			SetAssemblyResolver();
+			this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
+			this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
+			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}", this.BaseUrl, this.Handle));
+			KodiBridge.RunningAddon = this;
 		}
 
 		public int Run() {

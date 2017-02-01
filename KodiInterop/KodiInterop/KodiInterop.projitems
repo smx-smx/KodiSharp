@@ -20,7 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\UI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Weather.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EscapeMethod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EscapeFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiAddon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiApiVersionAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiBridge.cs" />
@@ -30,8 +30,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PyConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PythonInterop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PythonModules.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PyVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PyModules.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PythonFunction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PythonVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\VariableManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\ListItem.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,9 @@ using Smx.KodiInterop.Builtins;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using Smx.KodiInterop.Python;
+using mgr = Smx.KodiInterop.Python.PyVariableManager;
+using Smx.KodiInterop.XbmcGui;
 
 namespace TestPlugin {
 	public class TestPlugin : KodiAddon
@@ -26,18 +29,26 @@ namespace TestPlugin {
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
 
-			PyConsole.WriteLine("Hello Python");
-			PythonInterop.EvalToVar("sum", "1 + 2");
-			string opResult = PythonInterop.GetVariable("sum");
-			PythonInterop.DestroyVariable("sum");
+			var sum = mgr.NewVariable();
+			sum.Value = "1+2";
+			PyConsole.WriteLine("Result: " + sum);
+			sum.Dispose();
 
-			PyConsole.WriteLine("Result: " + opResult);
+			PyConsole.WriteLine("Hello Python");
+
+			List.Add(new ListItem(
+				label: "My ListItem"
+			));
+			List.Show();
+
 			UiBuiltins.Notification(
 				header: "My Notification",
 				message: "Hello World from C#",
 				duration: TimeSpan.FromSeconds(10)
 			);
 			testException();
+
+			//ConsoleHelper.FreeConsole();
 			return 0;
 		}
 

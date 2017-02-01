@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using Smx.KodiInterop.Python;
 
 namespace Smx.KodiInterop
 {
@@ -17,22 +18,41 @@ namespace Smx.KodiInterop
 			{ LastResultVarName, new PyVariable(LastResultVarName) }
 		};
 
-		public static string EscapeArgument(object argument, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
+		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			string text = argument.ToString();
 
-			switch (escapeMethod) {
-				case EscapeMethod.Quotes:
-					text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
-					return '"' + text + '"';
-				case EscapeMethod.RawString:
-					return "r'" + text + "'";
-				case EscapeMethod.None:
-				default:
-					return text;
+			//Don't escape primitives
+			if(
+				argument is bool ||
+				argument is int ||
+				argument is uint ||
+				argument is long ||
+				argument is ulong ||
+				argument is float ||
+				argument is double
+			) {
+				return text;
 			}
+
+			//If it's a variable, return it's unquoted python name
+			if (argument is PyVariable)
+				return (argument as PyVariable).PyName;
+
+
+			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
+				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
+				return '"' + text + '"';
+			}
+			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
+				return "r'" + text + "'";
+			}
+			//if (escapeMethod.HasFlag(EscapeFlags.None)) { 
+			return text;
+			//}
 		}
 
-		public static List<string> EscapeArguments(List<object> arguments, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
+
+		public static List<string> EscapeArguments(List<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
 				textArguments.Add(EscapeArgument(argument, escapeMethod));
@@ -44,6 +64,10 @@ namespace Smx.KodiInterop
 			return EvalToResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
 		}
 
+		public static void CallFunction(PythonFunction pythonFunction, List<object> arguments) {
+			CallFunction(pythonFunction.Module,	pythonFunction.Function, arguments);
+		}
+
 		public static string GetVariable(string variableName) {
 			return EvalToResult(string.Format("Variables['{0}']", variableName));
 		}
@@ -53,13 +77,17 @@ namespace Smx.KodiInterop
 		}
 
 		public static string EvalToResult(string code) {
-			string replyString = EvalToVar(LastResultVarName, code);
-			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
-			return reply.Result;
+			return EvalToVar(LastResultVarName, code);
 		}
 
 		public static string EvalToVar(string variableName, string code) {
+			Console.WriteLine(variableName + " = " + code);
 			return Eval(string.Format("Variables['{0}'] = {1}", variableName, code));
+		}
+
+		public static string EvalToVar(string variableName, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
+			List<string> textArguments = EscapeArguments(arguments, escapeMethod);
+			return EvalToVar(variableName, string.Format(codeFormat, textArguments.ToArray()));
 		}
 
 		public static string Eval(string code) {
@@ -67,7 +95,9 @@ namespace Smx.KodiInterop
 				Code = code
 			};
 
-			return KodiBridge.SendMessage(msg);
+			string replyString = KodiBridge.SendMessage(msg);
+			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			return reply.Result;
 		}
 
 		public static string CallFunction(string moduleName, string functionName, List<object> arguments) {
@@ -76,7 +106,7 @@ namespace Smx.KodiInterop
 		}
 
 		public static string  CallBuiltin(string builtinName, List<string> arguments) {
-			return CallFunction(PythonModules.Xbmc, "executebuiltin", new List<object> {
+			return CallFunction(PyModules.Xbmc, "executebuiltin", new List<object> {
 				string.Format("{0}({1})",
 					builtinName,
 					string.Join(",", arguments.ToArray())
@@ -89,7 +119,7 @@ namespace Smx.KodiInterop
 		}
 
 		public static string CallBuiltin(string builtinName, List<object> arguments) {
-			List<string> textArguments = EscapeArguments(arguments, EscapeMethod.None);
+			List<string> textArguments = EscapeArguments(arguments, EscapeFlags.None);
 			return CallBuiltin(builtinName, textArguments);
 		}
     }

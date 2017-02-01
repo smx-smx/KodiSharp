@@ -15,6 +15,8 @@ namespace Smx.KodiInterop {
 
 		private static AutoResetEvent MessageReady = new AutoResetEvent(false);
 		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
+		
+		public static KodiAddon RunningAddon;
 
 		public static void SaveException(Exception ex) {
 			PyConsole.Write(ex.ToString());

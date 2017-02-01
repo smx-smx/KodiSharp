@@ -4,10 +4,12 @@ using System.Text;
 
 namespace Smx.KodiInterop
 {
-    public enum EscapeMethod
+	[Flags]
+    public enum EscapeFlags
     {
 		None = 0,
 		Quotes,
-		RawString
+		RawString,
+		StripNullItems
     }
 }

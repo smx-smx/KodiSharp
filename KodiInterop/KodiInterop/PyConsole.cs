@@ -38,10 +38,10 @@ namespace Smx.KodiInterop
 			Write(printStr);
 		}
 
-		public static void WriteLine(string value, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
-			string valueStr = value;
-			valueStr = PythonInterop.EscapeArgument(valueStr, escapeMethod);
-			valueStr += PythonInterop.EscapeArgument(NewLine, EscapeMethod.Quotes);
+		public static void WriteLine(string value, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+			string valueStr;
+			valueStr = PythonInterop.EscapeArgument(value, escapeMethod);
+			valueStr += PythonInterop.EscapeArgument(NewLine, EscapeFlags.Quotes);
 			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
 		}
 
@@ -49,7 +49,7 @@ namespace Smx.KodiInterop
 		/// Writes the text representation of the specified object to kodi.log with "sys.stdout.write"
 		/// </summary>
 		/// <param name="value"></param>
-		public static void Write(object value, EscapeMethod escapeMethod = EscapeMethod.Quotes) {
+		public static void Write(object value, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			string valueStr = value.ToString();
 			valueStr = PythonInterop.EscapeArgument(valueStr, escapeMethod);
 

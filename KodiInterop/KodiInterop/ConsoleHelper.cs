@@ -15,6 +15,8 @@ namespace Smx.KodiInterop
 
 		public static void CreateConsole() {
 			AllocConsole();
+			SetConsoleCtrlHandler(null, true);
+
 			IntPtr stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 			SafeFileHandle safeFileHandle = new SafeFileHandle(stdHandle, true);
 			FileStream fileStream = new FileStream(safeFileHandle, FileAccess.Write);
@@ -24,13 +26,19 @@ namespace Smx.KodiInterop
 			Console.SetOut(standardOutput);
 		}
 
-		// P/Invoke required:
+		delegate bool HandlerRoutine(uint dwControlType);
 		private const UInt32 StdOutputHandle = 0xFFFFFFF5;
-		[DllImport("kernel32.dll")]
-		private static extern IntPtr GetStdHandle(int nStdHandle);
-		[DllImport("kernel32.dll")]
-		private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+
+		// P/Invoke required:
 		[DllImport("kernel32")]
 		static extern bool AllocConsole();
+		[DllImport("kernel32")]
+		public static extern bool FreeConsole();
+		[DllImport("kernel32")]
+		private static extern IntPtr GetStdHandle(int nStdHandle);
+		[DllImport("kernel32")]
+		private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+		[DllImport("kernel32")]
+		static extern bool SetConsoleCtrlHandler(HandlerRoutine HandlerRoutine, bool Add);
 	}
 }
