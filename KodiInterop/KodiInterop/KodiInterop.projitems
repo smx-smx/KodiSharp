@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Python\PythonFunction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PythonVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\VariableManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SpecialPaths.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\ListItem.cs" />
   </ItemGroup>
