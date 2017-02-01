@@ -33,11 +33,14 @@ namespace Smx.KodiInterop.XbmcGui
 			}
 			listCode += "]";
 
+			PyVariable listVar = PyVariableManager.NewVariable(isObject: true);
+			listVar.Value = listCode;
+
 			PythonInterop.CallFunction(
 				new PythonFunction(PyModules.XbmcPlugin, "addDirectoryItems"),
 				new List<object> {
 					KodiBridge.RunningAddon.Handle,
-					listCode,
+					listVar,
 					items.Count
 				}
 			);

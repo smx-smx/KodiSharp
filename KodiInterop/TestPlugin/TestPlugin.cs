@@ -36,9 +36,12 @@ namespace TestPlugin {
 
 			PyConsole.WriteLine("Hello Python");
 
-			List.Add(new ListItem(
-				label: "My ListItem"
-			));
+			List<ListItem> items = new List<ListItem> {
+				new ListItem("My ListItem"),
+				new ListItem("Item 2"),
+				new ListItem("Item 3")
+			};
+			List.Add(items);
 			List.Show();
 
 			UiBuiltins.Notification(
