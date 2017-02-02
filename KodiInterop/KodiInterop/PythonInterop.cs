@@ -44,7 +44,7 @@ namespace Smx.KodiInterop
 
 			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
 				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
-				return '"' + text + '"';
+				return '"' + text.Replace("\"", "\\\"") + '"';
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
 				return "r'" + text + "'";
