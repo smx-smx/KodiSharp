@@ -96,6 +96,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\addon.xml">
+      <Link>addon.xml</Link>
+    </Content>
     <Content Include="..\..\default.py">
       <Link>default.py</Link>
     </Content>
