@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Smx.KodiInterop
+﻿namespace Smx.KodiInterop
 {
-    public class PythonFunction
+	public class PythonFunction
     {
 		public string Module = "";
 		public string Function = "";

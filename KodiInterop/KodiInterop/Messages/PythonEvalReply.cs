@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop.Messages
 {
-    public class PythonEvalReply
+	public class PythonEvalReply
     {
 		[JsonProperty(PropertyName = "result")]
 		public string Result { get; set; }

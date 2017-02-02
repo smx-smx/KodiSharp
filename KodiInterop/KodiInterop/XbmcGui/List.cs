@@ -1,11 +1,9 @@
 ﻿using Smx.KodiInterop.Python;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop.XbmcGui
 {
-    public static class List
+	public static class List
     {
 		public static void Add(ListItem item) {
 			PythonInterop.CallFunction(

@@ -1,11 +1,10 @@
 ﻿using Smx.KodiInterop.Python;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop.XbmcGui
 {
-    public class ListItem : IDisposable
+	public class ListItem : IDisposable
     {
 		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
 		public string Url { get; private set; }

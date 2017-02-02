@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Smx.KodiInterop
 {
-    class LocalizedString
+	class LocalizedString
     {
 		private Dictionary<int, string> pair;
 		public int Id { get; private set; }

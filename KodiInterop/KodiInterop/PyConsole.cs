@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop
 {
-    public static class PyConsole
+	public static class PyConsole
     {
 		private static string NewLine {
 			get	{

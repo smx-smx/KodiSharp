@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Smx.KodiInterop
+﻿namespace Smx.KodiInterop
 {
-    public static class SpecialPaths
+	public static class SpecialPaths
     {
 		/// <summary>
 		/// Kodi's installation root directory. This path is read-only contains the Kodi binary, support libraries and default configuration files, skins, scripts and plugins. Users should not modify files or install addons in this directory.

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Smx.KodiInterop
+﻿namespace Smx.KodiInterop
 {
-    public static class PyModules
+	public static class PyModules
     {
 		public const string Xbmc = "xbmc";
 		public const string XbmcGui = "xbmcgui";

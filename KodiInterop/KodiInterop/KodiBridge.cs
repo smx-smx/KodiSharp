@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Smx.KodiInterop.Messages;
@@ -8,7 +6,8 @@ using RGiesecke.DllExport;
 using System;
 using System.Diagnostics;
 
-namespace Smx.KodiInterop {
+namespace Smx.KodiInterop
+{
 	public static class KodiBridge {
 		public static string LastMessage = null;
 		public static string LastReply = null;

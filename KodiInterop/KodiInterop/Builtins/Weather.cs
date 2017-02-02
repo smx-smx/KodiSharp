@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Builtins
 {
-    public static class WeatherBuiltins
+	public static class WeatherBuiltins
     {
 		/// <summary>
 		/// Switch to next weather location

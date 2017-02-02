@@ -1,16 +1,13 @@
 ﻿using Newtonsoft.Json;
-using Smx.KodiInterop;
 using Smx.KodiInterop.Messages;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 using Smx.KodiInterop.Python;
 
 namespace Smx.KodiInterop
 {
-    public static class PythonInterop
+	public static class PythonInterop
     {
 		#region Variables
 		private const string LastResultVarName = "LastResult";

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Smx.KodiInterop.Builtins
+﻿namespace Smx.KodiInterop.Builtins
 {
-    public static class CECBuiltins
+	public static class CECBuiltins
     {
 		/// <summary>
 		/// Wake up playing device via a CEC peripheral

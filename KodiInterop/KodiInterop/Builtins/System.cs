@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 
 namespace Smx.KodiInterop.Builtins
@@ -8,7 +6,7 @@ namespace Smx.KodiInterop.Builtins
 	/// <summary>
 	/// Interacts with System Functionalities
 	/// </summary>
-    public static class SystemBuiltins
+	public static class SystemBuiltins
     {
 		/// <summary>
 		/// Starts the screensaver

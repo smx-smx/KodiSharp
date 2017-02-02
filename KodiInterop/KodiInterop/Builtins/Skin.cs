@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Builtins
 {
-    public static class SkinBuiltins
+	public static class SkinBuiltins
     {
 		/// <summary>
 		/// Reloads the current skin – useful for Skinners to use after they upload modified skin files (saves power cycling)

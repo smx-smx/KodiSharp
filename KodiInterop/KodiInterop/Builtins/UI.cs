@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop.Builtins
 {
-    public static class UiBuiltins
+	public static class UiBuiltins
     {
 		/// <summary>
 		/// Will display a notification dialog with the specified header and message

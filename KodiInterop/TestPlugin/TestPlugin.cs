@@ -1,20 +1,15 @@
 ﻿using RGiesecke.DllExport;
 using System.Runtime.InteropServices;
 using Smx.KodiInterop;
-using Smx.KodiInterop.Messages;
 using System.Collections.Generic;
 using System;
-using System.Threading;
 
 using Smx.KodiInterop.Builtins;
-using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-using Smx.KodiInterop.Python;
 using mgr = Smx.KodiInterop.Python.PyVariableManager;
 using Smx.KodiInterop.XbmcGui;
 
-namespace TestPlugin {
+namespace TestPlugin
+{
 	public class TestPlugin : KodiAddon
     {
 		private static void testException() {
