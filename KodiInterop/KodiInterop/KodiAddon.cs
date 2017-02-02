@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace Smx.KodiInterop
 {
-    public abstract class KodiAddon
+	public abstract class KodiAddon
     {
 		//http://stackoverflow.com/a/1373295
 		private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args) {
@@ -24,12 +22,15 @@ namespace Smx.KodiInterop
 
 		public int Handle { get; private set; }
 		public string BaseUrl { get; private set; }
+		public string Parameters { get; private set; }
 
 		public KodiAddon() {
 			SetAssemblyResolver();
 			this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
 			this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
-			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}", this.BaseUrl, this.Handle));
+			this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
+			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
+				this.BaseUrl, this.Handle, this.Parameters));
 			KodiBridge.RunningAddon = this;
 		}
 
