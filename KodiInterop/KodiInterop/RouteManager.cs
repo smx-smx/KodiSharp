@@ -9,7 +9,7 @@ namespace Smx.KodiInterop
 {
 	public static class RouteManager
     {
-		public delegate void RouteCallback(KodiAddon addon, NameValueCollection parameters);
+		public delegate void RouteCallback(NameValueCollection parameters);
 		public static readonly Dictionary<string, RouteCallback> Routes;
 
 		static RouteManager() {
@@ -60,7 +60,7 @@ namespace Smx.KodiInterop
 			}
 			Console.WriteLine("Going to call " + path);
 
-			Routes[path](addon, qs);
+			Routes[path](qs);
 		}
 	}
 }

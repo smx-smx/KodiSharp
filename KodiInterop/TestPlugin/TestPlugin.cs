@@ -18,7 +18,8 @@ namespace TestPlugin
 		}
 
 		[Route("/")]
-		public static void MainHandler(KodiAddon addon, NameValueCollection parameters) { 
+		public static void MainHandler(NameValueCollection parameters) {
+			KodiAddon addon = KodiBridge.RunningAddon;
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: "Nav",
@@ -39,7 +40,8 @@ namespace TestPlugin
 		}
 
 		[Route("/nav")]
-		public static void NavHandler(KodiAddon addon, NameValueCollection parameters) {
+		public static void NavHandler(NameValueCollection parameters) {
+			KodiAddon addon = KodiBridge.RunningAddon;
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: "Go Back",
