@@ -57,6 +57,8 @@ namespace Smx.KodiInterop
 		public static List<string> EscapeArguments(List<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
+				if (escapeMethod.HasFlag(EscapeFlags.StripNullItems) && argument == null)
+					continue;
 				textArguments.Add(EscapeArgument(argument, escapeMethod));
 			}
 			return textArguments;

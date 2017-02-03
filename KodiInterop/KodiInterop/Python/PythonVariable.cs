@@ -39,21 +39,26 @@ namespace Smx.KodiInterop.Python
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
 		) {
+			if (arguments == null) {
+				arguments = new List<object>();
+			}
+
+			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
+			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
+				this.PyName, function.Function, string.Join(", ", textArguments)
+			));
+		}
+
+		public string CallAssign(
+			PythonFunction function,
+			List<object> arguments = null,
+			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
+		) {
 			if(arguments == null) {
 				arguments = new List<object>();
 			}
-			List<object> nArguments;
-			if (escapeMethod.HasFlag(EscapeFlags.StripNullItems)) {
-				nArguments = new List<object>();
-				foreach(object argument in arguments) {
-					if (argument != null)
-						nArguments.Add(argument);
-				}
-			} else {
-				nArguments = new List<object>(arguments);
-			}
 
-			List<string> textArguments = PythonInterop.EscapeArguments(nArguments, escapeMethod);
+			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
 			PythonInterop.EvalToVar(this.Name, "{0}({1})", new List<object> {
 				function.ToString(), string.Join(", ", textArguments)
 			}, EscapeFlags.None);

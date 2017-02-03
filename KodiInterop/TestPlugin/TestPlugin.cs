@@ -49,6 +49,9 @@ namespace TestPlugin
 					isFolder: true
 				),
 			};
+
+			Console.WriteLine(string.Format("ListItem label is '{0}'", items[0].getLabel()));
+
 			List.Add(items);
 			List.Show();
 		}
