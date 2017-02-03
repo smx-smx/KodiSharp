@@ -28,7 +28,7 @@ namespace Smx.KodiInterop
 		public string BaseUrl { get; private set; }
 		public string Parameters { get; private set; }
 
-		public string BuildUrl(string path, NameValueCollection parameters = null) {
+		public string BuildNavUrl(string path, NameValueCollection parameters = null) {
 			if (parameters == null) {
 				parameters = new NameValueCollection();
 			}

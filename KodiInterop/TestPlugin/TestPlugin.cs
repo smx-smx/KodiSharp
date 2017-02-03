@@ -23,7 +23,7 @@ namespace TestPlugin
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: "Nav",
-					url: addon.BuildUrl("/nav"),
+					url: addon.BuildNavUrl("/nav"),
 					isFolder: true
 				),
 				new ListItem("Item 2"),
@@ -45,7 +45,7 @@ namespace TestPlugin
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: "Go Back",
-					url: addon.BuildUrl("/"),
+					url: addon.BuildNavUrl("/"),
 					isFolder: true
 				),
 			};
