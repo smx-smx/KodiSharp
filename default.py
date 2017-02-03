@@ -63,8 +63,7 @@ def message_receiver():
 		exitcode = 0
 		# Will be blocking in C# context
 		try:
-			message = GetMessage()
-			message = json.loads( unicode(message, 'latin-1') )
+			message = json.loads( unicode(GetMessage(), 'latin-1') )
 			print message
 		except Exception as exc:
 			on_exception(exc)
