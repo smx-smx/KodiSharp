@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using System.Web;
 
 namespace Smx.KodiInterop
 {
@@ -24,19 +28,57 @@ namespace Smx.KodiInterop
 		public string BaseUrl { get; private set; }
 		public string Parameters { get; private set; }
 
+		public string BuildUrl(string path, NameValueCollection parameters = null) {
+			string url = this.BaseUrl;
+			
+			if (parameters == null) {
+				parameters = new NameValueCollection();
+			}
+			parameters["action"] = path;
+
+			List<string> items = new List<string>();
+			foreach(string name in parameters) {
+				items.Add(string.Concat(name, "=", HttpUtility.UrlEncode(parameters[name])));
+			}
+			return url + "?" + string.Join("&", items);
+		}
+
 		public KodiAddon() {
-			SetAssemblyResolver();
-			this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
-			this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
-			this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
-			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
-				this.BaseUrl, this.Handle, this.Parameters));
-			KodiBridge.RunningAddon = this;
+			try {
+#if DEBUG
+				ConsoleHelper.CreateConsole();
+#endif
+				SetAssemblyResolver();
+
+				// Parse parameters
+				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
+				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
+				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
+				PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
+					this.BaseUrl, this.Handle, this.Parameters));
+
+				// Register routes for derived type
+				RouteManager.RegisterRoutes(this.GetType());
+
+				// Set running addon
+				KodiBridge.RunningAddon = this;
+			} catch(Exception ex) {
+				KodiBridge.SaveException(ex);
+			}
 		}
 
 		public int Run() {
 			try {
-				return this.PluginMain();
+				// If we have routes, invoke the request handler
+				if(RouteManager.Routes.Count > 0) {
+					RouteManager.HandleRequest(this, this.BaseUrl + this.Parameters);
+				}
+				int result = this.PluginMain();
+
+				// Free all variables
+				// Python.PyVariableManager.DestroyAllVariables();
+
+				return result;
 			} catch (Exception ex) {
 				// This takes the exception and stores it, not allowing it to bubble up
 				KodiBridge.SaveException(ex);

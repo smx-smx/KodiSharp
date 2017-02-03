@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Python
@@ -53,6 +54,12 @@ namespace Smx.KodiInterop.Python
 
 		public static void DestroyVariable(PyVariable variable) {
 			DestroyVariable(variable.Name);
+		}
+
+		public static void DestroyAllVariables() {
+			foreach (string name in _variables.Keys.Where(v => v != LastResultVarName)) {
+				DestroyVariable(name);
+			}
 		}
 	}
 }

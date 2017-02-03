@@ -30,7 +30,7 @@ namespace Smx.KodiInterop.XbmcGui
 			bool isFolder = false
 		) {
 			this.Url = url;
-			this.IsFolder = IsFolder;
+			this.IsFolder = isFolder;
 			Instance.CallFunction(
 				new PythonFunction(PyModules.XbmcGui, "ListItem"),
 				new List<object> { label, label2, iconImage, thumbnailImage, path }

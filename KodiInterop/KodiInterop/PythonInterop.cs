@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Smx.KodiInterop.Python;
+using System.Text;
 
 namespace Smx.KodiInterop
 {

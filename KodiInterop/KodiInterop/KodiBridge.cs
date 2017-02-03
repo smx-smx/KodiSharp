@@ -18,7 +18,7 @@ namespace Smx.KodiInterop
 		/// <summary>
 		/// The currently running addon
 		/// </summary>
-		public static KodiAddon RunningAddon;
+		public static KodiAddon RunningAddon = null;
 
 		public static void SaveException(Exception ex) {
 			PyConsole.Write(ex.ToString());
