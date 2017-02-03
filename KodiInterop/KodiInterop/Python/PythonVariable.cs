@@ -74,6 +74,11 @@ namespace Smx.KodiInterop.Python
 			this.Value = evalCode;
 		}
 
+		~PyVariable() {
+			Console.WriteLine("Freeing variable " + this.Name);
+			this.Dispose();
+		}
+
 		public void Dispose() {
 			PyVariableManager.DestroyVariable(this.Name);
 		}

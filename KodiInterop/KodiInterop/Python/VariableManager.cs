@@ -6,17 +6,17 @@ namespace Smx.KodiInterop.Python
 {
 	public static class PyVariableManager {
 		private const string LastResultVarName = "LastResult";
-		private static readonly Dictionary<string, PyVariable> _variables;
+
+		private static readonly PyVariable _lastResult = new PyVariable(LastResultVarName);
+		private static readonly Dictionary<string, WeakReference<PyVariable>> _variables;
 
 		static PyVariableManager() {
-			_variables = new Dictionary<string, PyVariable>() {
-				{ LastResultVarName, new PyVariable(LastResultVarName) }
-			};
+			_variables = new Dictionary<string, WeakReference<PyVariable>>();
 		}
 
 		public static PyVariable LastResult {
 			get {
-				return _variables[LastResultVarName];
+				return _lastResult;
 			}
 		}
 
@@ -32,7 +32,7 @@ namespace Smx.KodiInterop.Python
 			}
 			if (!_variables.ContainsKey(variableName)) {
 				PyVariable variable = new PyVariable(variableName, isObject: isObject);
-				_variables.Add(variableName, variable);
+				_variables.Add(variableName, new WeakReference<PyVariable>(variable));
 				return variable;
 			}
 			return null;
@@ -43,9 +43,6 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="variableName">Name of the variable to delete</param>
 		public static void DestroyVariable(string variableName) {
-			if(variableName == LastResultVarName) {
-				throw new ArgumentException("Cannot delete reserved '{0}' variable", LastResultVarName);
-			}
 			if (_variables.ContainsKey(variableName)) {
 				PythonInterop.Eval(string.Format("del Variables['{0}']", variableName));
 				_variables.Remove(variableName);
@@ -57,9 +54,13 @@ namespace Smx.KodiInterop.Python
 		}
 
 		public static void DestroyAllVariables() {
-			foreach (string name in _variables.Keys.Where(v => v != LastResultVarName)) {
+			foreach (string name in _variables.Keys) {
 				DestroyVariable(name);
 			}
+		}
+
+		public static void Initialize() {
+			_variables.Clear();
 		}
 	}
 }

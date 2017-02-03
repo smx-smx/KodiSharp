@@ -69,14 +69,14 @@ namespace Smx.KodiInterop
 
 		public int Run() {
 			try {
+				// Clean the variables list from the previous run (we're in a new python instance so they don't exist anymore)
+				Python.PyVariableManager.Initialize();
+
 				// If we have routes, invoke the request handler
-				if(RouteManager.Routes.Count > 0) {
+				if (RouteManager.Routes.Count > 0) {
 					RouteManager.HandleRequest(this, this.BaseUrl + this.Parameters);
 				}
 				int result = this.PluginMain();
-
-				// Free all variables
-				// Python.PyVariableManager.DestroyAllVariables();
 
 				return result;
 			} catch (Exception ex) {
