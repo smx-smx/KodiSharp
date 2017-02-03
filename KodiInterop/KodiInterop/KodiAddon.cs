@@ -29,18 +29,12 @@ namespace Smx.KodiInterop
 		public string Parameters { get; private set; }
 
 		public string BuildUrl(string path, NameValueCollection parameters = null) {
-			string url = this.BaseUrl;
-			
 			if (parameters == null) {
 				parameters = new NameValueCollection();
 			}
 			parameters["action"] = path;
 
-			List<string> items = new List<string>();
-			foreach(string name in parameters) {
-				items.Add(string.Concat(name, "=", HttpUtility.UrlEncode(parameters[name])));
-			}
-			return url + "?" + string.Join("&", items);
+			return Utils.BuildUrl(this.BaseUrl, parameters);
 		}
 
 		public KodiAddon() {
