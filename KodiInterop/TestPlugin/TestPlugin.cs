@@ -37,14 +37,22 @@ namespace TestPlugin
 				message: "Hello World from C#",
 				duration: TimeSpan.FromSeconds(10)
 			);
+
+			TestPluginState.LastMainPageVisitTime = DateTime.Now;
 		}
 
 		[Route("/nav")]
 		public static void NavHandler(NameValueCollection parameters) {
 			KodiAddon addon = KodiBridge.RunningAddon;
+
+			string itemLabel = "Go to Main";
+			if(TestPluginState.LastMainPageVisitTime != null) {
+				itemLabel += string.Format(" (Last Visited: {0})", TestPluginState.LastMainPageVisitTime.Value.ToString());
+			}
+
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
-					label: "Go Back",
+					label: itemLabel,
 					url: addon.BuildNavUrl("/"),
 					isFolder: true
 				),
