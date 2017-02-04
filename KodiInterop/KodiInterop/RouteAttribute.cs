@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestPlugin
+namespace Smx.KodiInterop
 {
 	public class RouteAttribute : Attribute
 	{
