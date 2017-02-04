@@ -19,7 +19,7 @@ namespace Smx.KodiInterop
 			return assembly;
 		}
 
-		private static void SetAssemblyResolver() {
+		public static void SetAssemblyResolver() {
 			AppDomain currentDomain = AppDomain.CurrentDomain;
 			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
 		}
