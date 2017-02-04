@@ -12,6 +12,15 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
   
   Make sure you edit addon.xml aswell
 
+## NOTES
+- The project must target either x86 or x64 for UnmanagedExports to generate the proper code (**NOT AnyCpu**). If you use the wrong architecture type you may have issues like "[your plugin] is not a valid win 32 application". On windows, kodi builds are generally x86.
+- If you want to make a new project from scratch, make sure to:
+  - Clone this repo to your new addon solution
+  - Add the KodiInterop shared project to the solution
+  - Add a reference to the KodiInterop project to your Addon project
+  - Install the nuget packages "Newtonsoft.Json" and "UnmanagedExports"
+  - Copy default.py and addon.xml to your new addon folder, then add them to your solution as link. Edit them accordingly to change the DLL path and the addon name/author
+
 ## TODO
 - Mono support
 - Implement more APIs
