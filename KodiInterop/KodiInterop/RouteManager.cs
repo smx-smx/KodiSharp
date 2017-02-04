@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
-using TestPlugin;
 
 namespace Smx.KodiInterop
 {
