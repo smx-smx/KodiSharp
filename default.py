@@ -70,20 +70,26 @@ def message_receiver():
 			exitcode = 1
 			t.do_run = False
 
-		if message.get('type'):
-			if message['type'] == 'exit':
+		type = message.get('type')
+		if type:
+			if type == 'exit':
 				print "We got exit, bye"
 				# Stop thread at next loop
 				t.do_run = False
+			elif type == 'eval':
+				exec_code = message.get('exec_code')
+				if exec_code:
+					try:
+						eval(compile(exec_code, '<string>', 'exec'))
+					except Exception as exc:
+						on_exception(exc)
+						exitcode = 1
+						t.do_run = False
+			elif type == 'del_var':
+				var_name = message.get('var_name')
+				if var_name and var_name in Variables:
+					del Variables[var_name]
 
-		exec_code = message.get('exec_code')
-		if exec_code:
-			try:
-				eval(compile(exec_code, '<string>', 'exec'))
-			except Exception as exc:
-				on_exception(exc)
-				exitcode = 1
-				t.do_run = False
 
 
 		sendRet = PutMessage(json.dumps({

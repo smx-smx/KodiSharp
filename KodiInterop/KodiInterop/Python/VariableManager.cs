@@ -44,7 +44,10 @@ namespace Smx.KodiInterop.Python
 		/// <param name="variableName">Name of the variable to delete</param>
 		public static void DestroyVariable(string variableName) {
 			if (_variables.ContainsKey(variableName)) {
-				PythonInterop.Eval(string.Format("del Variables['{0}']", variableName));
+				Messages.PythonDeleteVariableMessage msg = new Messages.PythonDeleteVariableMessage {
+					VariableName = variableName
+				};
+				KodiBridge.SendMessage(msg);
 				_variables.Remove(variableName);
 			}
 		}
