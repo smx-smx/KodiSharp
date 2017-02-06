@@ -1,4 +1,5 @@
-﻿using Smx.KodiInterop.Python;
+﻿using Smx.KodiInterop;
+using Smx.KodiInterop.Python;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,14 @@ namespace Xbmc
     public class PlayList : IList<string>
     {
 		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
+
+		public PlayList(PlayListType type) {
+			Instance.CallAssign(
+				new PythonFunction(PyModule.Xbmc, "PlayList"),
+				new List<object> { type.GetString() }
+			);
+		}
+
 		public int Id {
 			get {
 				return int.Parse(Instance.CallFunction(
