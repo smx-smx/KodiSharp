@@ -49,7 +49,7 @@ namespace Smx.KodiInterop
 
 			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
 				text = Regex.Replace(text, "\r?\n", "\\n");
-				text = "'" + text.Replace("\"", "\\\"") + '"';
+				text = '"' + text.Replace("\"", "\\\"") + '"';
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.EscapeBuiltin)) {
 				text = Regex.Replace(text, ",", "\\,");
