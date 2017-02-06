@@ -10,8 +10,7 @@ using Smx.KodiInterop.Messages;
 
 namespace Smx.KodiInterop
 {
-	public static class PythonInterop
-    {
+	public static class PythonInterop {
 		#region Variables
 		private const string LastResultVarName = "LastResult";
 
@@ -35,7 +34,7 @@ namespace Smx.KodiInterop
 			//TODO: handle culture decimal point -> python decimal point
 
 			//Don't escape primitives
-			if(
+			if (
 				argument is bool ||
 				argument is int ||
 				argument is uint ||
@@ -61,7 +60,7 @@ namespace Smx.KodiInterop
 			return text;
 		}
 
-		public static List<string> EscapeArguments(List<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+		public static List<string> EscapeArguments(IEnumerable<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
 			foreach (object argument in arguments) {
 				if (escapeMethod.HasFlag(EscapeFlags.StripNullItems) && argument == null)
@@ -70,6 +69,10 @@ namespace Smx.KodiInterop
 			}
 			return textArguments;
 		}
+
+		public static List<string> EscapeArguments(EscapeFlags escapeMethod = EscapeFlags.Quotes, params object[] arguments) {
+			return EscapeArguments(arguments, escapeMethod);
+		}
 		#endregion
 
 		#region FunctionCall
@@ -77,7 +80,9 @@ namespace Smx.KodiInterop
 			return EvalToResult(string.Format("{0}.{1}({2})", module, functionName, string.Join(",", arguments.ToArray())));
 		}
 
-		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments) {
+		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments = null) {
+			if (arguments == null)
+				arguments = new List<object>();
 			List<string> textArguments = EscapeArguments(arguments);
 			return CallFunction(
 				pythonFunction.Module,
