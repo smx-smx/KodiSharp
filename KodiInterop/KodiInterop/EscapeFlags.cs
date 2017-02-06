@@ -6,9 +6,9 @@ namespace Smx.KodiInterop
     public enum EscapeFlags
     {
 		None = 0,
-		Quotes,
-		RawString,
-		EscapeBuiltin, //to escape ","
-		StripNullItems
+		Quotes = 1 << 0,
+		RawString = 1 << 1,
+		EscapeBuiltin = 1 << 2, //to escape ","
+		StripNullItems = 1 << 3
     }
 }
