@@ -49,13 +49,13 @@ namespace Smx.KodiInterop
 
 			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
 				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
-				return '"' + text.Replace("\"", "\\\"") + '"';
+				text = text.Replace("\"", "\\\"") + '"';
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.EscapeBuiltin)) {
 				text = Regex.Replace(argument.ToString(), ",", "\\,");
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
-				return "r'" + text + "'";
+				text = "r'" + text + "'";
 			}
 
 			return text;
