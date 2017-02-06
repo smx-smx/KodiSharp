@@ -5,6 +5,8 @@ using Smx.KodiInterop.Messages;
 using RGiesecke.DllExport;
 using System;
 using System.Diagnostics;
+using System.Reflection;
+using System.IO;
 
 namespace Smx.KodiInterop
 {
@@ -57,9 +59,23 @@ namespace Smx.KodiInterop
 			return LastReply;
 		}
 
+		//http://stackoverflow.com/a/1373295
+		private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args) {
+			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
+			if (!File.Exists(assemblyPath)) return null;
+			Assembly assembly = Assembly.LoadFrom(assemblyPath);
+			return assembly;
+		}
+
+		private static void SetAssemblyResolver() {
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
+		}
+
 		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
 		private static bool Initialize() {
-			KodiAddon.SetAssemblyResolver();
+			SetAssemblyResolver();
 			return true;
 		}
 

@@ -10,20 +10,6 @@ namespace Smx.KodiInterop
 {
 	public abstract class KodiAddon
     {
-		//http://stackoverflow.com/a/1373295
-		private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args) {
-			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
-			if (!File.Exists(assemblyPath)) return null;
-			Assembly assembly = Assembly.LoadFrom(assemblyPath);
-			return assembly;
-		}
-
-		public static void SetAssemblyResolver() {
-			AppDomain currentDomain = AppDomain.CurrentDomain;
-			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
-		}
-
 		public int Handle { get; private set; }
 		public string BaseUrl { get; private set; }
 		public string Parameters { get; private set; }
@@ -42,8 +28,6 @@ namespace Smx.KodiInterop
 #if DEBUG
 				ConsoleHelper.CreateConsole();
 #endif
-				SetAssemblyResolver();
-
 				// Parse parameters
 				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
 				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
