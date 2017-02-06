@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Smx.KodiInterop;
+using Smx.KodiInterop.Python;
+using System.Collections.Generic;
 
-namespace Smx.KodiInterop.Xbmc
+namespace Xbmc
 {
 	public static class Path {
 		/// <summary>
@@ -10,7 +12,7 @@ namespace Smx.KodiInterop.Xbmc
 		/// <returns></returns>
 		public static string getCacheThumbName(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModules.Xbmc, "getCacheThumbName"),
+				new PythonFunction(PyModule.Xbmc, "getCacheThumbName"),
 				new List<object> { path }
 			);
 		}
@@ -23,7 +25,7 @@ namespace Smx.KodiInterop.Xbmc
 		/// <returns></returns>
 		public static string makeLegalFilename(string filename, bool fatX = false) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModules.Xbmc, "makeLegalFilename"),
+				new PythonFunction(PyModule.Xbmc, "makeLegalFilename"),
 				new List<object> { filename, fatX }
 			);
 		}
@@ -35,7 +37,7 @@ namespace Smx.KodiInterop.Xbmc
 		/// <returns></returns>
 		public static string translatePath(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModules.Xbmc, "translatePath"),
+				new PythonFunction(PyModule.Xbmc, "translatePath"),
 				new List<object> { path }
 			);
 		}
@@ -47,7 +49,7 @@ namespace Smx.KodiInterop.Xbmc
 		/// <returns></returns>
 		public static string validatePath(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModules.Xbmc, "validatePath"),
+				new PythonFunction(PyModule.Xbmc, "validatePath"),
 				new List<object> { path }
 			);
 		}

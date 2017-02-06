@@ -5,14 +5,17 @@ using System.Collections.Generic;
 using System;
 
 using Smx.KodiInterop.Builtins;
-using mgr = Smx.KodiInterop.Python.PyVariableManager;
-using Smx.KodiInterop.XbmcGui;
 using System.Collections.Specialized;
+
+using mgr = Smx.KodiInterop.Python.PyVariableManager;
+using XbmcGui;
 
 namespace TestPlugin
 {
 	public class TestPlugin : KodiAddon
     {
+		public static string TempDir = Xbmc.Path.translatePath(SpecialPaths.Temp);
+
 		private static void testException() {
 			throw new Exception("I should appear in kodi.log");
 		}
@@ -38,6 +41,11 @@ namespace TestPlugin
 				duration: TimeSpan.FromSeconds(10)
 			);
 
+			/*
+			 * Persistent variables preserve their value between multiple plugin invokations,
+			 * unlike python in XBMC where everything is destroyed when the plugin is invoked again (e.g navigating between pages).
+			 * This is possible due to Assembly Domain that is created by the CLR once the plugin is loaded for the first time. 
+			 **/
 			TestPluginState.LastMainPageVisitTime = DateTime.Now;
 		}
 
@@ -58,7 +66,7 @@ namespace TestPlugin
 				),
 			};
 
-			Console.WriteLine(string.Format("ListItem label is '{0}'", items[0].getLabel()));
+			Console.WriteLine(string.Format("ListItem label is '{0}'", items[0].Label));
 
 			List.Add(items);
 			List.Show();
@@ -86,10 +94,11 @@ namespace TestPlugin
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
 		public static int Main() {
 			/*
-			 * This needs to be done here. The reason is that if you use variable initializers like
+			 * This needs to be done here. The reason is that if you use static variable initializers like
 			 * public string TempDir = Xbmc.Path.translatePath(SpecialPaths.Temp)
 			 *
-			 * The call to the right hand functions will happen before the constructor is called. This will lead to calls to
+			 * The call to the right hand functions will happen before the constructor is called (because it's static).
+			 * This will lead to calls to
 			 * Newtonsoft JSON APIs before we have set the Assembly load path (the directory the addon DLL is loaded from).
 			 * This means Newtonsoft or any other assembly will not be found and an exception will be thrown
 			 **/

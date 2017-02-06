@@ -8,6 +8,7 @@ namespace Smx.KodiInterop
 		None = 0,
 		Quotes,
 		RawString,
+		EscapeBuiltin, //to escape ","
 		StripNullItems
     }
 }

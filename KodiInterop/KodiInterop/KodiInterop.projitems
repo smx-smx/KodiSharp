@@ -20,8 +20,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\UI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Weather.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumValueAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EscapeFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonDeleteVariableMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonExitMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyModules.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringEnumAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiAddon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiApiVersionAttribute.cs" />
@@ -32,15 +37,23 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PyConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PythonInterop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PyModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PythonFunction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PythonVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\VariableManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpecialPaths.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\Art.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XbmcGui\ListItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\InfoTagMusic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\InfoTagRadioRDS.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\InfoTagVideo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\Keyboard.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\Monitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Xbmc\Path.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\PlayList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Xbmc\RenderCapture.cs" />
   </ItemGroup>
 </Project>

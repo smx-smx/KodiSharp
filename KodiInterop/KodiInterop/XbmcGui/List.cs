@@ -1,13 +1,14 @@
-﻿using Smx.KodiInterop.Python;
+﻿using Smx.KodiInterop;
+using Smx.KodiInterop.Python;
 using System.Collections.Generic;
 
-namespace Smx.KodiInterop.XbmcGui
+namespace XbmcGui
 {
 	public static class List
     {
 		public static void Add(ListItem item) {
 			PythonInterop.CallFunction(
-				new PythonFunction(PyModules.XbmcPlugin, "addDirectoryItem"),
+				new PythonFunction(PyModule.XbmcPlugin, "addDirectoryItem"),
 				new List<object> {
 					KodiBridge.RunningAddon.Handle,
 					item.Url,
@@ -35,7 +36,7 @@ namespace Smx.KodiInterop.XbmcGui
 			listVar.Value = listCode;
 
 			PythonInterop.CallFunction(
-				new PythonFunction(PyModules.XbmcPlugin, "addDirectoryItems"),
+				new PythonFunction(PyModule.XbmcPlugin, "addDirectoryItems"),
 				new List<object> {
 					KodiBridge.RunningAddon.Handle,
 					listVar,
@@ -46,7 +47,7 @@ namespace Smx.KodiInterop.XbmcGui
 
 		public static void Show(bool succeded = true, bool updateListing = false, bool cacheToDisc = true) {
 			PythonInterop.CallFunction(
-				new PythonFunction(PyModules.XbmcPlugin, "endOfDirectory"),
+				new PythonFunction(PyModule.XbmcPlugin, "endOfDirectory"),
 				new List<object> {
 					KodiBridge.RunningAddon.Handle,
 					succeded, updateListing, cacheToDisc

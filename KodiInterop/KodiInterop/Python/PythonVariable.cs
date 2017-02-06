@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smx.KodiInterop;
+using System;
 using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Python

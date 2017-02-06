@@ -12,6 +12,11 @@ namespace Smx.KodiInterop
 		public static string LastMessage = null;
 		public static string LastReply = null;
 
+		/// <summary>
+		/// Whether to unload the DLL when the Plugin is closed
+		/// </summary>
+		public static bool UnloadDLL = false;
+
 		private static AutoResetEvent MessageReady = new AutoResetEvent(false);
 		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
 		
@@ -28,8 +33,9 @@ namespace Smx.KodiInterop
 		/// Instructs python to abort message fetching
 		/// </summary>
 		private static void CloseRPC() {
-			RPCMessage amsg = new RPCMessage { MessageType = "exit" };
-			SendMessage(amsg);
+			PythonExitMessage exitMessage = new PythonExitMessage();
+			exitMessage.UnloadDLL = UnloadDLL;
+			SendMessage(exitMessage);
 		}
 
 		/// <summary>

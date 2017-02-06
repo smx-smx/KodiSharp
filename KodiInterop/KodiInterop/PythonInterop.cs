@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
-using Smx.KodiInterop.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Smx.KodiInterop.Python;
 using System.Text;
+using System.Linq;
+
+using Smx.KodiInterop.Python;
+using Smx.KodiInterop.Messages;
 
 namespace Smx.KodiInterop
 {
@@ -25,6 +27,9 @@ namespace Smx.KodiInterop
 		#region Escape
 		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			string text = argument.ToString();
+
+			//TODO: handle culture decimal point -> python decimal point
+			//TODO: handle "," in CallBuiltin
 
 			//Don't escape primitives
 			if(
@@ -47,6 +52,9 @@ namespace Smx.KodiInterop
 				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
 				return '"' + text.Replace("\"", "\\\"") + '"';
 			}
+			if (escapeMethod.HasFlag(EscapeFlags.EscapeBuiltin)) {
+				text = Regex.Replace(argument.ToString(), ",", "\\,");
+			}
 			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
 				return "r'" + text + "'";
 			}
@@ -66,24 +74,29 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region FunctionCall
-		public static string CallFunction(string moduleName, string functionName, List<string> arguments) {
-			return EvalToResult(string.Format("{0}.{1}({2})", moduleName, functionName, string.Join(",", arguments.ToArray())));
+		public static string CallFunction(string module, string functionName, List<string> arguments) {
+			return EvalToResult(string.Format("{0}.{1}({2})", module, functionName, string.Join(",", arguments.ToArray())));
 		}
 
 		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments) {
-			return CallFunction(pythonFunction.Module,	pythonFunction.Function, arguments);
+			List<string> textArguments = EscapeArguments(arguments);
+			return CallFunction(
+				pythonFunction.Module,
+				pythonFunction.Function,
+				textArguments
+			);
 		}
 
-		public static string CallFunction(string moduleName, string functionName, List<object> arguments) {
-			List<string> textArguments = EscapeArguments(arguments);
-			return CallFunction(moduleName, functionName, textArguments);
+		public static string CallFunction(PyModule module, string functionName, List<object> arguments) {
+			return CallFunction(new PythonFunction(module, functionName), arguments);
 		}
 
 		public static string CallBuiltin(string builtinName, List<string> arguments) {
-			return CallFunction(PyModules.Xbmc, "executebuiltin", new List<object> {
+			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object> {
+				//Kodi builtins shouldn't have quotes, so we pass a single parameter with the joined parameters
 				string.Format("{0}({1})",
 					builtinName,
-					string.Join(",", arguments.ToArray())
+					string.Join(",", arguments.Select(a => EscapeArgument(a, EscapeFlags.EscapeBuiltin)).ToArray())
 				)
 			});
 		}
