@@ -26,6 +26,10 @@ namespace Smx.KodiInterop
 
 		#region Escape
 		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+			//If it's a variable, return it's unquoted python name
+			if (argument is PyVariable)
+				return (argument as PyVariable).PyName;
+
 			string text = argument.ToString();
 
 			//TODO: handle culture decimal point -> python decimal point
@@ -43,16 +47,12 @@ namespace Smx.KodiInterop
 				return text;
 			}
 
-			//If it's a variable, return it's unquoted python name
-			if (argument is PyVariable)
-				return (argument as PyVariable).PyName;
-
 			if (escapeMethod.HasFlag(EscapeFlags.Quotes)) {
-				text = Regex.Replace(argument.ToString(), "\r?\n", "\\n");
-				text = text.Replace("\"", "\\\"") + '"';
+				text = Regex.Replace(text, "\r?\n", "\\n");
+				text = "'" + text.Replace("\"", "\\\"") + '"';
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.EscapeBuiltin)) {
-				text = Regex.Replace(argument.ToString(), ",", "\\,");
+				text = Regex.Replace(text, ",", "\\,");
 			}
 			if (escapeMethod.HasFlag(EscapeFlags.RawString)) {
 				text = "r'" + text + "'";
