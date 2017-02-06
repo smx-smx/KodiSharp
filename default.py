@@ -33,6 +33,11 @@ PutMessage = lib.PutMessage
 PutMessage.argtypes = [c_char_p]
 PutMessage.restype = c_bool
 
+# Plugin init
+Initialize = lib.Initialize
+Initialize.argtypes = []
+Initialize.restype = c_bool
+
 # Plugin entrypoint
 Main = lib.PluginMain
 Main.argtypes = []
@@ -101,6 +106,7 @@ thread = threading.Thread(target = message_receiver)
 thread.start()
 
 # Invoke PluginMain from C#
+Initialize()
 ret = Main()
 print "PluginMain returned %d" % ret
 

@@ -93,16 +93,6 @@ namespace TestPlugin
 
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
 		public static int Main() {
-			/*
-			 * This needs to be done here. The reason is that if you use static variable initializers like
-			 * public string TempDir = Xbmc.Path.translatePath(SpecialPaths.Temp)
-			 *
-			 * The call to the right hand functions will happen before the constructor is called (because it's static).
-			 * This will lead to calls to
-			 * Newtonsoft JSON APIs before we have set the Assembly load path (the directory the addon DLL is loaded from).
-			 * This means Newtonsoft or any other assembly will not be found and an exception will be thrown
-			 **/
-			KodiAddon.SetAssemblyResolver();
 			return new TestPlugin().Run();
 		}
 	}

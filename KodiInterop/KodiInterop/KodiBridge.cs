@@ -57,6 +57,12 @@ namespace Smx.KodiInterop
 			return LastReply;
 		}
 
+		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
+		private static bool Initialize() {
+			KodiAddon.SetAssemblyResolver();
+			return true;
+		}
+
 		/// <summary>
 		/// Called by python to send a message to C#
 		/// </summary>
