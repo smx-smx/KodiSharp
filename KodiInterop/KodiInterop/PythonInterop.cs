@@ -29,7 +29,6 @@ namespace Smx.KodiInterop
 			string text = argument.ToString();
 
 			//TODO: handle culture decimal point -> python decimal point
-			//TODO: handle "," in CallBuiltin
 
 			//Don't escape primitives
 			if(
