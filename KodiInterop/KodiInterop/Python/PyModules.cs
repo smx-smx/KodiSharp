@@ -1,6 +1,5 @@
 ﻿namespace Smx.KodiInterop.Python
 {
-	[StringEnum]
 	public enum PyModule
     {
 		[StringValue("xbmc")]

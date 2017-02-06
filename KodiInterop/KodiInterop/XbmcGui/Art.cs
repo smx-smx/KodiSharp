@@ -5,7 +5,6 @@ using System.Text;
 
 namespace XbmcGui
 {
-	[StringEnum]
     public enum Art
     {
 		[StringValue("thumb")]

@@ -26,7 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonDeleteVariableMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonExitMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyModules.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StringEnumAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiAddon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KodiApiVersionAttribute.cs" />
