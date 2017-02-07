@@ -25,7 +25,7 @@ namespace Smx.KodiInterop.Python
 		/// Allocates a new variable
 		/// </summary>
 		/// <param name="variableName">Name of the variable to add</param>
-		/// <param name="isObject">Indicates the variable will store non-serializable data</param>
+		/// <param name="isObject">Indicates the variable will store non-serializable data (like class instances)</param>
 		/// <returns>The newly added variable, or null if the variable already exists</returns>
 		public static PyVariable NewVariable(string variableName = null, bool isObject = false) {
 			if(variableName == null) {

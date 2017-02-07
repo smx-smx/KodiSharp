@@ -3,7 +3,7 @@ using Smx.KodiInterop.Python;
 using System;
 using System.Collections.Generic;
 
-namespace XbmcGui
+namespace Modules.XbmcGui
 {
 	public class ListItem : IDisposable
     {

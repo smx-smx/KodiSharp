@@ -2,7 +2,7 @@
 using Smx.KodiInterop.Python;
 using System.Collections.Generic;
 
-namespace Xbmc
+namespace Modules.Xbmc
 {
 	public static class Path {
 		/// <summary>

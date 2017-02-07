@@ -50,6 +50,13 @@ namespace Smx.KodiInterop.Python
 			));
 		}
 
+		/// <summary>
+		/// Calls the specified function and assigns the result to this variable
+		/// </summary>
+		/// <param name="function"></param>
+		/// <param name="arguments"></param>
+		/// <param name="escapeMethod"></param>
+		/// <returns></returns>
 		public string CallAssign(
 			PythonFunction function,
 			List<object> arguments = null,

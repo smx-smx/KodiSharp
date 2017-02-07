@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smx.KodiInterop.Python;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -13,6 +14,8 @@ namespace Smx.KodiInterop
 		public int Handle { get; private set; }
 		public string BaseUrl { get; private set; }
 		public string Parameters { get; private set; }
+
+		public KodiAddonSettings Settings { get; private set; }
 
 		public string BuildNavUrl(string path, NameValueCollection parameters = null) {
 			if (parameters == null) {
@@ -34,6 +37,9 @@ namespace Smx.KodiInterop
 				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
 				PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 					this.BaseUrl, this.Handle, this.Parameters));
+
+				// Creates the Settings object
+				this.Settings = new KodiAddonSettings(this);
 
 				// Register routes for derived type
 				RouteManager.RegisterRoutes(this.GetType());

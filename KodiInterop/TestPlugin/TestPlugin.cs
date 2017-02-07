@@ -8,13 +8,14 @@ using Smx.KodiInterop.Builtins;
 using System.Collections.Specialized;
 
 using mgr = Smx.KodiInterop.Python.PyVariableManager;
-using XbmcGui;
+using Modules.XbmcGui;
+using Modules.Xbmc;
 
 namespace TestPlugin
 {
 	public class TestPlugin : KodiAddon
     {
-		public static string TempDir = Xbmc.Path.translatePath(SpecialPaths.Temp);
+		public static string TempDir = Path.translatePath(SpecialPaths.Temp);
 
 		private static void testException() {
 			throw new Exception("I should appear in kodi.log");

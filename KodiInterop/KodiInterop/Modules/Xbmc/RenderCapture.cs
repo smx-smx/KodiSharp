@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xbmc
+namespace Modules.Xbmc
 {
-    public class Player
+    public class RenderCapture
     {
     }
 }

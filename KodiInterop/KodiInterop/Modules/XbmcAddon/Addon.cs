@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace XbmcAddon
+namespace Modules.XbmcAddon
 {
     public class Addon
     {

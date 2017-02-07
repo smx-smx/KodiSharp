@@ -4,9 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using XbmcGui;
+using Modules.XbmcGui;
 
-namespace Xbmc
+namespace Modules.Xbmc
 {
     public class PlayList : IList<string>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xbmc
+namespace Modules.Xbmc
 {
     public class Monitor
     {

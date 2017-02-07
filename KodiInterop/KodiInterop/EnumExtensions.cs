@@ -7,7 +7,7 @@ namespace Smx.KodiInterop
 {
 	public static class EnumExtensions
 	{
-		public static string GetString<T>(this T value) where T : struct, IConvertible { 
+		public static string GetString<T>(this T value) where T : struct, IConvertible {
 			string memberName = Enum.GetName(typeof(T), value);
 			FieldInfo field = typeof(T).GetField(memberName);
 			StringValueAttribute strAttr = field.GetCustomAttribute(typeof(StringValueAttribute), false) as StringValueAttribute;
