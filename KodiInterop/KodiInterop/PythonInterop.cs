@@ -31,8 +31,6 @@ namespace Smx.KodiInterop
 
 			string text = argument.ToString();
 
-			//TODO: handle culture decimal point -> python decimal point
-
 			//Don't escape primitives
 			if (
 				argument is bool ||

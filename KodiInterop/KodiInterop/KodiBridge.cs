@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using System.Globalization;
 
 namespace Smx.KodiInterop
 {
@@ -73,9 +74,25 @@ namespace Smx.KodiInterop
 			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
 		}
 
+		private static void SetPythonCulture() {
+			// Clone the current Culture, and alter it as needed
+			CultureInfo pythonCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+			pythonCulture.NumberFormat.NumberDecimalSeparator = ".";
+			pythonCulture.NumberFormat.NaNSymbol = "nan";
+			pythonCulture.NumberFormat.PositiveInfinitySymbol = "inf";
+			pythonCulture.NumberFormat.NegativeInfinitySymbol = "-inf";
+
+			// Change the current thread culture
+			Thread.CurrentThread.CurrentCulture = pythonCulture;
+			
+			// Set the new culture for all new threads
+			CultureInfo.DefaultThreadCurrentCulture = pythonCulture;
+		}
+
 		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
 		private static bool Initialize() {
 			SetAssemblyResolver();
+			SetPythonCulture();
 			return true;
 		}
 
