@@ -25,6 +25,10 @@ namespace Smx.KodiInterop
 
 		#region Escape
 		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+			if (argument == null) {
+				return "None";
+			}
+
 			//If it's a variable, return it's unquoted python name
 			if (argument is PyVariable)
 				return (argument as PyVariable).PyName;
@@ -60,11 +64,30 @@ namespace Smx.KodiInterop
 
 		public static List<string> EscapeArguments(IEnumerable<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
+
+			int i = arguments.Count();
+			if (
+				i > 0 &&
+				escapeMethod.HasFlag(EscapeFlags.StripNullItems)
+			) {
+				List<object> argumentsList = arguments.ToList();
+
+				int nulls = 0;
+				for (i = i - 1; i >= 0; --i) {
+					// Found the end of the null series
+					if (argumentsList[i] != null) {
+						argumentsList.RemoveRange(i + 1, nulls);
+						arguments = argumentsList;
+						break;
+					}
+					nulls++;
+				}
+			}
+
 			foreach (object argument in arguments) {
-				if (escapeMethod.HasFlag(EscapeFlags.StripNullItems) && argument == null)
-					continue;
 				textArguments.Add(EscapeArgument(argument, escapeMethod));
 			}
+
 			return textArguments;
 		}
 
