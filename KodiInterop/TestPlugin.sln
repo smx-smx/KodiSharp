@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\Te
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "KodiInterop", "KodiInterop\KodiInterop.shproj", "{238583EC-0D95-445E-9718-EC67F64A8141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonClassGen", "JsonClassGen\JsonClassGen.csproj", "{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		KodiInterop\KodiInterop.projitems*{238583ec-0d95-445e-9718-ec67f64a8141}*SharedItemsImports = 13
@@ -35,18 +33,6 @@ Global
 		{6206804B-2B16-4DB7-81D0-5969A1DF660D}.Release|x64.Build.0 = Release|x64
 		{6206804B-2B16-4DB7-81D0-5969A1DF660D}.Release|x86.ActiveCfg = Release|x86
 		{6206804B-2B16-4DB7-81D0-5969A1DF660D}.Release|x86.Build.0 = Release|x86
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|x64.Build.0 = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Debug|x86.Build.0 = Debug|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|x64.ActiveCfg = Release|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|x64.Build.0 = Release|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|x86.ActiveCfg = Release|Any CPU
-		{9C56E06E-F8BF-4BDC-AA04-E0B12BC4AC04}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

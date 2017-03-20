@@ -74,9 +74,6 @@ namespace TestPlugin
 
 			Console.WriteLine(string.Format("ListItem label is '{0}'", items[0].Label));
 
-			//var rep = Smx.KodiInterop.JsonRpc.Addons.ExecuteAddon("plugin.video.dplay2", wait: true);
-			//PyConsole.WriteLine(rep.);
-
 			List.Add(items);
 			List.Show();
 		}
