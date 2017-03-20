@@ -11,6 +11,9 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Messages\KodiEventMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonVarArgsMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\DatabaseEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\NotificationEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\LibraryEventArgs.cs" />
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -26,7 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EnumExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EnumValueAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EscapeFlags.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)KodiEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonDeleteVariableMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonExitMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcAddon\Addon.cs" />

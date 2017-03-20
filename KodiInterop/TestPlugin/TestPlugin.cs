@@ -86,10 +86,9 @@ namespace TestPlugin
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
 
-			Events.ScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev)
+			Events.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev)
 			{
-				//Note, EventArgs is null for now
-				Console.WriteLine("Screensaver Triggered!");
+				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
 			});
 
 			Thread.Sleep(TimeSpan.FromSeconds(1));
