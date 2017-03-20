@@ -64,10 +64,6 @@ def on_exception(exc):
 def exception_hook(exctype, value, traceback):
 	on_exception(value)
 
-sys.excepthook = exception_hook
-
-IsService = len(sys.argv) < 2
-
 class CSharpMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
 		super(xbmc.Monitor, self).__init__()
@@ -191,6 +187,9 @@ def message_receiver():
 		}))
 
 
+################################################
+
+sys.excepthook = exception_hook
 # Start the event monitor
 print "Starting Event Receiver..."
 monitor = CSharpMonitor()
