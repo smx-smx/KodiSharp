@@ -22,5 +22,7 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
   - Copy default.py and addon.xml to your new addon folder, then add them to your solution as link. Edit them accordingly to change the DLL path and the addon name/author
 
 ## TODO
-- Mono support
-- Implement more APIs
+- Mono support (involves getting rid of UnmanagedExports)
+- Implement remaining builtins
+- Implement remaining modules functionality (xbmc, xbmcgui, ...)
+- Implement a JSON interface (via executeJSONRPC)
