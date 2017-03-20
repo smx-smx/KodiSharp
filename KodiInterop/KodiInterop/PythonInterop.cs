@@ -65,23 +65,23 @@ namespace Smx.KodiInterop
 		public static List<string> EscapeArguments(IEnumerable<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
 
-			int i = arguments.Count();
-			if (
-				i > 0 &&
-				escapeMethod.HasFlag(EscapeFlags.StripNullItems)
-			) {
+			int count = arguments.Count();
+			if (escapeMethod.HasFlag(EscapeFlags.StripNullItems) && count > 0){
 				List<object> argumentsList = arguments.ToList();
-
 				int nulls = 0;
-				for (i = i - 1; i >= 0; --i) {
+				// Start from end, go backwards
+				for (int i = count - 1; i >= 0; --i) {
 					// Found the end of the null series
 					if (argumentsList[i] != null) {
 						argumentsList.RemoveRange(i + 1, nulls);
-						arguments = argumentsList;
 						break;
 					}
 					nulls++;
 				}
+				if(count == nulls) {
+					argumentsList.Clear();
+				}
+				arguments = argumentsList;
 			}
 
 			foreach (object argument in arguments) {
@@ -145,6 +145,10 @@ namespace Smx.KodiInterop
 			string replyString = KodiBridge.SendMessage(msg);
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
 			return reply.Result;
+		}
+
+		public static string EvalToVar(PyVariable variable, string code) {
+			return EvalToVar(variable.Name, code);
 		}
 
 		public static string EvalToVar(string variableName, string code) {

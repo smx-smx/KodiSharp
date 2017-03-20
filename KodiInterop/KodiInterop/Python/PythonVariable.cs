@@ -17,6 +17,14 @@ namespace Smx.KodiInterop.Python
 			}
 		}
 
+		public bool Exists {
+			get {
+				return bool.Parse(
+					PythonInterop.EvalToResult(string.Format("'{0}' in Variables", this.Name)
+				));
+			}
+		}
+
 		/// <summary>
 		/// Value contained by this value as string
 		/// </summary>
@@ -31,6 +39,10 @@ namespace Smx.KodiInterop.Python
 			set {
 				PythonInterop.EvalToVar(this.Name, value);
 			}
+		}
+
+		public T GetValue<T>() where T : IConvertible {
+			return (T)Convert.ChangeType(this.Value, typeof(T));
 		}
 
 		private bool IsObject;

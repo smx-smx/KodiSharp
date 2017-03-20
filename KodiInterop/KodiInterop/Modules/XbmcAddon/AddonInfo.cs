@@ -1,6 +1,6 @@
 ﻿using Smx.KodiInterop;
 
-namespace Modules.XbmcAddon
+namespace Smx.KodiInterop.Modules.XbmcAddon
 {
 	public enum AddonInfo
 	{

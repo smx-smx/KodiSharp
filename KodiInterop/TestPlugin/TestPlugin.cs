@@ -8,8 +8,11 @@ using Smx.KodiInterop.Builtins;
 using System.Collections.Specialized;
 
 using mgr = Smx.KodiInterop.Python.PyVariableManager;
-using Modules.XbmcGui;
-using Modules.Xbmc;
+using Smx.KodiInterop.Modules.XbmcGui;
+using Smx.KodiInterop.Modules.Xbmc;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestPlugin
 {
@@ -35,6 +38,8 @@ namespace TestPlugin
 			};
 			List.Add(items);
 			List.Show();
+
+			//Console.WriteLine("Settings Test: " + addon.Settings["test"]);
 
 			UiBuiltins.Notification(
 				header: "My Notification",
@@ -69,6 +74,9 @@ namespace TestPlugin
 
 			Console.WriteLine(string.Format("ListItem label is '{0}'", items[0].Label));
 
+			//var rep = Smx.KodiInterop.JsonRpc.Addons.ExecuteAddon("plugin.video.dplay2", wait: true);
+			//PyConsole.WriteLine(rep.);
+
 			List.Add(items);
 			List.Show();
 		}
@@ -80,6 +88,16 @@ namespace TestPlugin
 		public override int PluginMain() {
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
+
+			Events.ScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev)
+			{
+				//Note, EventArgs is null for now
+				Console.WriteLine("Screensaver Triggered!");
+			});
+
+			Thread.Sleep(TimeSpan.FromSeconds(1));
+			Console.WriteLine("Triggering screensaver");
+			SystemBuiltins.ActivateScreensaver();
 
 			var sum = mgr.NewVariable();
 			sum.Value = "1+2";

@@ -21,6 +21,10 @@ namespace Smx.KodiInterop
 			return path;
 		}
 
+		/// <summary>
+		/// Install Routes from the specified class
+		/// </summary>
+		/// <param name="addonClass">The class that will be looked up</param>
 		public static void RegisterRoutes(Type addonClass) {
 			Routes.Clear();
 
@@ -41,7 +45,11 @@ namespace Smx.KodiInterop
 			}
 		}
 
-		public static void HandleRequest(KodiAddon addon, string request) {
+		/// <summary>
+		/// Handle a request by using the registered routes
+		/// </summary>
+		/// <param name="request">request URL</param>
+		public static void HandleRequest(string request) {
 			Uri url = new Uri(request);
 			var qs = HttpUtility.ParseQueryString(url.Query);
 

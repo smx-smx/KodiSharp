@@ -1,14 +1,12 @@
-﻿using Smx.KodiInterop;
-using Smx.KodiInterop.Python;
+﻿using Smx.KodiInterop.Python;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using Modules.XbmcGui;
+using Smx.KodiInterop.Modules.XbmcGui;
 
-namespace Modules.Xbmc
+namespace Smx.KodiInterop.Modules.Xbmc
 {
-    public class PlayList : IList<string>
+	public class PlayList : IList<string>
     {
 		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
 

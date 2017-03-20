@@ -2,7 +2,7 @@
 using Smx.KodiInterop.Python;
 using System.Collections.Generic;
 
-namespace Modules.XbmcGui
+namespace Smx.KodiInterop.Modules.XbmcGui
 {
 	public static class List
     {

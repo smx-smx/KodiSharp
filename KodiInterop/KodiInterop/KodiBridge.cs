@@ -12,8 +12,8 @@ using System.Globalization;
 namespace Smx.KodiInterop
 {
 	public static class KodiBridge {
-		public static string LastMessage = null;
-		public static string LastReply = null;
+		public static string LastMessage { get; private set; }
+		public static string LastReply { get; private set;  }
 
 		/// <summary>
 		/// Whether to unload the DLL when the Plugin is closed
@@ -69,11 +69,17 @@ namespace Smx.KodiInterop
 			return assembly;
 		}
 
+		/// <summary>
+		/// Set an Assembly resolver to lookup in the plugin current directory
+		/// </summary>
 		private static void SetAssemblyResolver() {
 			AppDomain currentDomain = AppDomain.CurrentDomain;
 			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
 		}
 
+		/// <summary>
+		/// Set the Culture to be as close to python as possible
+		/// </summary>
 		private static void SetPythonCulture() {
 			// Clone the current Culture, and alter it as needed
 			CultureInfo pythonCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
@@ -89,6 +95,10 @@ namespace Smx.KodiInterop
 			CultureInfo.DefaultThreadCurrentCulture = pythonCulture;
 		}
 
+		/// <summary>
+		/// Called by Python to prepare the C# environment before running the plugin
+		/// </summary>
+		/// <returns></returns>
 		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
 		private static bool Initialize() {
 			SetAssemblyResolver();
@@ -97,15 +107,22 @@ namespace Smx.KodiInterop
 		}
 
 		/// <summary>
-		/// Called by python to send a message to C#
+		/// Called by Python to send a message to C#
 		/// </summary>
 		/// <param name="message"></param>
 		/// <returns></returns>
-		[DllExport("PutMessage", CallingConvention=CallingConvention.Cdecl)]
-		private static bool PutMessage([MarshalAs(UnmanagedType.AnsiBStr)] string message) {
+		[DllExport("PostMessage", CallingConvention=CallingConvention.Cdecl)]
+		private static bool PostMessage([MarshalAs(UnmanagedType.AnsiBStr)] string message) {
 			LastReply = message;
 			ReplyReady.Set();
 			return true;
+		}
+
+		[DllExport("PostEvent", CallingConvention=CallingConvention.Cdecl)]
+		private static bool PostEvent([MarshalAs(UnmanagedType.AnsiBStr)] string eventMessage) {
+			KodiEventMessage ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
+			return Modules.Xbmc.Events.DispatchEvent(ev);
+
 		}
 
 		/// <summary>

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Modules.XbmcGui
+namespace Smx.KodiInterop.Modules.XbmcGui
 {
     public enum Art
     {

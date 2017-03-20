@@ -1,15 +1,62 @@
-﻿using Smx.KodiInterop;
+﻿using Smx.KodiInterop.Modules.Xbmc;
 using Smx.KodiInterop.Python;
 using System;
 using System.Collections.Generic;
 
-namespace Modules.XbmcGui
+namespace Smx.KodiInterop.Modules.XbmcGui
 {
 	public class ListItem : IDisposable
     {
 		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
 		public string Url { get; private set; }
 		public bool IsFolder { get; private set; }
+
+		private PyVariable MusicInfoInstance;
+		private PyVariable VideoInfoInstance;
+
+		[Obsolete]
+		public TimeSpan Duration {
+			get {
+				string duration = Instance.CallFunction(
+					new PythonFunction("getduration")
+				);
+				return TimeSpan.FromSeconds(double.Parse(duration));
+			}
+		}
+
+		[Obsolete]
+		public string Filename {
+			get {
+				return Instance.CallFunction(
+					new PythonFunction("getfilename")
+				);
+			}
+		}
+
+		public InfoTagMusic MusicInfoTag {
+			get {
+				throw new NotImplementedException();
+				/*
+				this.MusicInfoInstance = PyVariableManager.NewVariable(isObject: true);
+				this.MusicInfoInstance.CallAssign(
+					new PythonFunction("getMusicInfoTag")
+				);
+				*/
+
+			}
+		}
+
+		public InfoTagVideo VideoInfoTag {
+			get {
+				throw new NotImplementedException();
+				/*
+				this.VideoInfoInstance = PyVariableManager.NewVariable(isObject: true);
+				this.VideoInfoInstance = Instance.CallAssign(
+					new PythonFunction("getVideoInfoTag")
+				);
+				*/
+			}
+		}
 
 		public bool Selected {
 			get {

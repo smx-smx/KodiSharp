@@ -1,5 +1,4 @@
-﻿using Smx.KodiInterop.Python;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -11,11 +10,12 @@ namespace Smx.KodiInterop
 {
 	public abstract class KodiAddon
     {
-		public int Handle { get; private set; }
-		public string BaseUrl { get; private set; }
-		public string Parameters { get; private set; }
+		public readonly int Handle;
+		public readonly string BaseUrl;
+		public readonly string Parameters;
+		public readonly bool IsService;
 
-		public KodiAddonSettings Settings { get; private set; }
+		//public KodiAddonSettings Settings { get; private set; }
 
 		public string BuildNavUrl(string path, NameValueCollection parameters = null) {
 			if (parameters == null) {
@@ -31,21 +31,32 @@ namespace Smx.KodiInterop
 #if DEBUG
 				ConsoleHelper.CreateConsole();
 #endif
+				// Clean the variables list from the previous run (we're in a new python instance so they don't exist anymore)
+				Python.PyVariableManager.Initialize();
+
 				// Parse parameters
 				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
+				this.IsService = bool.Parse(PythonInterop.EvalToResult("len(sys.argv) < 2"));
+
+				// Initialize the Event Monitor
+				//Modules.Xbmc.Events.Initialize();
+
+				// Set running addon
+				KodiBridge.RunningAddon = this;
+
+				// If we're being started as a service, don't run addon specific tasks
+				if (this.IsService) {
+					PyConsole.WriteLine(string.Format("Starting as Service: {0}", this.BaseUrl));
+					return;
+				}
+
 				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
 				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
 				PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 					this.BaseUrl, this.Handle, this.Parameters));
 
-				// Creates the Settings object
-				this.Settings = new KodiAddonSettings(this);
-
 				// Register routes for derived type
 				RouteManager.RegisterRoutes(this.GetType());
-
-				// Set running addon
-				KodiBridge.RunningAddon = this;
 			} catch(Exception ex) {
 				KodiBridge.SaveException(ex);
 			}
@@ -53,12 +64,12 @@ namespace Smx.KodiInterop
 
 		public int Run() {
 			try {
-				// Clean the variables list from the previous run (we're in a new python instance so they don't exist anymore)
-				Python.PyVariableManager.Initialize();
+				// Create the Settings object
+				//this.Settings = new KodiAddonSettings();
 
 				// If we have routes, invoke the request handler
 				if (RouteManager.Routes.Count > 0) {
-					RouteManager.HandleRequest(this, this.BaseUrl + this.Parameters);
+					RouteManager.HandleRequest(this.BaseUrl + this.Parameters);
 				}
 				int result = this.PluginMain();
 

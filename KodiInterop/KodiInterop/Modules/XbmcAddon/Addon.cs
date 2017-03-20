@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Modules.XbmcAddon
+namespace Smx.KodiInterop.Modules.XbmcAddon
 {
     public class Addon
     {
@@ -13,8 +13,9 @@ namespace Modules.XbmcAddon
 		/// <summary>
 		/// Creates a new AddOn class.
 		/// </summary>
-		/// <param name="id">id of the addon as specified in addon.xml</param>
-		public Addon(int id) {
+		/// <param name="id">id of the addon as specified in addon.xml.
+		/// If not specified, the running addon is used</param>
+		public Addon(int? id = null) {
 			Instance.CallAssign(
 				new PythonFunction(PyModule.XbmcAddon, "Addon"),
 				new List<object> { id }
@@ -43,6 +44,11 @@ namespace Modules.XbmcAddon
 				new PythonFunction("getSetting"),
 				new List<object> { setting }
 			);
+		}
+
+		public T GetSetting<T>(string setting) where T : IConvertible {
+			string value = GetSetting(setting);
+			return (T)Convert.ChangeType(value, typeof(T));
 		}
 
 		/// <summary>

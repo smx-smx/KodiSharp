@@ -104,6 +104,9 @@
     <Content Include="..\..\default.py">
       <Link>default.py</Link>
     </Content>
+    <Content Include="..\..\settings.xml">
+      <Link>settings.xml</Link>
+    </Content>
   </ItemGroup>
   <Import Project="..\KodiInterop\KodiInterop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

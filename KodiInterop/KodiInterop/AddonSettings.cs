@@ -1,20 +1,22 @@
-﻿using Smx.KodiInterop.Python;
+﻿using Smx.KodiInterop.Modules.XbmcAddon;
+using Smx.KodiInterop.Python;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Smx.KodiInterop
 {
 	public class KodiAddonSettings : IDictionary<string, string>
 	{
-		public KodiAddon Addon { get; private set; }
+		//public KodiAddon Addon { get; private set; }
+		private readonly Addon runningAddon;
 
-		public KodiAddonSettings(KodiAddon addon) {
-			this.Addon = addon;
+		public KodiAddonSettings(int? id = null) {
+			this.runningAddon = new Addon(id);
 		}
 
 		public string this[string setting] {
+			/*
 			get {
 				return PythonInterop.CallFunction(
 					new PythonFunction(PyModule.XbmcPlugin, "getSetting"),
@@ -27,6 +29,13 @@ namespace Smx.KodiInterop
 					new PythonFunction(PyModule.XbmcPlugin, "setSetting"),
 					new List<object> { Addon.Handle, setting, value }
 				);
+			}
+			*/
+			get {
+				return runningAddon.GetSetting(setting);
+			}
+			set {
+				runningAddon.SetSetting(setting, value);
 			}
 		}
 
