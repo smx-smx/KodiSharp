@@ -12,6 +12,21 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
   
   Make sure you edit addon.xml aswell
 
+## Features
+- Events support (xbmc.Monitor)
+- Python interfaces
+    - Code eval
+    - Variable management
+    - Value escaping
+    - Function calls
+    - Python console logging
+- C# Bindings of Kodi modules (xbmc, xbmcgui, ...)
+- URL Routing (handlers for different sections of the plugin)
+- Support for Service addons (executed in background, as defined in addon.xml)
+- Static variables persisting across script invocations (made possible by the .NET CLR that persists in the Kodi process). You can keep variables in a static class instance without having to pass them around
+
+See the TestPlugin project for a working sample
+
 ## NOTES
 - The project must target either x86 or x64 for UnmanagedExports to generate the proper code (**NOT AnyCpu**). If you use the wrong architecture type you may have issues like "[your plugin] is not a valid win 32 application". On windows, kodi builds are generally x86.
 - If you want to make a new project from scratch, make sure to:
