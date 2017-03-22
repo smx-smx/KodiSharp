@@ -9,7 +9,9 @@ namespace Smx.KodiInterop
 {
 	public static class ConsoleHelper
 	{
+		private const int STD_INPUT_HANDLE = -10;
 		private const int STD_OUTPUT_HANDLE = -11;
+		private const int STD_ERROR_HANDLE = -12;
 		//private const int MY_CODE_PAGE = Encoding.Get;
 		private static readonly int MY_CODE_PAGE = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 
@@ -17,13 +19,30 @@ namespace Smx.KodiInterop
 			AllocConsole();
 			SetConsoleCtrlHandler(null, true);
 
-			IntPtr stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-			SafeFileHandle safeFileHandle = new SafeFileHandle(stdHandle, true);
-			FileStream fileStream = new FileStream(safeFileHandle, FileAccess.Write);
+			IntPtr stdin = GetStdHandle(STD_INPUT_HANDLE);
+			IntPtr stdout = GetStdHandle(STD_OUTPUT_HANDLE);
+			IntPtr stderr = GetStdHandle(STD_ERROR_HANDLE);
+
+			SafeFileHandle safeInHandle = new SafeFileHandle(stdin, true);
+			SafeFileHandle safeOutHandle = new SafeFileHandle(stdout, true);
+			SafeFileHandle safeErrHandle = new SafeFileHandle(stderr, true);
+
+			FileStream inStream = new FileStream(safeInHandle, FileAccess.Read);
+			FileStream outStream = new FileStream(safeOutHandle, FileAccess.Write);
+			FileStream errStream = new FileStream(safeErrHandle, FileAccess.Write);
+
 			Encoding encoding = System.Text.Encoding.GetEncoding(MY_CODE_PAGE);
-			StreamWriter standardOutput = new StreamWriter(fileStream, encoding);
+
+			StreamReader standardInput = new StreamReader(inStream, encoding);
+			StreamWriter standardOutput = new StreamWriter(outStream, encoding);
+			StreamWriter standardError = new StreamWriter(errStream, encoding);
+
 			standardOutput.AutoFlush = true;
+			standardError.AutoFlush = true;
+
+			Console.SetIn(standardInput);
 			Console.SetOut(standardOutput);
+			Console.SetError(standardError);
 		}
 
 		delegate bool HandlerRoutine(uint dwControlType);
