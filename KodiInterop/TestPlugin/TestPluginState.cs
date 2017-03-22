@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smx.KodiInterop.Modules.Xbmc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,7 @@ namespace TestPlugin
 	public static class TestPluginState
 	{
 		public static DateTime? LastMainPageVisitTime = null;
+		public static Player Player = null;
+		public static Monitor Monitor = null;
 	}
 }

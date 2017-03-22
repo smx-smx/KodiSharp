@@ -13,6 +13,7 @@ using Smx.KodiInterop.Modules.Xbmc;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Smx.KodiInterop.Python;
 
 namespace TestPlugin
 {
@@ -28,6 +29,16 @@ namespace TestPlugin
 		public static void MainHandler(NameValueCollection parameters) {
 			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 			List<ListItem> items = new List<ListItem> {
+				new ListItem(
+					label: "AudioPlayer",
+					url: addon.BuildNavUrl("/audio"),
+					isFolder: true
+				),
+				new ListItem(
+					label: "Events",
+					url: addon.BuildNavUrl("/events"),
+					isFolder: true
+				),
 				new ListItem(
 					label: "Nav",
 					url: addon.BuildNavUrl("/nav"),
@@ -53,6 +64,69 @@ namespace TestPlugin
 			 * This is possible due to Assembly Domain that is created by the CLR once the plugin is loaded for the first time. 
 			 **/
 			TestPluginState.LastMainPageVisitTime = DateTime.Now;
+		}
+
+		/*
+		 * These routes used to work with the previous threaded implementation but were causing GIL/Context issues
+		 * The new routes are based on xbmc.wait() and use a callback instead of a thread to message Python
+		 * This means that you must wait() for the time you want to catch events, blocking the UI meanwhile
+		 * 
+		 * TODO: It would be nice to find a way that works without trashing the Python Context
+		 **/
+		#region OldRoutes
+		[Route("/audio2")]
+		public static void GlobalAudioNavHandler(NameValueCollection parameters) {
+			Player player = new Player(PyVariableManager.Player);
+			GlobalEvents.PlayBackStarted += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+				Console.WriteLine("=> Playback started!");
+			});
+			GlobalEvents.PlayBackEnded += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+				Console.WriteLine("=> Playback finished!");
+			});
+		}
+
+		[Route("/events2")]
+		public static void GlobalEventsNavHandler(NameValueCollection parameters) {
+			GlobalEvents.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
+				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
+			});
+
+			Thread.Sleep(TimeSpan.FromSeconds(1));
+			Console.WriteLine("Triggering screensaver");
+			SystemBuiltins.ActivateScreensaver();
+		}
+		#endregion
+
+		[Route("/audio")]
+		public static void AudioNavHandler(NameValueCollection parameters) {
+			//Player player = new Player(PyVariableManager.Player);
+			Player player = new Player();
+			player.PlayBackStarted += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+				Console.WriteLine("=> Playback started!");
+			});
+			player.PlayBackEnded += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+				Console.WriteLine("=> Playback finished!");
+			});
+			player.Play("http://www.bensound.com/royalty-free-music?download=memories");
+
+			/* Keep monitoring for a bit */
+			Kodi.Sleep(TimeSpan.FromSeconds(20));
+
+		}
+
+		[Route("/events")]
+		public static void EventsNavHandler(NameValueCollection parameters) {
+			Smx.KodiInterop.Modules.Xbmc.Monitor m = new Smx.KodiInterop.Modules.Xbmc.Monitor();
+			m.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
+				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
+			});
+
+			Thread.Sleep(TimeSpan.FromSeconds(1));
+			Console.WriteLine("Triggering screensaver");
+			SystemBuiltins.ActivateScreensaver();
+
+			/* Keep monitoring for a bit */
+			Kodi.Sleep(TimeSpan.FromSeconds(10));
 		}
 
 		[Route("/nav")]
@@ -85,15 +159,6 @@ namespace TestPlugin
 		public override int PluginMain() {
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
-
-			Events.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev)
-			{
-				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
-			});
-
-			Thread.Sleep(TimeSpan.FromSeconds(1));
-			Console.WriteLine("Triggering screensaver");
-			SystemBuiltins.ActivateScreensaver();
 
 			var sum = mgr.NewVariable();
 			sum.Value = "1+2";

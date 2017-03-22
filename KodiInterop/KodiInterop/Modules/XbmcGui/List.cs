@@ -32,7 +32,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			}
 			listCode += "]";
 
-			PyVariable listVar = PyVariableManager.NewVariable(isObject: true);
+			PyVariable listVar = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
 			listVar.Value = listCode;
 
 			PythonInterop.CallFunction(

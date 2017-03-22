@@ -7,7 +7,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 {
 	public class ListItem : IDisposable
     {
-		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
+		public readonly PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
 		public string Url { get; private set; }
 		public bool IsFolder { get; private set; }
 

@@ -7,10 +7,14 @@ namespace Smx.KodiInterop.Modules.Xbmc
 {
     public class InfoTagMusic
     {
-		private PyVariable Instance;
+		public readonly PyVariable Instance;
 
-		//public static InfoTagMusic FromPlayer() {
+		public InfoTagMusic(PyVariable instance) {
+			this.Instance = instance;
+		}
 
-		//}
+		public InfoTagMusic() {
+			this.Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
+		}
     }
 }

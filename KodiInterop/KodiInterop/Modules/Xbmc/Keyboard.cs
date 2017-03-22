@@ -7,7 +7,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 {
     public class Keyboard
     {
-		private PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
+		private PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
 
 		/// <summary>
 		/// Creates a new Keyboard  object with default text

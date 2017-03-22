@@ -15,12 +15,19 @@ import xbmcplugin
 import xbmcaddon
 import xbmcvfs
 
+csMonitorVar = "__csharpMonitor"
+csPlayerVar = "__csharpPlayer"
+
 Variables = {
 	"LastResult": ""
 }
 
+Monitors = {}
+Players = {}
+
 me = os.path.abspath(os.path.dirname(__file__))
 lib = cdll.LoadLibrary(os.path.join(me, "KodiInterop/TestPlugin/bin/x86/Debug", "TestPlugin.dll")) # Hardcoding this for now
+print lib
 
 ## C# Functions
 # Get the next command in JSON format
@@ -38,9 +45,12 @@ PostEvent = lib.PostEvent
 PostEvent.argtypes = [c_char_p]
 PostEvent.restype = c_bool
 
+# Callback Type
+message_callback_type = CFUNCTYPE(c_char_p, c_char_p)
+
 # Plugin init
 Initialize = lib.Initialize
-Initialize.argtypes = []
+Initialize.argtypes = [message_callback_type, c_bool]
 Initialize.restype = c_bool
 
 # Plugin entrypoint
@@ -64,12 +74,81 @@ def on_exception(exc):
 def exception_hook(exctype, value, traceback):
 	on_exception(value)
 
+class CSharpPlayer(xbmc.Player):
+	def __init__(self, *args, **kwargs):
+	    super(xbmc.Player, self).__init__()
+	def onPlayBackEnded(self, *args, **kwargs):
+	    return PostEvent(json.dumps({
+			"source": "Player",
+			"sender": "onPlayBackEnded",
+	        "args" : args,
+		    "kwargs" : kwargs
+	   }))
+	def onPlayBackPaused(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+            "sender": "onPlayBackPaused",
+            "args" : args,
+            "kwargs" : kwargs
+        }))
+	def onPlayBackResumed(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+			"sender": "onPlayBackResumed",
+			"args" : args,
+			"kwargs" : kwargs
+		}))
+	def onPlayBackSeek(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+            "sender": "onPlayBackSeek",
+            "args" : args,
+            "kwargs" : kwargs
+        }))
+	def onPlayBackSeekChapter(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+            "sender": "onPlayBackSeekChapter",
+            "args" : args,
+            "kwargs" : kwargs
+        }))
+	def onPlayBackSpeedChanged(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+            "sender": "onPlayBackSpeedChanged",
+            "args" : args,
+            "kwargs" : kwargs
+		}))
+	def onPlayBackStarted(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+			"sender": "onPlayBackStarted",
+			"args" : args,
+			"kwargs" : kwargs
+		}))
+	def	onPlayBackStopped(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+		    "sender": "onPlayBackStopped",
+	        "args" : args,
+			"kwargs" : kwargs
+		}))
+	def onQueueNextItem(self, *args, **kwargs):
+		return PostEvent(json.dumps({
+			"source": "Player",
+            "sender": "onQueueNextItem",
+            "args" : args,
+            "kwargs" : kwargs
+		}))
+
+
 class CSharpMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
 		super(xbmc.Monitor, self).__init__()
     def onAbortRequested(self, *args, **kwargs):
 		print "=> event onAbortRequested"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onAbortRequested",
 			"args" : args,
 			"kwargs" : kwargs
@@ -77,6 +156,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onCleanStarted(self, *args, **kwargs):
 		print "=> event onCleanStarted"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onCleanStarted",
 			"args" : args,
 			"kwargs" : kwargs
@@ -84,6 +164,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onCleanFinished(self, *args, **kwargs):
 		print "=> event onCleanFinished"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onCleanFinished",
 			"args" : args,
 			"kwargs" : kwargs
@@ -91,6 +172,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onDPMSActivated(self, *args, **kwargs):
 		print "=> event onDPMSActivated"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onDPMSActivated",
 			"args" : args,
 			"kwargs" : kwargs
@@ -98,6 +180,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onDPMSDeactivated(self, *args, **kwargs):
 		print "=> event onDPMSDeactivated"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onDPMSDeactivated",
 			"args" : args,
 			"kwargs" : kwargs
@@ -105,6 +188,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onScreensaverActivated(self, *args, **kwargs):
 		print "=> event onScreensaverActivated"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onScreensaverActivated",
 			"args" : args,
 			"kwargs" : kwargs
@@ -112,6 +196,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onScreensaverDeactivated(self, *args, **kwargs):
 		print "=> event onScreensaverDeactivated"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onScreensaverDeactivated",
 			"args" : args,
 			"kwargs" : kwargs
@@ -119,6 +204,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onScanStarted(self, *args, **kwargs):
 		print "=> event onScanStarted"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onScanStarted",
 			"args" : args,
 			"kwargs" : kwargs
@@ -126,6 +212,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onScanFinished(self, *args, **kwargs):
 		print "=> event onScanFinished"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onScanFinished",
 			"args" : args,
 			"kwargs" : kwargs
@@ -133,6 +220,7 @@ class CSharpMonitor(xbmc.Monitor):
     def onSettingsChanged(self, *args, **kwargs):
 		print "=> event onSettingsChanged"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onSettingsChanged",
 			"args" : args,
 			"kwargs" : kwargs
@@ -140,72 +228,70 @@ class CSharpMonitor(xbmc.Monitor):
     def onNotification(self, *args, **kwargs):
 		print "=> event onNotification"
 		return PostEvent(json.dumps({
+			"source": "Monitor",
 			"sender": "onNotification",
 			"args" : args,
 			"kwargs" : kwargs
 		}))
 
-# Thread to handle incoming C# requests
-def message_receiver():
-	t = threading.currentThread()
-	while getattr(t, "do_run", True):
-		exitcode = 0
-		# Will be blocking in C# context
-		try:
-			message = json.loads( unicode(GetMessage(), 'latin-1') )
-			print message
-		except Exception as exc:
-			on_exception(exc)
-			exitcode = 1
-			t.do_run = False
 
-		type = message.get('type')
-		if type:
-			if type == 'exit':
-				print "We got exit, bye"
-				# Stop thread at next loop
-				t.do_run = False
-			elif type == 'eval':
-				exec_code = message.get('exec_code')
-				if exec_code:
-					try:
-						eval(compile(exec_code, '<string>', 'exec'))
-					except Exception as exc:
-						on_exception(exc)
-						exitcode = 1
-						t.do_run = False
-			elif type == 'del_var':
-				var_name = message.get('var_name')
-				if var_name and var_name in Variables:
-					del Variables[var_name]
+def json_error(exitcode):
+	return json.dumps({
+		"exit_code": exitcode
+	})
 
 
+def on_message(data):
+	try:
+		message = json.loads(data)
+		print message
+	except Exception as exc:
+		on_exception(exc)
+		return json_error(1)
 
-		sendRet = PostMessage(json.dumps({
-			"result" : Variables['LastResult'],
-			"exit_code": exitcode
-		}))
+	type = message.get('type')
+	if not type:
+		print "Invalid Message Type"
+		return json_error(1)
+
+	if type == 'exit':
+		print "We got exit, bye"
+		return json_error(0)
+	elif type == 'eval':
+		exec_code = message.get('exec_code')
+		if exec_code:
+			try:
+				eval(compile(exec_code, '<string>', 'exec'), globals())
+			except Exception as exc:
+				on_exception(exc)
+				return json_error(1)
+	elif type == 'del_var':
+		var_name = message.get('var_name')
+		if var_name and var_name in Variables:
+			del Variables[var_name]
+
+	return json.dumps({
+		"result" : Variables['LastResult'],
+		"exit_code": 0
+	})
 
 
 ################################################
 
 sys.excepthook = exception_hook
-# Start the event monitor
-print "Starting Event Receiver..."
-monitor = CSharpMonitor()
-
-messages_thread = threading.Thread(target = message_receiver)
-messages_thread.start()
+# Start the global event monitors
+Variables[csMonitorVar] = CSharpMonitor()
+Variables[csPlayerVar] = CSharpPlayer()
 
 # Invoke PluginMain from C#
-Initialize()
+MessageCallbackFunc = message_callback_type(on_message)
+
+# Second parameter is enableDebug(bool)
+Initialize(MessageCallbackFunc, False)
+
 ret = Main()
 print "PluginMain returned %d" % ret
 
-monitor.waitForAbort()
-# Ask C# to stop RPC. This will cause the message_receiver thread to stop
-StopRPC()
-messages_thread.join()
 
 # Close handle to DLL
 del lib

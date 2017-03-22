@@ -10,16 +10,19 @@ using Smx.KodiInterop.Messages;
 
 namespace Smx.KodiInterop
 {
+	/// <summary>
+	/// Supporting class that handles basic Python operations on top of KodiBridge
+	/// </summary>
 	public static class PythonInterop {
 		#region Variables
 		private const string LastResultVarName = "LastResult";
 
-		public static string GetVariable(string variableName) {
-			return EvalToResult(string.Format("Variables['{0}']", variableName));
+		public static string GetVariable(PyVariable variable) {
+			return EvalToResult(variable.PyName);
 		}
 
-		public static void DestroyVariable(string variableName) {
-			Eval(string.Format("del Variables['{0}']", variableName));
+		public static void DestroyVariable(PyVariable variable) {
+			Eval(string.Format("del {0}", variable.PyName));
 		}
 		#endregion
 
@@ -97,26 +100,30 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region FunctionCall
-		public static string CallFunction(string module, string functionName, List<string> arguments) {
-			return EvalToResult(string.Format("{0}.{1}({2})", module, functionName, string.Join(",", arguments.ToArray())));
+		public static string CallFunction(string functionName, List<string> arguments = null) {
+			string argumentsText = "";
+			if (arguments != null)
+				argumentsText = string.Join(",", arguments.ToArray());
+
+			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText));
 		}
 
 		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments = null) {
-			if (arguments == null)
-				arguments = new List<object>();
-			List<string> textArguments = EscapeArguments(arguments);
+			List<string> textArguments = null;
+			if (arguments != null)
+				 textArguments = EscapeArguments(arguments);
+
 			return CallFunction(
-				pythonFunction.Module,
-				pythonFunction.Function,
+				pythonFunction.ToString(),
 				textArguments
 			);
 		}
 
-		public static string CallFunction(PyModule module, string functionName, List<object> arguments) {
+		public static string CallFunction(PyModule module, string functionName, List<object> arguments = null) {
 			return CallFunction(new PythonFunction(module, functionName), arguments);
 		}
 
-		public static string CallBuiltin(string builtinName, List<string> arguments) {
+		public static string CallBuiltin(string builtinName, List<string> arguments = null) {
 			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object> {
 				//Kodi builtins shouldn't have quotes, so we pass a single parameter with the joined parameters
 				string.Format("{0}({1})",
@@ -144,25 +151,26 @@ namespace Smx.KodiInterop
 
 			string replyString = KodiBridge.SendMessage(msg);
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+
 			return reply.Result;
 		}
 
+		public static string EvalToVar(string pyVarName, string code) {
+			Console.WriteLine(pyVarName + " = " + code);
+			return Eval(string.Format("{0} = {1}", pyVarName, code));
+		}
+
 		public static string EvalToVar(PyVariable variable, string code) {
-			return EvalToVar(variable.Name, code);
+			return EvalToVar(variable.PyName, code);
 		}
 
-		public static string EvalToVar(string variableName, string code) {
-			Console.WriteLine(variableName + " = " + code);
-			return Eval(string.Format("Variables['{0}'] = {1}", variableName, code));
-		}
-
-		public static string EvalToVar(string variableName, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
+		public static string EvalToVar(PyVariable variable, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
 			List<string> textArguments = EscapeArguments(arguments, escapeMethod);
-			return EvalToVar(variableName, string.Format(codeFormat, textArguments.ToArray()));
+			return EvalToVar(variable, string.Format(codeFormat, textArguments.ToArray()));
 		}
 
 		public static string EvalToResult(string code) {
-			return EvalToVar(LastResultVarName, code);
+			return EvalToVar(PyVariableManager.LastResult, code);
 		}
 		#endregion
 	}

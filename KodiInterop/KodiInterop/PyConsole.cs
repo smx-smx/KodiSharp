@@ -2,6 +2,9 @@
 
 namespace Smx.KodiInterop
 {
+	/// <summary>
+	/// Bindings for the Python console
+	/// </summary>
 	public static class PyConsole
     {
 		private static string NewLine {

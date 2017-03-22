@@ -8,7 +8,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 {
     public class Addon
     {
-		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
+		public readonly PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
 
 		/// <summary>
 		/// Creates a new AddOn class.

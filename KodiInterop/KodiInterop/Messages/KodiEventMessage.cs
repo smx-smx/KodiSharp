@@ -7,6 +7,9 @@ namespace Smx.KodiInterop.Messages
 {
     public class KodiEventMessage : RPCMessage
     {
+		[JsonProperty(PropertyName = "source")]
+		public string Source { get; set; }
+
 		[JsonProperty(PropertyName = "sender")]
 		public string Sender { get; set; }
 

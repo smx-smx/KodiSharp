@@ -9,11 +9,23 @@
     <Import_RootNamespace>Smx.KodiInterop</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Kodi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\KodiEventMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonVarArgsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\DatabaseEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\DVDState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\Monitor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\NotificationEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\LibraryEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSeekChapterEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSeekEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSpeedChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\ServerType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\CustomANSIBstrMarshaler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyEventClassBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyFunctionBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyVariableFlags.cs" />
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -59,8 +71,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)PyConsole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PythonInterop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PythonFunction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\PythonVariable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\VariableManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\PyVariableManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpecialPaths.cs" />

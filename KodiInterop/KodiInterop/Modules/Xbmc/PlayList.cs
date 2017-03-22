@@ -8,7 +8,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 {
 	public class PlayList : IList<string>
     {
-		public readonly PyVariable Instance = PyVariableManager.NewVariable(isObject: true);
+		public readonly PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
 
 		public PlayList(PlayListType type) {
 			Instance.CallAssign(
