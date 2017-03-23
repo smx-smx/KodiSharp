@@ -21,7 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSeekEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSpeedChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\ServerType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\CustomANSIBstrMarshaler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyEventClassBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyFunctionBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyThread.cs" />
