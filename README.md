@@ -27,6 +27,25 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 
 See the TestPlugin project for a working sample
 
+## Debugging
+To debug the C# code under visual studio, change this line in default.py
+```python
+Initialize(MessageCallbackFunc, False)
+```
+to
+```python
+Initialize(MessageCallbackFunc, True)
+```
+Then run the plugin again. The second argument indicates whether the debugger should be launched.
+
+If you have the project already opened, you can select it in the debugger selection window that will pop up.
+
+You should then see a breakpoint on
+```c#
+Debugger.Launch()
+```
+and you can continue from there with the normal plugin execution
+
 ## NOTES
 - The project must target either x86 or x64 for UnmanagedExports to generate the proper code (**NOT AnyCpu**). If you use the wrong architecture type you may have issues like "[your plugin] is not a valid win 32 application". On windows, kodi builds are generally x86.
 - If you want to make a new project from scratch, make sure to:
