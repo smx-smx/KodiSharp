@@ -1,4 +1,5 @@
 ﻿using Smx.KodiInterop;
+using Smx.KodiInterop.Python.Types;
 using System;
 using System.Collections.Generic;
 
@@ -31,8 +32,10 @@ namespace Smx.KodiInterop.Python
 		public bool Exists {
 			get {
 				return bool.Parse(
-					PythonInterop.EvalToResult(string.Format("'{0}' in {1}", this.Name, this.DictName)
-				));
+					PythonInterop.EvalToResult(
+						string.Format("'{0}' in {1}", this.Name, this.DictName)
+					).Value
+				);
 			}
 		}
 
@@ -54,6 +57,24 @@ namespace Smx.KodiInterop.Python
 			}
 		}
 
+		public string TypeName {
+			get {
+				return PythonInterop.GetVariable(this).TypeName;
+			}
+		}
+
+		private Messages.PythonEvalReply lastMsg;
+
+		public dynamic Value {
+			get {
+				return PythonInterop.GetVariable(this).Value;
+			}
+			set {
+				PythonInterop.EvalToVar(this, GetPyValueString(value));
+			}
+		}
+
+#if false
 		/// <summary>
 		/// Value contained by this value as string
 		/// </summary>
@@ -68,6 +89,17 @@ namespace Smx.KodiInterop.Python
 			set {
 				PythonInterop.EvalToVar(this, value);
 			}
+		}
+#endif
+
+		private string GetPyValueString(dynamic value) {
+			if (value is bool)
+				return value.ToString();
+			if (value is int || value is uint || value is long || value is ulong)
+				return value.ToString();
+			if (value is string)
+				return value;
+			throw new NotSupportedException("Unknown type for " + value);
 		}
 
 		public T GetValue<T>() where T : IConvertible {
@@ -88,7 +120,7 @@ namespace Smx.KodiInterop.Python
 			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
 			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
 				this.PyName, function.Function, string.Join(", ", textArguments)
-			));
+			)).Value;
 		}
 
 		public string CallFunction(

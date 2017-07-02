@@ -8,12 +8,17 @@ import threading
 import traceback
 from ctypes import *
 
+
 # Load all XBMC Apis so C# can use them
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import xbmcvfs
+
+class Errors:
+	SUCCESS = 0
+	RESULT_NOT_SERIALIZABLE = 1
 
 csMonitorVar = "__csharpMonitor"
 csPlayerVar = "__csharpPlayer"
@@ -26,7 +31,7 @@ Monitors = {}
 Players = {}
 
 me = os.path.abspath(os.path.dirname(__file__))
-lib = cdll.LoadLibrary(os.path.join(me, "KodiInterop/TestPlugin/bin/x86/Debug", "TestPlugin.dll")) # Hardcoding this for now
+lib = cdll.LoadLibrary(os.path.join(me, "KodiInterop/TestPlugin/bin/Debug", "TestPlugin.dll")) # Hardcoding this for now
 print lib
 
 ## C# Functions
@@ -63,16 +68,11 @@ StopRPC = lib.StopRPC
 StopRPC.argtypes = []
 StopRPC.restype = c_bool
 
-def on_exception(exc):
+def exception_hook(exc_type, exc_value, exc_traceback):
 	print "--- Caught Exception ---"
-	exc_type, exc_value, exc_traceback = sys.exc_info()
 	lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
 	print ''.join('!! ' + line for line in lines)
 	print "------------------------"
-	xbmc.executebuiltin('Notification(KodiSharp, An error occured. Please check the log for more information')
-
-def exception_hook(exctype, value, traceback):
-	on_exception(value)
 
 class CSharpPlayer(xbmc.Player):
 	def __init__(self, *args, **kwargs):
@@ -270,10 +270,24 @@ def on_message(data):
 		if var_name and var_name in Variables:
 			del Variables[var_name]
 
-	return json.dumps({
-		"result" : Variables['LastResult'],
-		"exit_code": 0
-	})
+	result = Variables['LastResult']
+	typeName = result.__class__.__name__
+	print "=> TypeName is " + typeName
+	
+	jDict = {
+		"type": typeName,
+		"value": result,
+		"exit_code": Errors.SUCCESS
+	}
+
+	try:
+		jsonData = json.dumps(jDict)
+	except TypeError:
+		jDict['value'] = None
+		jDict['exit_code'] = Errors.RESULT_NOT_SERIALIZABLE
+		jsonData = json.dumps(jDict)
+	
+	return jsonData
 
 
 ################################################
@@ -287,7 +301,7 @@ Variables[csPlayerVar] = CSharpPlayer()
 MessageCallbackFunc = message_callback_type(on_message)
 
 # Second parameter is enableDebug(bool)
-Initialize(MessageCallbackFunc, False)
+Initialize(MessageCallbackFunc, True)
 
 ret = Main()
 print "PluginMain returned %d" % ret

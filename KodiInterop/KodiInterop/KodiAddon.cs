@@ -35,8 +35,8 @@ namespace Smx.KodiInterop
 				Python.PyVariableManager.Initialize();
 
 				// Parse parameters
-				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]");
-				this.IsService = bool.Parse(PythonInterop.EvalToResult("len(sys.argv) < 2"));
+				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]").Value;
+				this.IsService = PythonInterop.EvalToResult("len(sys.argv) < 2").Value;
 
 				// Initialize the Event Monitor
 				//Modules.Xbmc.Events.Initialize();
@@ -50,8 +50,8 @@ namespace Smx.KodiInterop
 					return;
 				}
 
-				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]"));
-				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]");
+				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]").Value);
+				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]").Value;
 				PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 					this.BaseUrl, this.Handle, this.Parameters));
 

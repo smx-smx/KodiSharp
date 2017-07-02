@@ -165,6 +165,11 @@ namespace TestPlugin
 			PyConsole.WriteLine("Result: " + sum);
 			sum.Dispose();
 
+			var dict = mgr.NewVariable();
+			dict.Value = @"{1: 2, 'a': 'b'}";
+			PyConsole.WriteLine("Dict: " + dict);
+			dict.Dispose();
+
 			PyConsole.WriteLine("Hello Python");
 
 			//ConsoleHelper.FreeConsole();

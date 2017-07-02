@@ -17,7 +17,7 @@ namespace Smx.KodiInterop
 		#region Variables
 		private const string LastResultVarName = "LastResult";
 
-		public static string GetVariable(PyVariable variable) {
+		public static PythonEvalReply GetVariable(PyVariable variable) {
 			return EvalToResult(variable.PyName);
 		}
 
@@ -100,15 +100,15 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region FunctionCall
-		public static string CallFunction(string functionName, List<string> arguments = null) {
+		public static dynamic CallFunction(string functionName, List<string> arguments = null) {
 			string argumentsText = "";
 			if (arguments != null)
 				argumentsText = string.Join(",", arguments.ToArray());
 
-			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText));
+			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText)).Value;
 		}
 
-		public static string CallFunction(PythonFunction pythonFunction, List<object> arguments = null) {
+		public static dynamic CallFunction(PythonFunction pythonFunction, List<object> arguments = null) {
 			List<string> textArguments = null;
 			if (arguments != null)
 				 textArguments = EscapeArguments(arguments);
@@ -119,11 +119,11 @@ namespace Smx.KodiInterop
 			);
 		}
 
-		public static string CallFunction(PyModule module, string functionName, List<object> arguments = null) {
+		public static dynamic CallFunction(PyModule module, string functionName, List<object> arguments = null) {
 			return CallFunction(new PythonFunction(module, functionName), arguments);
 		}
 
-		public static string CallBuiltin(string builtinName, List<string> arguments = null) {
+		public static dynamic CallBuiltin(string builtinName, List<string> arguments = null) {
 			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object> {
 				//Kodi builtins shouldn't have quotes, so we pass a single parameter with the joined parameters
 				string.Format("{0}({1})",
@@ -133,43 +133,42 @@ namespace Smx.KodiInterop
 			});
 		}
 
-		public static string CallBuiltin(string builtinName) {
+		public static dynamic CallBuiltin(string builtinName) {
 			return CallBuiltin(builtinName, new List<string> { });
 		}
 
-		public static string CallBuiltin(string builtinName, List<object> arguments) {
+		public static dynamic CallBuiltin(string builtinName, List<object> arguments) {
 			List<string> textArguments = EscapeArguments(arguments, EscapeFlags.None);
 			return CallBuiltin(builtinName, textArguments);
 		}
 		#endregion
 
 		#region Eval
-		public static string Eval(string code) {
+		public static PythonEvalReply Eval(string code) {
 			PythonEvalMessage msg = new PythonEvalMessage {
 				Code = code
 			};
 
 			string replyString = KodiBridge.SendMessage(msg);
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
-
-			return reply.Result;
+			return reply;
 		}
 
-		public static string EvalToVar(string pyVarName, string code) {
+		public static PythonEvalReply EvalToVar(string pyVarName, string code) {
 			Console.WriteLine(pyVarName + " = " + code);
 			return Eval(string.Format("{0} = {1}", pyVarName, code));
 		}
 
-		public static string EvalToVar(PyVariable variable, string code) {
+		public static PythonEvalReply EvalToVar(PyVariable variable, string code) {
 			return EvalToVar(variable.PyName, code);
 		}
 
-		public static string EvalToVar(PyVariable variable, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
+		public static PythonEvalReply EvalToVar(PyVariable variable, string codeFormat, List<object> arguments, EscapeFlags escapeMethod) {
 			List<string> textArguments = EscapeArguments(arguments, escapeMethod);
 			return EvalToVar(variable, string.Format(codeFormat, textArguments.ToArray()));
 		}
 
-		public static string EvalToResult(string code) {
+		public static PythonEvalReply EvalToResult(string code) {
 			return EvalToVar(PyVariableManager.LastResult, code);
 		}
 		#endregion
