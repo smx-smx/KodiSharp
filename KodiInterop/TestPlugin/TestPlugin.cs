@@ -166,7 +166,11 @@ namespace TestPlugin
 			sum.Dispose();
 
 			var dict = mgr.NewVariable();
-			dict.Value = @"{1: 2, 'a': 'b'}";
+			Dictionary<string, string> TestDict = new Dictionary<string, string> {
+				{"hello", "python" },
+				{"dict", "test" }
+			};
+			dict.Value = TestDict.ToPythonDict();
 			PyConsole.WriteLine("Dict: " + dict);
 			dict.Dispose();
 

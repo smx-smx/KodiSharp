@@ -246,7 +246,8 @@ def on_message(data):
 		message = json.loads(data)
 		print message
 	except Exception as exc:
-		on_exception(exc)
+		type, value, traceback = sys.exc_info()
+		exception_hook(type, value, traceback)
 		return json_error(1)
 
 	type = message.get('type')
@@ -263,7 +264,8 @@ def on_message(data):
 			try:
 				eval(compile(exec_code, '<string>', 'exec'), globals())
 			except Exception as exc:
-				on_exception(exc)
+				type, value, traceback = sys.exc_info()
+				exception_hook(type, value, traceback)
 				return json_error(1)
 	elif type == 'del_var':
 		var_name = message.get('var_name')
