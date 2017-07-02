@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Linq;
 
+using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
 using Smx.KodiInterop.Messages;
 
@@ -37,6 +38,15 @@ namespace Smx.KodiInterop
 				return (argument as PyVariable).PyName;
 
 			string text = argument.ToString();
+
+			//TODO: Find a better way
+			//Invokes Enum.GetString<T>(argument)
+			if (argument is Enum) {
+				text = typeof(EnumExtensions)
+					.GetMethod("GetString")
+					.MakeGenericMethod(argument.GetType())
+					.Invoke(null, new object[] { argument }) as string;
+			}
 
 			//Don't escape primitives
 			if (

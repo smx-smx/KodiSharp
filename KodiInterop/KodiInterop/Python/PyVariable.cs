@@ -81,6 +81,15 @@ namespace Smx.KodiInterop.Python
 
 		public string CallFunction(
 			PythonFunction function,
+			string argumentsBody
+		) {
+			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
+				this.PyName, function.Function, argumentsBody
+			)).Value;
+		}
+
+		public string CallFunction(
+			PythonFunction function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
 		) {
@@ -89,9 +98,7 @@ namespace Smx.KodiInterop.Python
 			}
 
 			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
-			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
-				this.PyName, function.Function, string.Join(", ", textArguments)
-			)).Value;
+			return CallFunction(function, string.Join(", ", textArguments));
 		}
 
 		public string CallFunction(

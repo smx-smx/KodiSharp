@@ -47,6 +47,10 @@ namespace TestPlugin
 				new ListItem("Item 2"),
 				new ListItem("Item 3")
 			};
+			items[0].SetArt(new Dictionary<Art, string> {
+				{ Art.Poster, "https://upload.wikimedia.org/wikipedia/commons/2/25/Kodi-logo-Thumbnail-light-transparent.png" }
+			});
+
 			List.Add(items);
 			List.Show();
 
