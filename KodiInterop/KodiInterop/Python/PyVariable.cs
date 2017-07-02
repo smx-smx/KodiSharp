@@ -1,5 +1,4 @@
 ﻿using Smx.KodiInterop;
-using Smx.KodiInterop.Python.Types;
 using System;
 using System.Collections.Generic;
 
@@ -70,36 +69,8 @@ namespace Smx.KodiInterop.Python
 				return PythonInterop.GetVariable(this).Value;
 			}
 			set {
-				PythonInterop.EvalToVar(this, GetPyValueString(value));
-			}
-		}
-
-#if false
-		/// <summary>
-		/// Value contained by this value as string
-		/// </summary>
-		public string Value {
-			get {
-				if (this.IsObject) {
-					return "<object>"; //we can't JSON serialize everything
-				} else {
-					return PythonInterop.GetVariable(this);
-				}
-			}
-			set {
 				PythonInterop.EvalToVar(this, value);
 			}
-		}
-#endif
-
-		private string GetPyValueString(dynamic value) {
-			if (value is bool)
-				return value.ToString();
-			if (value is int || value is uint || value is long || value is ulong)
-				return value.ToString();
-			if (value is string)
-				return value;
-			throw new NotSupportedException("Unknown type for " + value);
 		}
 
 		public T GetValue<T>() where T : IConvertible {
