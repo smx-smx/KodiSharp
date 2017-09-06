@@ -25,7 +25,10 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 - Support for Service addons (executed in background, as defined in addon.xml)
 - Static variables persisting across script invocations (made possible by the .NET CLR that persists in the Kodi process). You can keep variables in a static class instance without having to pass them around
 
-See the TestPlugin project for a working sample
+### Samples
+You can load the TestPlugin project for a working sample.
+
+On Windows you can also try the SpeechRecognizerPlugin project, which is an example of speech recognition inside a Kodi Addon
 
 ## Debugging
 First of all, target kodi.exe as the process we want to debug
@@ -42,7 +45,7 @@ to
 ```python
 Initialize(MessageCallbackFunc, True)
 ```
-The second argument to `Initialize` indicates whether the debugger should be launched.
+The last argument to `Initialize` indicates whether the debugger should be launched.
 Next time you run the plugin, a debugger selection window should pop up.
 
 You should then see a breakpoint on
