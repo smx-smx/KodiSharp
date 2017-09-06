@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace Smx.KodiInterop
@@ -78,6 +79,12 @@ namespace Smx.KodiInterop
 				// This takes the exception and stores it, not allowing it to bubble up
 				KodiBridge.SaveException(ex);
 				return 1;
+			} finally {
+				/*
+				 * When we get here, we have already returned from PluginMain
+				 * tell Python that we are done (TODO: Wait for threads here)
+				 * */
+				KodiBridge.StopRPC();
 			}
 		}
 

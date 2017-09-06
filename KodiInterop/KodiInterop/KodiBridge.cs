@@ -10,6 +10,8 @@ using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop
 {
@@ -17,18 +19,39 @@ namespace Smx.KodiInterop
 	/// Class to handle message passing from C# and Python
 	/// </summary>
 	public static class KodiBridge {
-		public static string LastMessage { get; private set; }
-		public static string LastReply { get; private set;  }
-
 		/// <summary>
 		/// Whether to unload the DLL when the Plugin is closed
 		/// </summary>
 		public static bool UnloadDLL = false;
 
-		private static AutoResetEvent MessageReady = new AutoResetEvent(false);
-		private static AutoResetEvent ReplyReady = new AutoResetEvent(false);
+		/// <summary>
+		/// Cancellation Token for the periodic message queue flusher
+		/// </summary>
+		private static readonly CancellationTokenSource taskCts = new CancellationTokenSource();
+
+		private static object MessageLock = new object();
+		private static readonly ManualResetEvent RPCInitialized = new ManualResetEvent(false);
+
+		private static readonly BlockingCollection<RPCRequest> MessageQueue = new BlockingCollection<RPCRequest>();
+		private static readonly Task asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
 
 		public static readonly Dictionary<Type, List<object>> EventClasses = new Dictionary<Type, List<object>>();
+
+		static KodiBridge() {
+			asyncMessageConsumer.Start();
+		}
+
+		private static void _messageConsumer() {
+			while (!taskCts.IsCancellationRequested) {
+				try {
+					RPCRequest req = MessageQueue.Take(taskCts.Token);
+					//send the message, populate the reply and notify the listeners
+					req.Send();
+				} catch(OperationCanceledException) {
+					break;
+				}
+			}
+		}
 
 		public static void RegisterEventClass(Type classType, object classInstance) {
 			if (!EventClasses.ContainsKey(classType))
@@ -74,22 +97,18 @@ namespace Smx.KodiInterop
 		/// <param name="message">message object to send</param>
 		/// <returns></returns>
 		public static string SendMessage(RPCMessage message) {
-			string messageString = EncodeNonAsciiCharacters( JsonConvert.SerializeObject(message) );
-			// Check if we have a callback we can call
-			if (_pySendString != null) {
-				return PySendMessage(messageString);
+			RPCInitialized.WaitOne(); //Make sure the RPC is initialized before trying to use it
+
+			string reply = null;
+			lock (MessageLock) {
+				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(message));
+				reply = PySendMessage(messageString);
 			}
+			return reply;
+		}
 
-			Debug.WriteLine(messageString);
-
-			LastMessage = messageString;
-			MessageReady.Set();
-
-			Debug.WriteLine("Waiting Reply...");
-			ReplyReady.WaitOne();
-
-			Debug.WriteLine(LastReply);
-			return LastReply;
+		public static void SendMessageAsync(RPCMessage message) {
+			MessageQueue.Add(new RPCRequest(message));
 		}
 
 		//http://stackoverflow.com/a/1373295
@@ -137,7 +156,11 @@ namespace Smx.KodiInterop
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate IntPtr PySendStringDelegate([MarshalAs(UnmanagedType.AnsiBStr)] string messageData);
 
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		public delegate void PyExitDelegate();
+
 		private static PySendStringDelegate _pySendString;
+		private static PyExitDelegate _pyExit;
 
 		/// <summary>
 		/// </summary>
@@ -156,7 +179,11 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <returns></returns>
 		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
-		private static bool Initialize([MarshalAs(UnmanagedType.FunctionPtr)] PySendStringDelegate sendMessageCallback, bool enableDebug = false){
+		private static bool Initialize(
+			[MarshalAs(UnmanagedType.FunctionPtr)] PySendStringDelegate sendMessageCallback,
+			[MarshalAs(UnmanagedType.FunctionPtr)] PyExitDelegate exitCallback,
+			bool enableDebug = false
+		){
 #if DEBUG
 			ConsoleHelper.CreateConsole();
 			if (!Debugger.IsAttached && enableDebug) {
@@ -164,24 +191,14 @@ namespace Smx.KodiInterop
 			}
 #endif
 			_pySendString = sendMessageCallback;
+			_pyExit = exitCallback;
 			Console.WriteLine(string.Format("Function Pointer: 0x{0:X}", Marshal.GetFunctionPointerForDelegate(sendMessageCallback)));
 
 			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 			SetAssemblyResolver();
 			SetPythonCulture();
-			return true;
-		}
 
-		/// <summary>
-		/// Called by Python to send a message to C#
-		/// </summary>
-		/// <param name="message"></param>
-		/// <returns></returns>
-		[DllExport("PostMessage", CallingConvention=CallingConvention.Cdecl)]
-		private static bool PostMessage([MarshalAs(UnmanagedType.AnsiBStr)] string message) {
-			LastReply = message;
-			// Indicate that a reply is available for consumption
-			ReplyReady.Set();
+			RPCInitialized.Set();
 			return true;
 		}
 
@@ -200,30 +217,27 @@ namespace Smx.KodiInterop
 				return Modules.Xbmc.GlobalEvents.DispatchEvent(ev);
 			}
 		}
-
+	
 		/// <summary>
-		/// Called by python to get the next message, in JSON format
-		/// </summary>
-		/// <returns></returns>
-		[DllExport("GetMessage", CallingConvention=CallingConvention.Cdecl)]
-		[return: MarshalAs(UnmanagedType.AnsiBStr)]
-		private static string GetMessage() {
-			Debug.WriteLine("Waiting Message...");
-			// Wait for the message to be populated
-			MessageReady.WaitOne();
-
-			string message = LastMessage;
-			Debug.WriteLine(string.Format("Giving {0}", message));
-			return message;
-		}
-
-		/// <summary>
-		/// Signals python to close RPC. Called by python itself to terminate
+		/// Signals python to close RPC
 		/// </summary>
 		/// <returns></returns>
 		[DllExport("StopRPC", CallingConvention = CallingConvention.Cdecl)]
-		private static bool StopRPC() {
+		private static bool _StopRPC() {
+			/* 
+			 * this alias is needed to avoid "Method not Found" exception
+			 * in PluginMain's "finally" block
+			 * */
+			return StopRPC();
+		}
+
+		public static bool StopRPC() {
+			Console.WriteLine("Shutting Down...");
+			taskCts.Cancel();
+			asyncMessageConsumer.Wait();
+
 			CloseRPC();
+			RPCInitialized.Reset();
 			return true;
 		}
 	}

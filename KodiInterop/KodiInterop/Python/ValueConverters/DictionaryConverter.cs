@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Smx.KodiInterop.Python
 {
-    public static class DictionaryExtensions
+    public static class DictionaryConverter
     {
-		public static string ToPythonDict<TKey, TValue>(this IDictionary<TKey, TValue> dict) {
+		public static string ToPythonCode<TKey, TValue>(this IDictionary<TKey, TValue> dict) {
 			StringBuilder sb = new StringBuilder("{");
 			foreach(TKey key in dict.Keys) {
 				sb.Append(string.Format("{0}:{1}",

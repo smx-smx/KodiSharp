@@ -155,7 +155,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public void SetArt(Dictionary<Art, string> art) {
 			Instance.CallFunction(
-				new PythonFunction("setArt"), art.ToPythonDict()
+				new PythonFunction("setArt"), art.ToPythonCode()
 			);
 		}
 

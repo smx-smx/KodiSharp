@@ -11,6 +11,8 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Kodi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\KodiEventMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\MessageReplyEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonVarArgsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RpcExitCodes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\DatabaseEventArgs.cs" />
@@ -22,11 +24,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSeekEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\PlayBackSpeedChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\ServerType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\DictionaryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\DictionaryConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyEventClassBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyFunctionBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyThread.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\PyVariableFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\ObjectConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\PyVariableConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\StringConverter.cs" />
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
   <ItemGroup>
