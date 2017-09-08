@@ -1,5 +1,7 @@
 # KodiSharp
 Use Kodi python APIs in C#, and write rich addons using the .NET framework
+![TestPlugin](https://raw.githubusercontent.com/smx-smx/KodiSharp/master/img/KodiSharp.png)
+
 
 ## How to use
 - Download this repo as zip or clone the repo and zip it.
