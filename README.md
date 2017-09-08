@@ -6,7 +6,7 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 ## How to use
 - Make a copy of this repository and rename the TestPlugin project to fit your needs. You can keep the project to have references/dependencies already set-up.
 - Edit the addon names in addon.xml and default.py aswell
-- Build the solution, then copy addon.xml, default.py and the compiled assemblies under <kodi>/addons/<youraddon>
+- Build the solution, then copy addon.xml, default.py and the compiled assemblies under \<kodi\>/addons/\<youraddon\>
 - Launch Kodi and go to the add-on list. You should see the new add-on with a disabled state. Enable it
 
 ## Features
