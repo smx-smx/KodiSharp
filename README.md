@@ -4,15 +4,10 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 
 
 ## How to use
-- Download this repo as zip or clone the repo and zip it.
-
-  Make sure the zip contains a top level folder in the format plugin.[type].[name], example plugin.video.test
-- Install this ZIP with kodi
-- Go to the kodi addons folder and open the solution (TestPlugin.sln).
-
-  To make new plugins you can copy the solution and rename the TestPlugin project to fit your needs.
-  
-  Make sure you edit addon.xml aswell
+- Make a copy of this repository and rename the TestPlugin project to fit your needs. You can keep the project to have references/dependencies already set-up.
+- Edit the addon names in addon.xml and default.py aswell
+- Build the solution, then copy addon.xml, default.py and the compiled assemblies under <kodi>/addons/<youraddon>
+- Launch Kodi and go to the add-on list. You should see the new add-on with a disabled state. Enable it
 
 ## Features
 - Events support (xbmc.Monitor)
