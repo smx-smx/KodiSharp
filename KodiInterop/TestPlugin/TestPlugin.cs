@@ -1,4 +1,7 @@
-﻿using RGiesecke.DllExport;
+﻿#if !UNIX
+using RGiesecke.DllExport;
+#endif
+
 using System.Runtime.InteropServices;
 using Smx.KodiInterop;
 using System.Collections.Generic;
@@ -18,15 +21,17 @@ using Smx.KodiInterop.Python;
 namespace TestPlugin
 {
 	public class TestPlugin : KodiAddon
-    {
+	{
 		public static string TempDir = Path.translatePath(SpecialPaths.Temp);
 
-		private static void testException() {
+		private static void testException()
+		{
 			throw new Exception("I should appear in kodi.log");
 		}
 
 		[Route("/")]
-		public static void MainHandler(NameValueCollection parameters) {
+		public static void MainHandler(NameValueCollection parameters)
+		{
 			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
@@ -71,7 +76,8 @@ namespace TestPlugin
 		}
 
 		[Route("/audio")]
-		public static void AudioNavHandler(NameValueCollection parameters) {
+		public static void AudioNavHandler(NameValueCollection parameters)
+		{
 			new Task(() => {
 				//Player player = new Player(PyVariableManager.Player);
 				Player player = new Player();
@@ -89,7 +95,8 @@ namespace TestPlugin
 		}
 
 		[Route("/events")]
-		public static void EventsNavHandler(NameValueCollection parameters) {
+		public static void EventsNavHandler(NameValueCollection parameters)
+		{
 			Smx.KodiInterop.Modules.Xbmc.Monitor m = new Smx.KodiInterop.Modules.Xbmc.Monitor();
 			m.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
 				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
@@ -104,11 +111,12 @@ namespace TestPlugin
 		}
 
 		[Route("/nav")]
-		public static void NavHandler(NameValueCollection parameters) {
+		public static void NavHandler(NameValueCollection parameters)
+		{
 			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 
 			string itemLabel = "Go to Main";
-			if(TestPluginState.LastMainPageVisitTime != null) {
+			if (TestPluginState.LastMainPageVisitTime != null) {
 				itemLabel += string.Format(" (Last Visited: {0})", TestPluginState.LastMainPageVisitTime.Value.ToString());
 			}
 
@@ -130,7 +138,8 @@ namespace TestPlugin
 		/// Plugin Main Logic
 		/// </summary>
 		/// <returns></returns>
-		public override int PluginMain() {
+		public override int PluginMain()
+		{
 			ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
 
@@ -154,7 +163,9 @@ namespace TestPlugin
 			return 0;
 		}
 
+#if !UNIX
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
+#endif
 		public static int Main() {
 			return new TestPlugin().Run();
 		}

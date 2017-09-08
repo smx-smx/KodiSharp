@@ -27,8 +27,10 @@ namespace Smx.KodiInterop
 		/// <param name="addonClass">The class that will be looked up</param>
 		public static void RegisterRoutes(Type addonClass) {
 			Routes.Clear();
+			Console.WriteLine("REGISTER ROUTES");
 
 			var methods = addonClass.GetMethods().Where(m => Attribute.IsDefined(m, typeof(RouteAttribute), false));
+			Console.WriteLine("Num Attribs: {0}", methods.Count());
 			foreach(var method in addonClass.GetMethods()) {
 				var attributes = method.GetCustomAttributes(typeof(RouteAttribute), false);
 				if(attributes.Length > 0) {

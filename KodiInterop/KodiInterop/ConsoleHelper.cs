@@ -15,7 +15,8 @@ namespace Smx.KodiInterop
 		//private const int MY_CODE_PAGE = Encoding.Get;
 		private static readonly int MY_CODE_PAGE = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 
-		public static void CreateConsole() {
+		public static void CreateConsole(){
+#if !UNIX
 			AllocConsole();
 			SetConsoleCtrlHandler(null, true);
 
@@ -43,6 +44,7 @@ namespace Smx.KodiInterop
 			Console.SetIn(standardInput);
 			Console.SetOut(standardOutput);
 			Console.SetError(standardError);
+#endif
 		}
 
 		delegate bool HandlerRoutine(uint dwControlType);

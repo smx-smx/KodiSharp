@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\PyVariableConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\StringConverter.cs" />
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
+    <Compile Include="$(MSBuildThisFileDirectory)MonoNativeBridge.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AddonSettings.cs" />

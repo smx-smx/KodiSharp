@@ -16,6 +16,14 @@ import xbmcplugin
 import xbmcaddon
 import xbmcvfs
 
+#### Config
+me = os.path.abspath(os.path.dirname(__file__))
+assembly_path = os.path.join(me, "KodiInterop/TestPlugin/bin/x64/Debug", "TestPlugin.dll")
+monohost_path = os.path.join(me, "KodiInterop/Mono/build", "libmonoHost.so")
+plugin_namespace = "TestPlugin"
+plugin_main = "Main"
+
+
 class Errors:
 	SUCCESS = 0
 	RESULT_NOT_SERIALIZABLE = 1
@@ -27,11 +35,17 @@ Variables = {
 Monitors = {}
 Players = {}
 
+not_windows = not "win" in sys.platform
+
 #mutex = threading.Lock()
 close_event = threading.Event()
 
-me = os.path.abspath(os.path.dirname(__file__))
-lib = cdll.LoadLibrary(os.path.join(me, "KodiInterop/TestPlugin/bin/Debug", "TestPlugin.dll")) # Hardcoding this for now
+if not_windows:
+	lib_path = monohost_path
+else:
+	lib_path = assembly_path
+
+lib = cdll.LoadLibrary(lib_path)
 print lib
 
 ## C# Functions
@@ -58,6 +72,23 @@ PostEvent.restype = c_bool
 StopRPC = lib.StopRPC
 StopRPC.argtypes = []
 StopRPC.restype = c_bool
+
+if not_windows:
+	CreateInstance = lib.CreateInstance
+	CreateInstance.argtypes = [c_char_p, c_char_p]
+	CreateInstance.restype = c_int
+
+	ClrInit = lib.clrInit
+	ClrInit.argtypes = [c_char_p, message_callback_type, main_callback_type]
+	ClrInit.restype = c_int
+
+	SetMainMethodName = lib.SetMainMethodName
+	SetMainMethodName.argtypes = [c_char_p]
+	SetMainMethodName.restype = None
+
+	ClrDeInit = lib.clrDeInit
+	ClrDeInit.argtypes = []
+	ClrDeInit.restype = None
 
 def exception_hook(exc_type, exc_value, exc_traceback):
 	print "--- Caught Exception ---"
@@ -138,14 +169,22 @@ def on_message(data):
 
 sys.excepthook = exception_hook
 
-# Invoke PluginMain from C#
 MessageCallbackFunc = message_callback_type(on_message)
 MainCallbackFunc = main_callback_type(on_exit)
 
-# Second parameter is enableDebug(bool)
-Initialize(MessageCallbackFunc, MainCallbackFunc, True)
+if not_windows:
+	SetMainMethodName(plugin_namespace + "::" + plugin_main)
+	ClrInit(assembly_path, MessageCallbackFunc, MainCallbackFunc)
+#	CreateInstance(plugin_namespace, plugin_class)
+
+# Last parameter is enableDebug(bool)
+print "Calling initialize"
+ret = Initialize(MessageCallbackFunc, MainCallbackFunc, True)
+print "Initialize returned %d" % ret
 
 close_event.clear()
+
+# Invoke PluginMain from C#
 ret = Main()
 print "PluginMain returned %d" % ret
 

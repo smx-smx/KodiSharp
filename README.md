@@ -75,7 +75,8 @@ This method also avoids having to select the debugger every time
   - Copy default.py and addon.xml to your new addon folder, then add them to your solution as link. Edit them accordingly to change the DLL path and the addon name/author
 
 ## TODO
-- Mono support (involves getting rid of UnmanagedExports)
+- Remove UnmanagedExports
+- Add infrastructure to handle plugin loading/unloading in separate assembly domains
 - Implement remaining builtins
 - Implement remaining modules functionality (xbmc, xbmcgui, ...)
 - Implement a JSON interface (via executeJSONRPC)

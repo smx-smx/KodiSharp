@@ -8,6 +8,12 @@ namespace Smx.KodiInterop
 {
     class Utils
     {
+		public static bool IsUnixOS()
+		{
+			int p = (int)Environment.OSVersion.Platform;
+			return ((p == 4) || (p == 6) || (p == 128));
+		}
+
 		public static string BuildUrl(string url, NameValueCollection getParams = null) {
 			if(getParams == null) {
 				getParams = new NameValueCollection();

@@ -10,7 +10,7 @@ using System.Web;
 namespace Smx.KodiInterop
 {
 	public abstract class KodiAddon
-    {
+	{
 		public readonly int Handle;
 		public readonly string BaseUrl;
 		public readonly string Parameters;
@@ -18,7 +18,7 @@ namespace Smx.KodiInterop
 
 		//public KodiAddonSettings Settings { get; private set; }
 
-		public string BuildNavUrl(string path, NameValueCollection parameters = null) {
+		public string BuildNavUrl(string path, NameValueCollection parameters = null){
 			if (parameters == null) {
 				parameters = new NameValueCollection();
 			}
@@ -27,11 +27,12 @@ namespace Smx.KodiInterop
 			return Utils.BuildUrl(this.BaseUrl, parameters);
 		}
 
-		public KodiAddon() {
+		public KodiAddon(){
 			try {
 #if DEBUG
 				ConsoleHelper.CreateConsole();
 #endif
+
 				// Clean the variables list from the previous run (we're in a new python instance so they don't exist anymore)
 				Python.PyVariableManager.Initialize();
 
