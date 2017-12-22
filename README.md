@@ -6,8 +6,8 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 ## How to use
 - Make a copy of this repository and rename the TestPlugin project to fit your needs. You can keep the project to have references/dependencies already set-up.
 - Edit the addon names in addon.xml and default.py aswell
-- Build the solution, then copy addon.xml, default.py and the compiled assemblies under \<kodi\>/addons/\<youraddon\>
-- Launch Kodi and go to the add-on list. You should see the new add-on with a disabled state. Enable it
+- Build the solution, then copy addon.xml, default.py and the compiled assemblies under \<kodi\>/addons/\<youraddon\>, or build in place in the addons folder
+- Launch Kodi and go to the installed add-ons list (in settings). You should see the new add-on with a disabled state. Enable it
 
 ## Features
 - Events support (xbmc.Monitor)
@@ -25,7 +25,7 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 ### Samples
 You can load the TestPlugin project for a working sample.
 
-On Windows you can also try the SpeechRecognizerPlugin project, which is an example of speech recognition inside a Kodi Addon
+On Windows you can also try the SpeechRecognizerPlugin project, which is an example of speech recognition inside a Kodi Addon. Note that the speech recognition API uses the UWP APIs, and requires that you have enabled speech services. On Windows 10, you can do that from the privacy menu in the modern control panel.
 
 ## Debugging
 First of all, target kodi.exe as the process we want to debug
