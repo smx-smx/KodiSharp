@@ -11,6 +11,8 @@
 		[StringValue("xbmcaddon")]
 		XbmcAddon,
 		[StringValue("xbmcvfs")]
-		XbmcVfs
-	}
+		XbmcVfs,
+        [StringValue("sys")]
+        Sys
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Smx.KodiInterop;
+using System;
 
 namespace Smx.KodiInterop.Python
 {
@@ -33,6 +34,10 @@ namespace Smx.KodiInterop.Python
 		/// <param name="functionName"></param>
 		public PythonFunction(string functionName) : this("", functionName) { }
 
+        public dynamic Call(params object[] args)
+        {
+            return PythonInterop.CallFunction(this, args);
+        }
 
 		public override string ToString() {
 			string result = this.Module;

@@ -39,7 +39,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		#endregion
 
 		public static bool DispatchEvent(KodiEventMessage e) {
-			switch (e.Source) {
+			switch (e.Sender) {
 				case "Monitor":
 					return DispatchMonitorEvent(e);
 				case "Player":
@@ -50,36 +50,36 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public static bool DispatchPlayerEvent(KodiEventMessage e) {
-			switch (e.Sender) {
+			switch (e.Source) {
 				case "onPlayBackEnded":
-					PlayBackEnded?.Invoke(e.Sender, new EventArgs());
+					PlayBackEnded?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackPaused":
-					PlayBackPaused?.Invoke(e.Sender, new EventArgs());
+					PlayBackPaused?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackResumed":
-					PlayBackResumed?.Invoke(e.Sender, new EventArgs());
+					PlayBackResumed?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackSeek":
-					PlayBackSeek?.Invoke(e.Sender, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
+					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
 					break;
 				case "onPlayBackSeekChapter":
-					PlayBackSeekChapter?.Invoke(e.Sender, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
 					break;
 				case "onPlayBackSpeedChanged":
-					PlayBackSpeedChanged?.Invoke(e.Sender, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
 					break;
 				case "onPlayBackStarted":
-					PlayBackStarted?.Invoke(e.Sender, new EventArgs());
+					PlayBackStarted?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackStopped":
-					PlayBackStopped?.Invoke(e.Sender, new EventArgs());
+					PlayBackStopped?.Invoke(null, new EventArgs());
 					break;
 				case "onQueueNextItem":
-					QueueNextItem?.Invoke(e.Sender, new EventArgs());
+					QueueNextItem?.Invoke(null, new EventArgs());
 					break;
 				default:
-					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Sender));
+					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", null));
 					return false;
 			}
 			return true;
@@ -91,50 +91,50 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <param name="e">The event message to handle</param>
 		/// <returns>true if the event was handled</returns>
 		public static bool DispatchMonitorEvent(KodiEventMessage e) {
-			switch (e.Sender) {
+			switch (e.Source) {
 				case "onAbortRequested":
-					AbortRequested?.Invoke(e.Sender, new EventArgs());
+					AbortRequested?.Invoke(null, new EventArgs());
 					break;
 				case "onCleanStarted":
-					CleanStarted?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					CleanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onCleanFinished":
-					CleanFinished?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					CleanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onDPMSActivated":
-					DPMSActivated?.Invoke(e.Sender, new EventArgs());
+					DPMSActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDPMSDeactivated":
-					DPMSDeactivated?.Invoke(e.Sender, new EventArgs());
+					DPMSDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDatabaseScanStarted":
-					DatabaseScanStarted?.Invoke(e.Sender, new DatabaseEventArgs(e.EventArgs[0]));
+					DatabaseScanStarted?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onDatabaseUpdated":
-					DatabaseUpdated?.Invoke(e.Sender, new DatabaseEventArgs(e.EventArgs[0]));
+					DatabaseUpdated?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onNotification":
-					Notification?.Invoke(e.Sender, new NotificationEventArgs(
+					Notification?.Invoke(null, new NotificationEventArgs(
 						e.EventArgs[0], e.EventArgs[1], e.EventArgs[2]
 					));
 					break;
 				case "onScanStarted":
-					ScanStarted?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					ScanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScanFinished":
-					ScanFinished?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					ScanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScreensaverActivated":
-					ScreensaverActivated?.Invoke(e.Sender, new EventArgs());
+					ScreensaverActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onScreensaverDeactivated":
-					ScreensaverDeactivated?.Invoke(e.Sender, new EventArgs());
+					ScreensaverDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onSettingsChanged":
-					SettingsChanged?.Invoke(e.Sender, new EventArgs());
+					SettingsChanged?.Invoke(null, new EventArgs());
 					break;
 				default:
-					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Sender));
+					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Source));
 					return false;
 			}
 			return true;

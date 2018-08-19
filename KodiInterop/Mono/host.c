@@ -206,7 +206,6 @@ extern int PluginMain(){
 	return *(int *)mono_object_unbox(ret);
 }
 
-//TODO: Cleanup. This method is currently unused. 
 extern bool PostEvent(char *eventMessage){
 	dprintf("\n");
 	assert(image != NULL);

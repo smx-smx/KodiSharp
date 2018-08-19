@@ -14,7 +14,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public InfoTagVideo() {
-			this.Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
+			this.Instance = PyVariableManager.Get.NewVariable();
 		}
 	}
 }

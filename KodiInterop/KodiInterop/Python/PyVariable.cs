@@ -1,4 +1,5 @@
-﻿using Smx.KodiInterop;
+﻿using Newtonsoft.Json.Linq;
+using Smx.KodiInterop;
 using System;
 using System.Collections.Generic;
 
@@ -6,55 +7,9 @@ namespace Smx.KodiInterop.Python
 {
 	public class PyVariable: IDisposable
 	{
-		/// <summary>
-		/// Name of the variable
-		/// </summary>
-		public string Name { get; private set; }
-
-		public string DictName {
-			get {
-				if (this.IsMonitor)
-					return "Monitors";
-				if (this.IsPlayer)
-					return "Players";
-
-				return "Variables";
-			}
-		}
-
-		public string PyName {
-			get {
-				return string.Format("{0}['{1}']", this.DictName, this.Name);
-			}
-		}
-
-		public bool Exists {
-			get {
-				return bool.Parse(
-					PythonInterop.EvalToResult(
-						string.Format("'{0}' in {1}", this.Name, this.DictName)
-					).Value
-				);
-			}
-		}
-
-		public bool IsObject {
-			get {
-				return this.Flags.HasFlag(PyVariableFlags.Object);
-			}
-		}
-
-		public bool IsMonitor {
-			get {
-				return this.Flags.HasFlag(PyVariableFlags.Monitor);
-			}
-		}
-
-		public bool IsPlayer {
-			get {
-				return this.Flags.HasFlag(PyVariableFlags.Player);
-			}
-		}
+		public readonly string Basename;
+		public readonly string PyName;
+		private readonly bool Disposable;
 
 		public string TypeName {
 			get {
@@ -77,9 +32,7 @@ namespace Smx.KodiInterop.Python
 			return (T)Convert.ChangeType(this.Value, typeof(T));
 		}
 
-		public readonly PyVariableFlags Flags;
-
-		public string CallFunction(
+		public dynamic CallFunction(
 			PythonFunction function,
 			string argumentsBody
 		) {
@@ -88,7 +41,7 @@ namespace Smx.KodiInterop.Python
 			)).Value;
 		}
 
-		public string CallFunction(
+		public dynamic CallFunction(
 			PythonFunction function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
@@ -101,7 +54,7 @@ namespace Smx.KodiInterop.Python
 			return CallFunction(function, string.Join(", ", textArguments));
 		}
 
-		public string CallFunction(
+		public dynamic CallFunction(
 			string function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
@@ -119,7 +72,8 @@ namespace Smx.KodiInterop.Python
 		public string CallAssign(
 			PythonFunction function,
 			List<object> arguments = null,
-			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
+			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
+			PyVariable target = null
 		) {
 			string argumentsText = "";
 			if (arguments != null) {
@@ -127,45 +81,55 @@ namespace Smx.KodiInterop.Python
 				argumentsText = string.Join(", ", textArguments);
 			}
 
-			PythonInterop.EvalToVar(this, "{0}({1})", new List<object> {
+			if (target == null)
+				target = this;
+
+			PythonInterop.EvalToVar(target, "{0}({1})", new List<object> {
 				function.ToString(), argumentsText
 			}, EscapeFlags.None);
 
 			return this.Value;
 		}
 
+		public string CallAssign(
+			string function,
+			List<object> arguments = null,
+			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
+			PyVariable target = null
+		)
+		{
+			return CallAssign(new PythonFunction(function), arguments, escapeMethod, target);
+		}
+
+        public void EvalAssign(string code)
+        {
+            PythonInterop.EvalToVar(this, code);
+        }
+
 		/// <summary>
 		/// Represents a Python variable
 		/// </summary>
-		/// <param name="varName">Name of the variable</param>
-		/// <param name="evalCode">Code that will be evaluated as the variable value/content</param>
+		/// <param name="evalCode">Code that will be evaluated to get/set the variable value/content</param>
 		/// <param name="isObject">Indicates the variable will store non-serializable data</param>
 		public PyVariable(
-			string varName, string evalCode = null,
-			PyVariableFlags flags = PyVariableFlags.Normal, bool keepValue = false
+			string evalCode,
+			string basename = null,
+			bool disposable = true
 		) {
-			this.Name = varName;
-
-			if (flags.HasFlag(PyVariableFlags.Monitor) || flags.HasFlag(PyVariableFlags.Player))
-				flags |= PyVariableFlags.Object;
-
-			this.Flags = flags;
-
-			if (evalCode == null && !keepValue) {
-				evalCode = "''";
-			}
-
-			if(!keepValue)
-				this.Value = evalCode;
+			this.PyName = evalCode;
+            this.Disposable = disposable;
+			this.Basename = basename;
 		}
 
 		~PyVariable() {
-			PyConsole.WriteLine("Freeing variable " + this.Name);
-			this.Dispose();
+            this.Dispose();
 		}
 
 		public void Dispose() {
-			PyVariableManager.DestroyVariable(this.Name);
+            if (this.Disposable)
+            {
+				PyVariableManager.Get.DeleteVariable(this);
+            }
 		}
 
 		public override string ToString() {

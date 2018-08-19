@@ -10,24 +10,13 @@ using System.Threading;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-	public class Player
-    {
+	public class XbmcPlayer : IDisposable, IKodiEventConsumer
+	{
 		public readonly PyVariable Instance;
 
 		private int _subtitleStream;
 		private int _videoStream;
 		private int _audioStream;
-
-		private string[] eventNames = {
-			"onPlayBackEnded",
-			"onPlayBackPaused",
-			"onPlayBackResumed",
-			"onPlayBackSeek",
-			"onPlayBackSeekChapter",
-			"onPlayBackSpeedChanged",
-			"onPlayBackStarted",
-			"onQueueNextItem"
-		};
 
 		public event EventHandler<EventArgs> PlayBackEnded;
 		public event EventHandler<EventArgs> PlayBackPaused;
@@ -39,53 +28,52 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public event EventHandler<EventArgs> PlayBackStopped;
 		public event EventHandler<EventArgs> QueueNextItem;
 
-		private bool onEvent(KodiEventMessage e) {
-			switch (e.Sender) {
+		public bool TriggerEvent(KodiEventMessage e) {
+			switch (e.Source) {
 				case "onPlayBackEnded":
-					PlayBackEnded?.Invoke(e.Sender, new EventArgs());
+					PlayBackEnded?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackPaused":
-					PlayBackPaused?.Invoke(e.Sender, new EventArgs());
+					PlayBackPaused?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackResumed":
-					PlayBackResumed?.Invoke(e.Sender, new EventArgs());
+					PlayBackResumed?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackSeek":
-					PlayBackSeek?.Invoke(e.Sender, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
+					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
 					break;
 				case "onPlayBackSeekChapter":
-					PlayBackSeekChapter?.Invoke(e.Sender, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
 					break;
 				case "onPlayBackSpeedChanged":
-					PlayBackSpeedChanged?.Invoke(e.Sender, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
 					break;
 				case "onPlayBackStarted":
-					PlayBackStarted?.Invoke(e.Sender, new EventArgs());
+					PlayBackStarted?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackStopped":
-					PlayBackStopped?.Invoke(e.Sender, new EventArgs());
+					PlayBackStopped?.Invoke(null, new EventArgs());
 					break;
 				case "onQueueNextItem":
-					QueueNextItem?.Invoke(e.Sender, new EventArgs());
+					QueueNextItem?.Invoke(null, new EventArgs());
 					break;
 				default:
-					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Sender));
+					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Source));
 					return false;
 			}
 			return true;
 		}
 
-		public Player() {
-			PyEventClassBuilder cb = new PyEventClassBuilder("xbmc.Player", typeof(Player));
-			cb.Methods.AddRange(this.eventNames);
-			cb.Install();
-			this.Instance = cb.NewInstance(flags: PyVariableFlags.Player);
-			Console.WriteLine("=> Registering EventClass " + typeof(Player).FullName);
-			KodiBridge.RegisterEventClass(typeof(Player), this);
+		public XbmcPlayer() {
+			this.Instance = PyVariableManager.Get.NewVariable(evalCode: "self.new_player()");
+
+			// We now register this type so that PostEvent will be able to invoke onMessage in this class
+			Console.WriteLine("=> Registering EventClass " + typeof(XbmcPlayer).FullName);
+			KodiBridge.RegisterPlayer(this);
 		}
 
-		public Player(PyVariable player) {
-			PyVariableManager.CopyVariable(Instance, player);
+		public XbmcPlayer(PyVariable player) {
+			PyVariableManager.Get.CopyVariable(Instance, player);
 		}
 
 		public int SubtitleStream {
@@ -132,27 +120,24 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public InfoTagRadioRDS RadioRDSInfoTag {
 			get {
-				var InfoTag = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
-				Instance.CallFunction("getRadioRDSInfoTag");
-				PyVariableManager.CopyVariable(InfoTag, PyVariableManager.LastResult);
+				var InfoTag = PyVariableManager.Get.NewVariable();
+				Instance.CallAssign("getRadioRDSInfoTag", target: InfoTag);
 				return new InfoTagRadioRDS(InfoTag);
 			}
 		}
 
 		public InfoTagMusic MusicInfoTag {
 			get {
-				var InfoTag = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
-				Instance.CallFunction("getMusicInfoTag");
-				PyVariableManager.CopyVariable(InfoTag, PyVariableManager.LastResult);
+				var InfoTag = PyVariableManager.Get.NewVariable();
+				Instance.CallAssign("getMusicInfoTag", target: InfoTag);
 				return new InfoTagMusic(InfoTag);
 			}
 		}
 
 		public InfoTagVideo VideoInfoTag {
 			get {
-				var InfoTag = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
-				Instance.CallFunction("getVideoInfoTag");
-				PyVariableManager.CopyVariable(InfoTag, PyVariableManager.LastResult);
+				var InfoTag = PyVariableManager.Get.NewVariable();
+				Instance.CallAssign("getVideoInfoTag", target: InfoTag);
 				return new InfoTagVideo(InfoTag);
 			}
 		}
@@ -232,5 +217,11 @@ namespace Smx.KodiInterop.Modules.Xbmc
 				seekTime.TotalSeconds
 			});
 		}
-    }
+
+		public void Dispose()
+		{
+			Instance.Dispose();
+			KodiBridge.UnregisterEventClass(this);
+		}
+	}
 }

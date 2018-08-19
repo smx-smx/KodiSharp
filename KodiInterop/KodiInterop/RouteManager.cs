@@ -25,7 +25,9 @@ namespace Smx.KodiInterop
 		/// Install Routes from the specified class
 		/// </summary>
 		/// <param name="addonClass">The class that will be looked up</param>
-		public static void RegisterRoutes(Type addonClass) {
+		public static void RegisterRoutes(KodiAddon addon) {
+			Type addonClass = addon.GetType();
+
 			Routes.Clear();
 			Console.WriteLine("REGISTER ROUTES");
 
@@ -37,7 +39,10 @@ namespace Smx.KodiInterop
 					RouteAttribute route = attributes[0] as RouteAttribute;
 
 					string url = RemoveTrailingSlash(route.Url);
-					RouteCallback callback = method.CreateDelegate(typeof(RouteCallback)) as RouteCallback;
+					// Delegate from Class instance
+					RouteCallback callback = Delegate.CreateDelegate(typeof(RouteCallback), addon, method) as RouteCallback;
+					// Delegate from Static method
+					//RouteCallback callback = method.CreateDelegate(typeof(RouteCallback)) as RouteCallback;
 					//RouteCallback callback = Delegate.CreateDelegate(typeof(RouteCallback), method) as RouteCallback;
 					Routes.Add(url, callback);
 

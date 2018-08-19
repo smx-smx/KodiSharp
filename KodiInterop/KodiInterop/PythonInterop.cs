@@ -16,15 +16,10 @@ namespace Smx.KodiInterop
 	/// </summary>
 	public static class PythonInterop {
 		#region Variables
-		private const string LastResultVarName = "LastResult";
-
 		public static PythonEvalReply GetVariable(PyVariable variable) {
 			return EvalToResult(variable.PyName);
 		}
 
-		public static void DestroyVariable(PyVariable variable) {
-			Eval(string.Format("del {0}", variable.PyName));
-		}
 		#endregion
 
 		#region Escape
@@ -110,7 +105,7 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region FunctionCall
-		public static dynamic CallFunction(string functionName, List<string> arguments = null) {
+		public static dynamic CallFunction(string functionName, IEnumerable<string> arguments = null) {
 			string argumentsText = "";
 			if (arguments != null)
 				argumentsText = string.Join(",", arguments.ToArray());
@@ -118,10 +113,10 @@ namespace Smx.KodiInterop
 			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText)).Value;
 		}
 
-		public static dynamic CallFunction(PythonFunction pythonFunction, List<object> arguments = null) {
+		public static dynamic CallFunction(PythonFunction pythonFunction, IEnumerable<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
 			List<string> textArguments = null;
 			if (arguments != null)
-				 textArguments = EscapeArguments(arguments);
+				 textArguments = EscapeArguments(arguments, flags);
 
 			return CallFunction(
 				pythonFunction.ToString(),
@@ -129,8 +124,8 @@ namespace Smx.KodiInterop
 			);
 		}
 
-		public static dynamic CallFunction(PyModule module, string functionName, List<object> arguments = null) {
-			return CallFunction(new PythonFunction(module, functionName), arguments);
+		public static dynamic CallFunction(PyModule module, string functionName, List<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
+			return CallFunction(new PythonFunction(module, functionName), arguments, flags);
 		}
 
 		public static dynamic CallBuiltin(string builtinName, List<string> arguments = null) {
@@ -166,7 +161,7 @@ namespace Smx.KodiInterop
 
 		public static PythonEvalReply EvalToVar(string pyVarName, string code) {
 			Console.WriteLine(pyVarName + " = " + code);
-			return Eval(string.Format("{0} = {1}", pyVarName, code));
+			return Eval(string.Format("{0}={1}", pyVarName, code));
 		}
 
 		public static PythonEvalReply EvalToVar(PyVariable variable, string code) {

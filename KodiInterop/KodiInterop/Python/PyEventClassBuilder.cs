@@ -20,7 +20,7 @@ namespace Smx.KodiInterop.Python
 		public PyEventClassBuilder(string baseClass, Type classType = null) {
 			this._itw = new IndentedTextWriter(this._sw);
 			this.BaseClassName = baseClass;
-			this.ClassName = PyVariableManager.GetFreeVariableName() + baseClass.Replace(".", string.Empty); ;
+			this.ClassName = PyVariableManager.Get.GetFreeVariableName() + baseClass.Replace(".", string.Empty); ;
 			if(classType != null) {
 				this.EventDest = classType.FullName;
 			}
@@ -40,9 +40,17 @@ namespace Smx.KodiInterop.Python
 			}
 		}
 
-		public PyVariable NewInstance(PyVariableFlags flags = PyVariableFlags.Object, List<object> arguments = null) {
-			PyVariable instance = PyVariableManager.NewVariable(flags: flags);
-			instance.CallAssign(new PythonFunction(this.ClassName), arguments);
+		public PyVariable NewInstance(List<object> arguments = null) {
+			PyVariable instance = PyVariableManager.Get.NewVariable();
+
+            List<object> args = new List<object>()
+            {
+                "self.bridge"
+            };
+            if(arguments != null)
+                args.AddRange(arguments);
+
+			instance.CallAssign(new PythonFunction(this.ClassName), args);
 			return instance;
 		}
 

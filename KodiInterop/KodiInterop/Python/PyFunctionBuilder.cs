@@ -15,7 +15,7 @@ namespace Smx.KodiInterop.Python
 
 		public PyFunctionBuilder(string functionName) {
 			if(functionName == null) {
-				functionName = "_f" + PyVariableManager.GetFreeVariableName();
+				functionName = "_f" + PyVariableManager.Get.GetFreeVariableName();
 			}
 			this.Name = functionName;
 			this.Writer = new IndentedTextWriter(this._sw);

@@ -8,14 +8,14 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 {
     public class Addon
     {
-		public readonly PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
+		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
 		/// <summary>
 		/// Creates a new AddOn class.
 		/// </summary>
 		/// <param name="id">id of the addon as specified in addon.xml.
 		/// If not specified, the running addon is used</param>
-		public Addon(int? id = null) {
+		public Addon(string id = null) {
 			Instance.CallAssign(
 				new PythonFunction(PyModule.XbmcAddon, "Addon"),
 				new List<object> { id }
@@ -47,11 +47,55 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		}
 
 		public T GetSetting<T>(string setting) where T : IConvertible {
-			string value = GetSetting(setting);
+			PythonFunction func;
+
+			switch (Type.GetTypeCode(typeof(T))) {
+				case TypeCode.Boolean:
+					func = new PythonFunction("getSettingBool");
+					break;
+				case TypeCode.Decimal:
+					func = new PythonFunction("getSettingInt");
+					break;
+				case TypeCode.Double:
+					func = new PythonFunction("getSettingNumber");
+					break;
+				case TypeCode.String:
+					func = new PythonFunction("getSettingString");
+					break;
+				default:
+					func = new PythonFunction("getSetting");
+					break;
+
+			}
+			string value = Instance.CallFunction(func, new List<object>{ setting });
 			return (T)Convert.ChangeType(value, typeof(T));
 		}
 
-		/// <summary>
+	    public void SetSetting<T>(string setting, object value) where T : IConvertible {
+		    PythonFunction func;
+
+		    switch (Type.GetTypeCode(typeof(T))) {
+			    case TypeCode.Boolean:
+				    func = new PythonFunction("setSettingBool");
+				    break;
+			    case TypeCode.Decimal:
+				    func = new PythonFunction("setSettingInt");
+				    break;
+			    case TypeCode.Double:
+				    func = new PythonFunction("setSettingNumber");
+				    break;
+			    case TypeCode.String:
+				    func = new PythonFunction("setSettingString");
+				    break;
+				default:
+					func = new PythonFunction("setSetting");
+					break;
+		    }
+
+		    Instance.CallFunction(func, new List<object> { setting, value });
+	    }
+
+	    /// <summary>
 		/// Sets a script setting.
 		/// </summary>
 		/// <param name="setting">the setting that the module needs to access.</param>
@@ -71,5 +115,17 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 				new PythonFunction("openSettings")
 			);
 		}
+
+		/// <summary>
+		/// Returns an addon's localized 'unicode string'.
+		/// </summary>
+		/// <param name="id">id# for string you want to localize.</param>
+		/// <returns>Localized 'unicode string'</returns>
+		public string GetLocalizedString(int id) {
+		    return Instance.CallFunction(
+				new PythonFunction("getLocalizedString"),
+				new List<object> { id }
+		    );
+	    }
     }
 }

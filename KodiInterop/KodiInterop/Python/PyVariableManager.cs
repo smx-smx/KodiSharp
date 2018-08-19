@@ -5,36 +5,29 @@ using Smx.KodiInterop;
 
 namespace Smx.KodiInterop.Python
 {
-	public static class PyVariableManager {
-		public const string LastResultVarName = "LastResult";
-		public const string MonitorVarName = "__csharpMonitor";
-		public const string PlayerVarName = "__csharpPlayer";
-
-
-		private static readonly PyVariable _lastResult = new PyVariable(LastResultVarName);
-		private static readonly PyVariable _monitor = new PyVariable(MonitorVarName, flags: PyVariableFlags.Object, keepValue: true);
-		private static readonly PyVariable _player = new PyVariable(PlayerVarName, flags: PyVariableFlags.Object, keepValue: true);
-
-		private static readonly Dictionary<string, WeakReference<PyVariable>> _variables;
-
-		static PyVariableManager() {
-			_variables = new Dictionary<string, WeakReference<PyVariable>>();
-		}
-
-		public static PyVariable LastResult {
+	public class PyVariableManager {
+		public static PyVariableManager Get {
 			get {
-				return _lastResult;
+				return KodiBridge.RunningAddon.PyVariableManager;
 			}
 		}
-		public static PyVariable Monitor {
-			get {
-				return _monitor;
-			}
+
+		private const string LastResultVarName = "LastResult";
+
+        private PyDict variables = new PyDict(new PyVariable("self.Variables"));
+		public static PyVariable LastResult = new PyVariable($"self.{LastResultVarName}");
+
+		public PyVariableManager()
+		{
+			variables.Refresh();
 		}
-		public static PyVariable Player {
-			get {
-				return _player;
-			}
+
+		/// <summary>
+		/// Invoked when Python re-runs the script, to wipe variables from the previous script
+		/// </summary>
+		public void Reset()
+		{
+			variables.Clear();
 		}
 
 		/// <summary>
@@ -43,34 +36,19 @@ namespace Smx.KodiInterop.Python
 		/// <param name="variableName">Name of the variable to add</param>
 		/// <param name="isObject">Indicates the variable will store non-serializable data (like class instances)</param>
 		/// <returns>The newly added variable, or null if the variable already exists</returns>
-		public static PyVariable NewVariable(string variableName = null, PyVariableFlags flags = PyVariableFlags.Normal) {
+		public PyVariable NewVariable(string variableName = null, string evalCode = null) {
 			if(variableName == null) {
-				variableName = "_var" + _variables.Count;
+				variableName = "_var" + variables.Count;
 			}
-			if (!_variables.ContainsKey(variableName)) {
-				PyVariable variable = new PyVariable(variableName, flags: flags);
-				_variables.Add(variableName, new WeakReference<PyVariable>(variable));
-				return variable;
+			if (!variables.ContainsKey(variableName)) {
+                variables.Add(variableName, evalCode);
+				return variables.GetVariable(variableName);
 			}
 			return null;
 		}
 
-		public static string GetFreeVariableName() {
-			return "_var" + _variables.Count;
-		}
-
-		/// <summary>
-		/// Deletes the specified python variable
-		/// </summary>
-		/// <param name="variableName">Name of the variable to delete</param>
-		public static void DestroyVariable(string variableName) {
-			if (_variables.ContainsKey(variableName)) {
-				Messages.PythonDeleteVariableMessage msg = new Messages.PythonDeleteVariableMessage {
-					VariableName = variableName
-				};
-				KodiBridge.SendMessage(msg);
-				_variables.Remove(variableName);
-			}
+		public string GetFreeVariableName() {
+			return "_var" + variables.Count;
 		}
 
 		/// <summary>
@@ -78,22 +56,14 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="dest"></param>
 		/// <param name="source"></param>
-		public static void CopyVariable(PyVariable dest, PyVariable source) {
+		public void CopyVariable(PyVariable dest, PyVariable source) {
 			PythonInterop.EvalToVar(dest, source.PyName);
 		}
 
-		public static void DestroyVariable(PyVariable variable) {
-			DestroyVariable(variable.Name);
-		}
-
-		public static void DestroyAllVariables() {
-			foreach (string name in _variables.Keys) {
-				DestroyVariable(name);
-			}
-		}
-
-		public static void Initialize() {
-			_variables.Clear();
+		public void DeleteVariable(PyVariable pyVariable)
+		{
+			//pyVariable has absolute path here, dict['var']
+			variables.Remove(pyVariable.Basename);
 		}
 	}
 }

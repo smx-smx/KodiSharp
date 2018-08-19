@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Smx.KodiInterop.Modules.XbmcAddon;
+using Smx.KodiInterop.Python;
 
 namespace Smx.KodiInterop
 {
@@ -16,7 +18,10 @@ namespace Smx.KodiInterop
 		public readonly string Parameters;
 		public readonly bool IsService;
 
-		//public KodiAddonSettings Settings { get; private set; }
+		public readonly KodiAddonSettings Settings;
+		public readonly Addon Addon;
+
+		public readonly PyVariableManager PyVariableManager;
 
 		public string BuildNavUrl(string path, NameValueCollection parameters = null){
 			if (parameters == null) {
@@ -27,24 +32,29 @@ namespace Smx.KodiInterop
 			return Utils.BuildUrl(this.BaseUrl, parameters);
 		}
 
-		public KodiAddon(){
+		public KodiAddon(bool debug=false){
 			try {
-#if DEBUG
-				ConsoleHelper.CreateConsole();
-#endif
+                if (debug)
+                {
+                    ConsoleHelper.CreateConsole();
+                }
 
-				// Clean the variables list from the previous run (we're in a new python instance so they don't exist anymore)
-				Python.PyVariableManager.Initialize();
+				// Set running addon
+				KodiBridge.RunningAddon = this;
+
+				PyVariableManager = new PyVariableManager();
 
 				// Parse parameters
 				this.BaseUrl = PythonInterop.EvalToResult("sys.argv[0]").Value;
 				this.IsService = PythonInterop.EvalToResult("len(sys.argv) < 2").Value;
 
-				// Initialize the Event Monitor
-				//Modules.Xbmc.Events.Initialize();
+				// Instance of XbmcAddon
+				this.Addon = new Addon();
 
-				// Set running addon
-				KodiBridge.RunningAddon = this;
+				// Settings accessor
+				this.Settings = new KodiAddonSettings(this.Addon);
+
+				//string addonName = BaseUrl.Replace("plugin://", "").Replace("/", "");
 
 				// If we're being started as a service, don't run addon specific tasks
 				if (this.IsService) {
@@ -58,7 +68,7 @@ namespace Smx.KodiInterop
 					this.BaseUrl, this.Handle, this.Parameters));
 
 				// Register routes for derived type
-				RouteManager.RegisterRoutes(this.GetType());
+				RouteManager.RegisterRoutes(this);
 			} catch(Exception ex) {
 				KodiBridge.SaveException(ex);
 			}
@@ -81,7 +91,7 @@ namespace Smx.KodiInterop
 				KodiBridge.SaveException(ex);
 				return 1;
 			} finally {
-				/*
+                /*
 				 * When we get here, we have already returned from PluginMain
 				 * tell Python that we are done (TODO: Wait for threads here)
 				 * */

@@ -13,7 +13,7 @@ namespace TestPlugin
 	public static class TestPluginState
 	{
 		public static DateTime? LastMainPageVisitTime = null;
-		public static Player Player = null;
-		public static Monitor Monitor = null;
+		public static XbmcPlayer Player = null;
+		public static XbmcMonitor Monitor = null;
 	}
 }

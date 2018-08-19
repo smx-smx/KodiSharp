@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-	public static class Path {
+	public static class XbmcPath {
 		/// <summary>
 		/// Returns a thumb cache filename.
 		/// </summary>

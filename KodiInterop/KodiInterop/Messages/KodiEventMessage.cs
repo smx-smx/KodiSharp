@@ -10,10 +10,10 @@ namespace Smx.KodiInterop.Messages
 		[JsonProperty(PropertyName = "source")]
 		public string Source { get; set; }
 
-		[JsonProperty(PropertyName = "sender")]
-		public string Sender { get; set; }
+        [JsonProperty(PropertyName = "sender")]
+        public string Sender { get; set; }
 
-		[JsonProperty(PropertyName = "args")]
+        [JsonProperty(PropertyName = "args")]
 		public List<string> EventArgs { get; set; }
 
 		[JsonProperty(PropertyName = "kwargs")]

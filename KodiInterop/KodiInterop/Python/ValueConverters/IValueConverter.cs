@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Smx.KodiInterop.Python.ValueConverters
 {
-    public static class ObjectConverter
+    public interface IValueConverter<TLocal>
     {
-		public static string ToPythonCode(this object obj) {
-			return obj.ToString();
-		}
+        TLocal FromPythonCode(string value);
+        string ToPythonCode(TLocal value);
     }
 }

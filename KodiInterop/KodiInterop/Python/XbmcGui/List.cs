@@ -19,7 +19,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		}
 
 		public static void Add(IList<ListItem> items) {
-			var list = PyVariableManager.NewVariable();
+			var list = PyVariableManager.Get.NewVariable();
 			string listCode = "[";
 			for (int i = 0; i < items.Count; i++) {
 				listCode += string.Format("({0},{1},{2})",
@@ -32,8 +32,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			}
 			listCode += "]";
 
-			PyVariable listVar = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
-			listVar.Value = listCode;
+			PyVariable listVar = PyVariableManager.Get.NewVariable(evalCode: listCode);
 
 			PythonInterop.CallFunction(
 				new PythonFunction(PyModule.XbmcPlugin, "addDirectoryItems"),

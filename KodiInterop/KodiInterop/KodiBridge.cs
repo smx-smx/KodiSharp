@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Smx.KodiInterop.Modules.Xbmc;
 
 #if UNIX
 using System.Configuration;
@@ -44,7 +45,7 @@ namespace Smx.KodiInterop
 		private static readonly BlockingCollection<RPCRequest> MessageQueue = new BlockingCollection<RPCRequest>();
 		private static readonly Task asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
 
-		public static readonly Dictionary<Type, List<object>> EventClasses = new Dictionary<Type, List<object>>();
+		public static readonly Dictionary<Type, List<IKodiEventConsumer>> EventClasses = new Dictionary<Type, List<IKodiEventConsumer>>();
 
 		static KodiBridge()
 		{
@@ -64,12 +65,22 @@ namespace Smx.KodiInterop
 			}
 		}
 
-		public static void RegisterEventClass(Type classType, object classInstance)
+		private static void RegisterEventClass(IKodiEventConsumer classInstance)
 		{
+            Type classType = classInstance.GetType();
 			if (!EventClasses.ContainsKey(classType))
-				EventClasses.Add(classType, new List<object>());
+				EventClasses.Add(classType, new List<IKodiEventConsumer>());
 			EventClasses[classType].Add(classInstance);
 		}
+
+		public static void UnregisterEventClass(IKodiEventConsumer classInstance)
+		{
+			Type classType = classInstance.GetType();
+			EventClasses[classType].Remove(classInstance);
+		}
+
+        public static void RegisterMonitor(XbmcMonitor monitor) => RegisterEventClass(monitor);
+        public static void RegisterPlayer(XbmcPlayer player) => RegisterEventClass(player);
 
 		/// <summary>
 		/// The currently running addon
@@ -250,17 +261,30 @@ private static bool Initialize(
 #endif
 		private static bool PostEvent([MarshalAs(UnmanagedType.AnsiBStr)] string eventMessage){
 			KodiEventMessage ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
-			Type classType = Type.GetType(ev.Source);
-			if (classType != null && EventClasses.ContainsKey(classType)) {
-				List<object> instances = EventClasses[classType];
-				foreach (object instance in instances) {
-					var method = classType.GetMethod("onEvent", BindingFlags.NonPublic | BindingFlags.Instance);
-					bool result = (bool)method.Invoke(instance, new object[] { ev });
-				}
-				return true;
-			} else {
-				return Modules.Xbmc.GlobalEvents.DispatchEvent(ev);
+			Type classType;
+
+			switch (ev.Sender)
+			{
+				case "Monitor":
+					classType = typeof(XbmcMonitor);
+					break;
+				case "Player":
+					classType = typeof(XbmcPlayer);
+					break;
+				default:
+					return false;
 			}
+
+			if (!EventClasses.ContainsKey(classType))
+			{
+				return false;
+			}
+
+			List<IKodiEventConsumer> instances = EventClasses[classType];
+			foreach (IKodiEventConsumer instance in instances) {
+				instance.TriggerEvent(ev);
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -271,11 +295,11 @@ private static bool Initialize(
 		[DllExport("StopRPC", CallingConvention = CallingConvention.Cdecl)]
 #endif
 		private static bool _StopRPC() {
-			/* 
+            /* 
 			 * this alias is needed to avoid "Method not Found" exception
 			 * in PluginMain's "finally" block
 			 * */
-			return StopRPC();
+            return StopRPC();
 		}
 
 		public static bool StopRPC() {

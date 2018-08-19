@@ -7,7 +7,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 {
 	public class ListItem : IDisposable
     {
-		public readonly PyVariable Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
+		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 		public string Url { get; private set; }
 		public bool IsFolder { get; private set; }
 
@@ -125,7 +125,8 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			string thumbnailImage = null,
 			string path = null,
 			string url = "",
-			bool isFolder = false
+			bool isFolder = false,
+			Dictionary<Art, string> art = null
 		) {
 			this.Url = url;
 			this.IsFolder = isFolder;
@@ -133,6 +134,11 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				new PythonFunction(PyModule.XbmcGui, "ListItem"),
 				new List<object> { label, label2, iconImage, thumbnailImage, path }
 			);
+
+			if(art != null)
+			{
+				SetArt(art);
+			}
 		}
 
 		public string GetProperty(string key) {

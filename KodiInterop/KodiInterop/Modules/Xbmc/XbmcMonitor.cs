@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-    public class Monitor : IDisposable
+    public class XbmcMonitor : IDisposable, IKodiEventConsumer
     {
 		public readonly PyVariable Instance;
 		
@@ -25,59 +25,51 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public event EventHandler<EventArgs> SettingsChanged;
 		public event EventHandler<NotificationEventArgs> Notification;
 
-		private string[] eventNames = new string[] {
-			"onAbortRequested", "onCleanStarted", "onCleanFinished",
-			"onDPMSActivated", "onDPMSDeactivated", "onDatabaseScanStarted",
-			"onDatabaseUpdated", "onNotification", "onScanStarted",
-			"onScanFinished", "onScreensaverActivated", "onScreensaverDeactivated",
-			"onSettingsChanged"
-		};
-
-		private bool onEvent(KodiEventMessage e) {
-			switch (e.Sender) {
+		public bool TriggerEvent(KodiEventMessage e) {
+			switch (e.Source) {
 				case "onAbortRequested":
-					AbortRequested?.Invoke(e.Sender, new EventArgs());
+					AbortRequested?.Invoke(null, new EventArgs());
 					break;
 				case "onCleanStarted":
-					CleanStarted?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					CleanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onCleanFinished":
-					CleanFinished?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					CleanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onDPMSActivated":
-					DPMSActivated?.Invoke(e.Sender, new EventArgs());
+					DPMSActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDPMSDeactivated":
-					DPMSDeactivated?.Invoke(e.Sender, new EventArgs());
+					DPMSDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDatabaseScanStarted":
-					DatabaseScanStarted?.Invoke(e.Sender, new DatabaseEventArgs(e.EventArgs[0]));
+					DatabaseScanStarted?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onDatabaseUpdated":
-					DatabaseUpdated?.Invoke(e.Sender, new DatabaseEventArgs(e.EventArgs[0]));
+					DatabaseUpdated?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onNotification":
-					Notification?.Invoke(e.Sender, new NotificationEventArgs(
+					Notification?.Invoke(null, new NotificationEventArgs(
 						e.EventArgs[0], e.EventArgs[1], e.EventArgs[2]
 					));
 					break;
 				case "onScanStarted":
-					ScanStarted?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					ScanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScanFinished":
-					ScanFinished?.Invoke(e.Sender, new LibraryEventArgs(e.EventArgs[0]));
+					ScanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScreensaverActivated":
-					ScreensaverActivated?.Invoke(e.Sender, new EventArgs());
+					ScreensaverActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onScreensaverDeactivated":
-					ScreensaverDeactivated?.Invoke(e.Sender, new EventArgs());
+					ScreensaverDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onSettingsChanged":
-					SettingsChanged?.Invoke(e.Sender, new EventArgs());
+					SettingsChanged?.Invoke(null, new EventArgs());
 					break;
 				default:
-					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Sender));
+					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Source));
 					return false;
 			}
 			return true;
@@ -85,17 +77,15 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public void Dispose() {
 			Instance.Dispose();
+			KodiBridge.UnregisterEventClass(this);
 		}
 
-		public Monitor() {
-			PyEventClassBuilder cb = new PyEventClassBuilder("xbmc.Monitor", typeof(Monitor));
-			cb.Methods.AddRange(this.eventNames);
-			cb.Install();
-			this.Instance = cb.NewInstance(flags: PyVariableFlags.Monitor);
+		public XbmcMonitor() {
+            this.Instance = PyVariableManager.Get.NewVariable(evalCode: "self.new_monitor()");
 
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
-			Console.WriteLine("=> Registering EventClass " + typeof(Monitor).FullName);
-			KodiBridge.RegisterEventClass(typeof(Monitor), this);
+			Console.WriteLine("=> Registering EventClass " + typeof(XbmcMonitor).FullName);
+			KodiBridge.RegisterMonitor(this);
 		}
 	}
 }

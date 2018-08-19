@@ -6,36 +6,37 @@ using System.Collections.Generic;
 
 namespace Smx.KodiInterop
 {
-	public class KodiAddonSettings : IDictionary<string, string>
-	{
-		//public KodiAddon Addon { get; private set; }
-		private readonly Addon runningAddon;
+	public class KodiAddonSettings : IDictionary<string, string> {
+		private Addon addon;
 
-		public KodiAddonSettings(int? id = null) {
-			this.runningAddon = new Addon(id);
+		public KodiAddonSettings(Addon addon) {
+			this.addon = addon;
 		}
 
-		public string this[string setting] {
-			/*
+		public string this[string key] {
+			// FIXME: settings via XbmcPlugin cause "Invalid Handle" being printed in kodi.log
+			// even if the handle seems valid
+#if false
 			get {
 				return PythonInterop.CallFunction(
 					new PythonFunction(PyModule.XbmcPlugin, "getSetting"),
-					new List<object> { Addon.Handle, setting }
+					new List<object> { KodiBridge.RunningAddon.Handle, key }
 				);
 			}
 
 			set {
 				PythonInterop.CallFunction(
 					new PythonFunction(PyModule.XbmcPlugin, "setSetting"),
-					new List<object> { Addon.Handle, setting, value }
+					new List<object> { KodiBridge.RunningAddon.Handle, key, value }
 				);
 			}
-			*/
+#endif
+
 			get {
-				return runningAddon.GetSetting(setting);
+				return addon.GetSetting(key);
 			}
 			set {
-				runningAddon.SetSetting(setting, value);
+				addon.SetSetting(key, value);
 			}
 		}
 

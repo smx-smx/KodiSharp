@@ -13,7 +13,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			this.Instance = instance;
 		}
 		public InfoTagRadioRDS() {
-			this.Instance = PyVariableManager.NewVariable(flags: PyVariableFlags.Object);
+			this.Instance = PyVariableManager.Get.NewVariable();
 		}
     }
 }
