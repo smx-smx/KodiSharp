@@ -62,7 +62,7 @@ namespace Smx.KodiInterop
 					return;
 				}
 
-				this.Handle = int.Parse(PythonInterop.EvalToResult("sys.argv[1]").Value);
+				this.Handle = Convert.ToInt32(PythonInterop.EvalToResult("sys.argv[1]").Value);
 				this.Parameters = PythonInterop.EvalToResult("sys.argv[2]").Value;
 				PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 					this.BaseUrl, this.Handle, this.Parameters));

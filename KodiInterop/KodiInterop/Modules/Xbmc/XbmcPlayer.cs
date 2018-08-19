@@ -40,13 +40,13 @@ namespace Smx.KodiInterop.Modules.Xbmc
 					PlayBackResumed?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackSeek":
-					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
+					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(Convert.ToInt32(e.EventArgs[0]), Convert.ToInt32(e.EventArgs[1])));
 					break;
 				case "onPlayBackSeekChapter":
-					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(Convert.ToInt32(e.EventArgs[0])));
 					break;
 				case "onPlayBackSpeedChanged":
-					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(Convert.ToInt32(e.EventArgs[0])));
 					break;
 				case "onPlayBackStarted":
 					PlayBackStarted?.Invoke(null, new EventArgs());
@@ -144,37 +144,37 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public double PlayTime {
 			get {
-				return double.Parse(Instance.CallFunction("getTime"));
+				return Convert.ToDouble(Instance.CallFunction("getTime"));
 			}
 		}
 
 		public double TotalPlayTime {
 			get {
-				return double.Parse(Instance.CallFunction("getTotalTime"));
+				return Convert.ToDouble(Instance.CallFunction("getTotalTime"));
 			}
 		}
 
 		public bool IsPlaying {
 			get {
-				return bool.Parse(Instance.CallFunction("isPlaying"));
+				return Convert.ToBoolean(Instance.CallFunction("isPlaying"));
 			}
 		}
 
 		public bool IsPlayingAudio {
 			get {
-				return bool.Parse(Instance.CallFunction("isPlayingAudio"));
+				return Convert.ToBoolean(Instance.CallFunction("isPlayingAudio"));
 			}
 		}
 
 		public bool IsPlayingRDS {
 			get {
-				return bool.Parse(Instance.CallFunction("isPlayingRDS"));
+				return Convert.ToBoolean(Instance.CallFunction("isPlayingRDS"));
 			}
 		}
 
 		public bool IsPlayingVideo {
 			get {
-				return bool.Parse(Instance.CallFunction("isPlayingVideo"));
+				return Convert.ToBoolean(Instance.CallFunction("isPlayingVideo"));
 			}
 		}
 
@@ -194,6 +194,20 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		) {
 			Instance.CallFunction("play", new List<object> {
 				item,
+				listItem?.Instance,
+				windowed,
+				startPos
+			});
+		}
+
+		public void Play(
+			PlayList item = null,
+			ListItem listItem = null,
+			bool? windowed = null,
+			int? startPos = null
+		) {
+			Instance.CallFunction("play", new List<object> {
+				item?.Instance,
 				listItem?.Instance,
 				windowed,
 				startPos

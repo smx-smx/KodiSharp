@@ -13,7 +13,7 @@ namespace Smx.KodiInterop
 		/// </summary>
 		public static DVDState DVDState {
 			get {
-				return (DVDState)int.Parse(PythonInterop.CallFunction(
+				return (DVDState)Convert.ToInt32(PythonInterop.CallFunction(
 					PyModule.Xbmc, "getDVDState"
 				));
 			}
@@ -23,7 +23,7 @@ namespace Smx.KodiInterop
 		/// </summary>
 		public static int FreeMem {
 			get {
-				return int.Parse(PythonInterop.CallFunction(
+				return Convert.ToInt32(PythonInterop.CallFunction(
 					PyModule.Xbmc, "getFreeMem"
 				));
 			}
@@ -34,7 +34,7 @@ namespace Smx.KodiInterop
 		/// </summary>
 		public static int GlobalIdleTime {
 			get {
-				return int.Parse(PythonInterop.CallFunction(
+				return Convert.ToInt32(PythonInterop.CallFunction(
 					PyModule.Xbmc, "getGlobalIdleTime"
 				));
 			}
@@ -90,7 +90,7 @@ namespace Smx.KodiInterop
 
 		public static bool StartServer(ServerType type, bool bStart, bool? bWait = null) {
 			string typeString = PyModule.Xbmc.GetString() + type.GetString();
-			return bool.Parse(PythonInterop.CallFunction(
+			return Convert.ToBoolean(PythonInterop.CallFunction(
 				PyModule.Xbmc, "startServer", new List<object> {
 					typeString, bStart, bWait
 				}

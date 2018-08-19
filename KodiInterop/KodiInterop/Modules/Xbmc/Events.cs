@@ -61,13 +61,13 @@ namespace Smx.KodiInterop.Modules.Xbmc
 					PlayBackResumed?.Invoke(null, new EventArgs());
 					break;
 				case "onPlayBackSeek":
-					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(int.Parse(e.EventArgs[0]), int.Parse(e.EventArgs[1])));
+					PlayBackSeek?.Invoke(null, new PlayBackSeekEventArgs(Convert.ToInt32(e.EventArgs[0]), Convert.ToInt32(e.EventArgs[1])));
 					break;
 				case "onPlayBackSeekChapter":
-					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSeekChapter?.Invoke(null, new PlayBackSeekChapterEventArgs(Convert.ToInt32(e.EventArgs[0])));
 					break;
 				case "onPlayBackSpeedChanged":
-					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(int.Parse(e.EventArgs[0])));
+					PlayBackSpeedChanged?.Invoke(null, new PlayBackSpeedChangedEventArgs(Convert.ToInt32(e.EventArgs[0])));
 					break;
 				case "onPlayBackStarted":
 					PlayBackStarted?.Invoke(null, new EventArgs());

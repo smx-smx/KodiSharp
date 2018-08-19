@@ -15,6 +15,9 @@ using Smx.KodiInterop.Modules.Xbmc;
 using System.Threading;
 using Smx.KodiInterop.Python;
 using Smx.KodiInterop.Python.ValueConverters;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Net.Http;
 
 namespace TestPlugin
 {
@@ -55,6 +58,11 @@ namespace TestPlugin
 					url: addon.BuildNavUrl("/nav"),
 					isFolder: true
 				),
+				new ListItem(
+					label: "Playlist",
+					url: addon.BuildNavUrl("/playlist"),
+					isFolder: true
+				),
 				new ListItem("Item 2"),
 				new ListItem("Item 3")
 			};
@@ -74,6 +82,43 @@ namespace TestPlugin
 			 * This is possible due to Assembly Domain that is created by the CLR once the plugin is loaded for the first time. 
 			 **/
 			TestPluginState.LastMainPageVisitTime = DateTime.Now;
+		}
+
+		[Route("/playlist")]
+		public void PlaylistHandler(NameValueCollection parameters) {
+			Uri uri = new Uri("http://www.amclassical.com/piano/");
+
+			var data = new HttpClient()
+				.GetAsync(uri)
+				.Result.Content
+				.ReadAsStringAsync()
+				.Result;
+
+			PlayList pl = new PlayList(PlayListType.Music);
+
+			var matches = new Regex("<a href=\"?(.*?)\"?>.*</a>").Matches(data);
+			var number = Math.Min(5, matches.Count);
+			for (var i = 0; i < number; i++) {
+				string path = matches[i].Groups[1].Value.ToLower();
+				if (!path.EndsWith("mp3"))
+					continue;
+
+				string url = uri.GetLeftPart(UriPartial.Authority) + path;
+
+				pl.Add(url);
+			}
+
+			var player = new XbmcPlayer();
+			player.Play(pl);
+
+			for(int i=0; i<pl.Count; i++) {
+				while (!player.IsPlayingAudio) {
+					Kodi.Sleep(TimeSpan.FromMilliseconds(200));
+				}
+				Console.WriteLine($"[NOW PLAYING]: {player.PlayingFile}");
+				Kodi.Sleep(TimeSpan.FromSeconds(5));
+				player.PlayNext();
+			}
 		}
 
 		[Route("/audio")]

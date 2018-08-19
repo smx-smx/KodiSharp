@@ -17,10 +17,10 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		[Obsolete]
 		public TimeSpan Duration {
 			get {
-				string duration = Instance.CallFunction(
+				double duration = Convert.ToDouble(Instance.CallFunction(
 					new PythonFunction("getduration")
-				);
-				return TimeSpan.FromSeconds(double.Parse(duration));
+				));
+				return TimeSpan.FromSeconds(duration);
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public bool Selected {
 			get {
-				return bool.Parse(Instance.CallFunction(
+				return Convert.ToBoolean(Instance.CallFunction(
 					new PythonFunction("isSelected")
 				));
 			}

@@ -68,7 +68,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// </summary>
 		public bool Confirmed {
 			get {
-				return bool.Parse(Instance.CallFunction(
+				return Convert.ToBoolean(Instance.CallFunction(
 					new PythonFunction("isConfirmed")
 				));
 			}
