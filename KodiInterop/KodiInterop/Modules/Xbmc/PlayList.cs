@@ -21,7 +21,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public int Id {
 			get {
 				return Convert.ToInt32(Instance.CallFunction(
-					new PythonFunction("getPlayListId")
+					PythonFunction.ClassFunction("getPlayListId")
 				));
 			}
 		}
@@ -35,21 +35,19 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public void Clear() {
 			Instance.CallFunction(
-				new PythonFunction("clear")
+				PythonFunction.ClassFunction("clear")
 			);
 		}
 
 		public void Remove(string item) {
 			Instance.CallFunction(
-				new PythonFunction("remove"), new List<object> { item }
+				PythonFunction.ClassFunction("remove"), item
 			);
 		}
 
 		public void Insert(int index, string item) {
 			Instance.CallFunction(
-				new PythonFunction("add"), new List<object> {
-					item, null, index
-				}
+				PythonFunction.ClassFunction("add"), item, null, index
 			);
 		}
 
@@ -59,16 +57,14 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public void Add(string url, ListItem listItem = null) {
 			Instance.CallFunction(
-				new PythonFunction("add"), new List<object> {
-					url, listItem
-				}
+				PythonFunction.ClassFunction("add"), url, listItem
 			);
 		}
 
 		public int Count {
 			get {
 				return Convert.ToInt32(Instance.CallFunction(
-					new PythonFunction("size")
+					PythonFunction.ClassFunction("size")
 				));
 			}
 		}

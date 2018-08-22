@@ -63,7 +63,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="shellCommand"></param>
 		public static void Exec(string shellCommand) {
-			PythonInterop.CallBuiltin("System.Exec", new List<string> { shellCommand });
+			PythonInterop.CallBuiltin("System.Exec", shellCommand);
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="shellCommand"></param>
 		public static void ExecWait(string shellCommand) {
-			PythonInterop.CallBuiltin("System.ExecWait", new List<string> { shellCommand });
+			PythonInterop.CallBuiltin("System.ExecWait", shellCommand);
 		}
 
 		/// <summary>
@@ -136,14 +136,8 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="filenameAndPath">filename (including the path)</param>
 		/// <param name="sync">whether to run synchronously</param>
-		public static void TakeScreenshot(string filenameAndPath = null, bool? sync = null) {
-			List<object> arguments = new List<object>();
-			if (filenameAndPath != null)
-				arguments.Add(filenameAndPath);
-			if (sync != null)
-				arguments.Add(sync);
-
-			PythonInterop.CallBuiltin("TakeScreenshot", arguments);
+		public static void TakeScreenshot(string filenameAndPath = null, bool sync = false) {
+			PythonInterop.CallBuiltin("TakeScreenshot", filenameAndPath, sync);
 		}
 
 		/// <summary>
@@ -151,7 +145,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="macAddress">MAC address (Format: FF:FF:FF:FF:FF:FF or FF-FF-FF-FF-FF-FF)</param>
 		public static void WakeOnLan(string macAddress) {
-			PythonInterop.CallBuiltin("System.WakeOnLan", new List<string> { macAddress });
+			PythonInterop.CallBuiltin("System.WakeOnLan", macAddress);
 		}
 	}
 }

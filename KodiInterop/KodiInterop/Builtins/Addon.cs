@@ -2,6 +2,17 @@
 
 namespace Smx.KodiInterop.Builtins
 {
+	public static class AddonDefaultBuiltins
+	{
+		/// <summary>
+		/// Open a settings dialog for the default addon of the given type (extensionpoint) 
+		/// </summary>
+		/// <param name="extensionPoint">The add-on type</param>
+		public static void OpenSettings(string extensionPoint) {
+			PythonInterop.CallBuiltin("Addon.Default.OpenSettings", extensionPoint);
+		}
+	}
+
 	public static class AddonBuiltins
     {
 		/// <summary>
@@ -9,7 +20,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="id"></param>
 		public static void InstallAddon(int id) {
-			PythonInterop.CallBuiltin("InstallAddon", new List<object> { id });
+			PythonInterop.CallBuiltin("InstallAddon", id);
 		}
 
 		/// <summary>
@@ -17,7 +28,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="id"></param>
 		public static void RunAddon(int id) {
-			PythonInterop.CallBuiltin("RunAddon", new List<object> { id });
+			PythonInterop.CallBuiltin("RunAddon", id);
 		}
 
 		/// <summary>
@@ -25,7 +36,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="id"></param>
 		public static void OpenSettings(int id) {
-			PythonInterop.CallBuiltin("Addon.OpenSettings", new List<object> { id });
+			PythonInterop.CallBuiltin("Addon.OpenSettings", id);
 		}
 
 		/// <summary>
@@ -41,5 +52,15 @@ namespace Smx.KodiInterop.Builtins
 		public static void UpdateAddonRepos() {
 			PythonInterop.CallBuiltin("UpdateAddonRepos");
 		}
+
+		/// <summary>
+		/// Run the specified AppleScript command 
+		/// </summary>
+		/// <param name="scriptUri">the URL to the apple script</param>
+		public static void RunAppleScript(string scriptUri) {
+			PythonInterop.CallBuiltin("RunAppleScript", scriptUri);
+		}
+
+
 	}
 }

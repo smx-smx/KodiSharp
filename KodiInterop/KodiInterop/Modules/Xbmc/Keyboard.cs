@@ -19,9 +19,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public Keyboard(string defaultText = null, string heading = null, bool hidden = false) {
 			Instance.CallAssign(
 				new PythonFunction(PyModule.Xbmc, "Keyboard"),
-				new List<object> {
-					defaultText, heading, hidden
-				}
+				defaultText, heading, hidden
 			);
 		}
 
@@ -31,7 +29,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public string Text {
 			get {
 				return Instance.CallFunction(
-					new PythonFunction("getText")
+					PythonFunction.ClassFunction("getText")
 				);
 			}
 		}
@@ -39,8 +37,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		private string Heading {
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setHeading"),
-					new List<object> { value }
+					PythonFunction.ClassFunction("setHeading"),
+					value
 				);
 			}
 		}
@@ -48,8 +46,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public string DefaultText {
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setDefault"),
-					new List<object> { value }
+					PythonFunction.ClassFunction("setDefault"),
+					value
 				);
 			}
 		}
@@ -57,8 +55,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public bool HiddenInput {
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setHiddenInput"),
-					new List<object> { value }
+					PythonFunction.ClassFunction("setHiddenInput"),
+					value
 				);
 			}
 		}
@@ -69,7 +67,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public bool Confirmed {
 			get {
 				return Convert.ToBoolean(Instance.CallFunction(
-					new PythonFunction("isConfirmed")
+					PythonFunction.ClassFunction("isConfirmed")
 				));
 			}
 		}
@@ -81,7 +79,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <param name="timeout">milliseconds to autoclose dialog. (default=do not autoclose)</param>
 		public void DoModal(TimeSpan? timeout = null) {
 			Instance.CallFunction(
-				new PythonFunction("doModal"),
+				PythonFunction.ClassFunction("doModal"),
 				new List<object> {
 					timeout?.TotalMilliseconds
 				}

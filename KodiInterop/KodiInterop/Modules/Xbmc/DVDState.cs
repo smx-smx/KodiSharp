@@ -7,12 +7,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
     public enum DVDState
     {
 		[StringValue("DRIVE_NOT_READY")]
-		DRIVE_NOT_READY = 1,
+		DriveNotReady = 1,
 		[StringValue("TRAY_OPEN")]
-		TRAY_OPEN = 16,
+		TrayOpen = 16,
 		[StringValue("TRAY_CLOSED_NO_MEDIA")]
-		TRAY_CLOSED_NO_MEDIA = 64,
+		TrayClosedNoMedia = 64,
 		[StringValue("TRAY_CLOSED_MEDIA_PRESENT")]
-		TRAY_CLOSED_MEDIA_PRESENT = 96
+		TrayClosedMediaPresent = 96
 	}
 }

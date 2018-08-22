@@ -29,7 +29,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// <returns></returns>
 		public string GetAddonInfo(AddonInfo info) {
 			return Instance.CallFunction(
-				new PythonFunction("getAddonInfo"),
+				PythonFunction.ClassFunction("getAddonInfo"),
 				new List<object> { info.GetString() }
 			);
 		}
@@ -41,7 +41,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// <returns></returns>
 		public string GetSetting(string setting) {
 			return Instance.CallFunction(
-				new PythonFunction("getSetting"),
+				PythonFunction.ClassFunction("getSetting"),
 				new List<object> { setting }
 			);
 		}
@@ -51,19 +51,19 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 
 			switch (Type.GetTypeCode(typeof(T))) {
 				case TypeCode.Boolean:
-					func = new PythonFunction("getSettingBool");
+					func = PythonFunction.ClassFunction("getSettingBool");
 					break;
 				case TypeCode.Decimal:
-					func = new PythonFunction("getSettingInt");
+					func = PythonFunction.ClassFunction("getSettingInt");
 					break;
 				case TypeCode.Double:
-					func = new PythonFunction("getSettingNumber");
+					func = PythonFunction.ClassFunction("getSettingNumber");
 					break;
 				case TypeCode.String:
-					func = new PythonFunction("getSettingString");
+					func = PythonFunction.ClassFunction("getSettingString");
 					break;
 				default:
-					func = new PythonFunction("getSetting");
+					func = PythonFunction.ClassFunction("getSetting");
 					break;
 
 			}
@@ -76,19 +76,19 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 
 		    switch (Type.GetTypeCode(typeof(T))) {
 			    case TypeCode.Boolean:
-				    func = new PythonFunction("setSettingBool");
+				    func = PythonFunction.ClassFunction("setSettingBool");
 				    break;
 			    case TypeCode.Decimal:
-				    func = new PythonFunction("setSettingInt");
+				    func = PythonFunction.ClassFunction("setSettingInt");
 				    break;
 			    case TypeCode.Double:
-				    func = new PythonFunction("setSettingNumber");
+				    func = PythonFunction.ClassFunction("setSettingNumber");
 				    break;
 			    case TypeCode.String:
-				    func = new PythonFunction("setSettingString");
+				    func = PythonFunction.ClassFunction("setSettingString");
 				    break;
 				default:
-					func = new PythonFunction("setSetting");
+					func = PythonFunction.ClassFunction("setSetting");
 					break;
 		    }
 
@@ -102,7 +102,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// <param name="value">value of the setting.</param>
 		public void SetSetting(string setting, object value) {
 			Instance.CallFunction(
-				new PythonFunction("setSetting"),
+				PythonFunction.ClassFunction("setSetting"),
 				new List<object> { setting, value }
 			);
 		}
@@ -112,7 +112,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// </summary>
 		public void OpenSettings() {
 			Instance.CallFunction(
-				new PythonFunction("openSettings")
+				PythonFunction.ClassFunction("openSettings")
 			);
 		}
 
@@ -123,7 +123,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// <returns>Localized 'unicode string'</returns>
 		public string GetLocalizedString(int id) {
 		    return Instance.CallFunction(
-				new PythonFunction("getLocalizedString"),
+				PythonFunction.ClassFunction("getLocalizedString"),
 				new List<object> { id }
 		    );
 	    }

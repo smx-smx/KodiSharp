@@ -23,7 +23,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="locationIndex">A number between 1 and 3</param>
 		public static void LocationSet(int locationIndex) {
-			PythonInterop.CallBuiltin("Weather.LocationSet", new List<object> { locationIndex });
+			PythonInterop.CallBuiltin("Weather.LocationSet", locationIndex);
 		}
 
 		/// <summary>

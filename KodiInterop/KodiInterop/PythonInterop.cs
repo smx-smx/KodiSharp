@@ -128,6 +128,10 @@ namespace Smx.KodiInterop
 			return CallFunction(new PythonFunction(module, functionName), arguments, flags);
 		}
 
+		public static dynamic CallFunction(PythonFunction pythonFunction, params object[] arguments) {
+			return CallFunction(pythonFunction, arguments.ToList());
+		}
+
 		public static dynamic CallBuiltin(string builtinName, List<string> arguments = null) {
 			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object> {
 				//Kodi builtins shouldn't have quotes, so we pass a single parameter with the joined parameters
@@ -145,6 +149,14 @@ namespace Smx.KodiInterop
 		public static dynamic CallBuiltin(string builtinName, List<object> arguments) {
 			List<string> textArguments = EscapeArguments(arguments, EscapeFlags.None);
 			return CallBuiltin(builtinName, textArguments);
+		}
+
+		public static dynamic CallBuiltin(string builtinName, params string[] arguments) {
+			return CallBuiltin(builtinName, arguments.ToList());
+		}
+
+		public static dynamic CallBuiltin(string builtinName, params object[] arguments) {
+			return CallBuiltin(builtinName, arguments.ToList());
 		}
 		#endregion
 

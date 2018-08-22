@@ -18,7 +18,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="setting">Name of the setting to reset</param>
 		public static void Reset(string setting) {
-			PythonInterop.CallBuiltin("Skin.Reset", new List<string> { setting });
+			PythonInterop.CallBuiltin("Skin.Reset", setting);
 		}
 
 		/// <summary>
@@ -34,9 +34,7 @@ namespace Smx.KodiInterop.Builtins
 		/// The most common types are xbmc.addon.video, xbmc.addon.audio, xbmc.addon.image and xbmc.addon.executable.
 		/// </summary>
 		public static void SetAddon(string itemName, string typeName) {
-			PythonInterop.CallBuiltin("Skin.SetAddon", new List<string> {
-				itemName, typeName
-			});
+			PythonInterop.CallBuiltin("Skin.SetAddon", itemName, typeName);
 		}
 
 		/// <summary>
@@ -45,7 +43,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="setting"></param>
 		public static void SetBool(string setting) {
-			PythonInterop.CallBuiltin("Skin.SetBool", new List<string> { setting });
+			PythonInterop.CallBuiltin("Skin.SetBool", setting);
 		}
 
 		/// <summary>
@@ -141,7 +139,7 @@ namespace Smx.KodiInterop.Builtins
 		///	Toggles the skin setting ?setting? for use with conditional visibility tags containing Skin.HasSetting(setting).
 		/// </summary>
 		public static void ToggleSetting(string setting) {
-			PythonInterop.CallBuiltin("Skin.ToggleSetting", new List<string> { setting });
+			PythonInterop.CallBuiltin("Skin.ToggleSetting", setting);
 		}
 
 		/// <summary>

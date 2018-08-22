@@ -69,7 +69,7 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="position"></param>
 		[KodiMinApiVersion(15)]
 		public static void Seek(TimeSpan position) {
-			PythonInterop.CallBuiltin("Seek", new List<object> { position.TotalSeconds });
+			PythonInterop.CallBuiltin("Seek", position.TotalSeconds);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using Smx.KodiInterop;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Smx.KodiInterop.Python
 {
@@ -59,7 +60,11 @@ namespace Smx.KodiInterop.Python
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
 		){
-			return CallFunction(new PythonFunction(function), arguments, escapeMethod);
+			return CallFunction(PythonFunction.ClassFunction(function), arguments, escapeMethod);
+		}
+
+		public dynamic CallFunction(PythonFunction function, params object[] args) {
+			return CallFunction(function, args.ToList());
 		}
 
 		/// <summary>
@@ -69,7 +74,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="arguments"></param>
 		/// <param name="escapeMethod"></param>
 		/// <returns></returns>
-		public string CallAssign(
+		public dynamic CallAssign(
 			PythonFunction function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
@@ -91,14 +96,18 @@ namespace Smx.KodiInterop.Python
 			return this.Value;
 		}
 
-		public string CallAssign(
+		public dynamic CallAssign(
 			string function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
 			PyVariable target = null
 		)
 		{
-			return CallAssign(new PythonFunction(function), arguments, escapeMethod, target);
+			return CallAssign(PythonFunction.ClassFunction(function), arguments, escapeMethod, target);
+		}
+
+		public dynamic CallAssign(PythonFunction function, params object[] args) {
+			return CallAssign(function, args.ToList());
 		}
 
         public void EvalAssign(string code)

@@ -18,7 +18,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public TimeSpan Duration {
 			get {
 				double duration = Convert.ToDouble(Instance.CallFunction(
-					new PythonFunction("getduration")
+					PythonFunction.ClassFunction("getduration")
 				));
 				return TimeSpan.FromSeconds(duration);
 			}
@@ -28,7 +28,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public string Filename {
 			get {
 				return Instance.CallFunction(
-					new PythonFunction("getfilename")
+					PythonFunction.ClassFunction("getfilename")
 				);
 			}
 		}
@@ -61,12 +61,12 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public bool Selected {
 			get {
 				return Convert.ToBoolean(Instance.CallFunction(
-					new PythonFunction("isSelected")
+					PythonFunction.ClassFunction("isSelected")
 				));
 			}
 			set {
 				Instance.CallFunction(
-					new PythonFunction("select"), new List<object> { value }
+					PythonFunction.ClassFunction("select"), new List<object> { value }
 				);
 			}
 		}
@@ -74,12 +74,12 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public string Label {
 			get {
 				return Instance.CallFunction(
-					new PythonFunction("getLabel")
+					PythonFunction.ClassFunction("getLabel")
 				);
 			}
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setLabel"), new List<object> { value }
+					PythonFunction.ClassFunction("setLabel"), new List<object> { value }
 				);
 			}
 		}
@@ -87,12 +87,12 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public string Label2 {
 			get {
 				return Instance.CallFunction(
-					new PythonFunction("getLabel2")
+					PythonFunction.ClassFunction("getLabel2")
 				);
 			}
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setLabel2"), new List<object> { value }
+					PythonFunction.ClassFunction("setLabel2"), new List<object> { value }
 				);
 			}
 		}
@@ -103,7 +103,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			}
 			set {
 				Instance.CallFunction(
-					new PythonFunction("setPath"), new List<object> { value }
+					PythonFunction.ClassFunction("setPath"), new List<object> { value }
 				);
 			}
 		}
@@ -143,25 +143,25 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public string GetProperty(string key) {
 			return Instance.CallFunction(
-				new PythonFunction("getProperty"), new List<object> { key }
+				PythonFunction.ClassFunction("getProperty"), new List<object> { key }
 			);
 		}
 
 		public void SetProperty(string key, object value) {
 			Instance.CallFunction(
-				new PythonFunction("setProperty"), new List<object> { key, value }
+				PythonFunction.ClassFunction("setProperty"), new List<object> { key, value }
 			);
 		}
 
 		public string GetArt(string key) {
 			return Instance.CallFunction(
-				new PythonFunction("getArt"), new List<object> { key }
+				PythonFunction.ClassFunction("getArt"), new List<object> { key }
 			);
 		}
 
 		public void SetArt(Dictionary<Art, string> art) {
 			Instance.CallFunction(
-				new PythonFunction("setArt"), art.ToPythonCode()
+				PythonFunction.ClassFunction("setArt"), art.ToPythonCode()
 			);
 		}
 

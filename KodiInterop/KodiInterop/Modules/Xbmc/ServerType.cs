@@ -7,18 +7,18 @@ namespace Smx.KodiInterop.Modules.Xbmc
     public enum ServerType
     {
 		[StringValue("SERVER_WEBSERVER")]
-		SERVER_WEBSERVER = 1,
+		WebServer = 1,
 		[StringValue("SERVER_AIRPLAYSERVER")]
-		SERVER_AIRPLAYSERVER = 2,
+		AirplayServer = 2,
 		[StringValue("SERVER_JSONRPCSERVER")]
-		SERVER_JSONRPCSERVER = 3,
+		JsonRpcServer = 3,
 		[StringValue("SERVER_UPNPRENDERER")]
-		SERVER_UPNPRENDERER = 4,
+		UpnpRenderer = 4,
 		[StringValue("SERVER_UPNPSERVER")]
-		SERVER_UPNPSERVER = 5,
+		UpnpServer = 5,
 		[StringValue("SERVER_EVENTSERVER")]
-		SERVER_EVENTSERVER = 6,
+		EventServer = 6,
 		[StringValue("SERVER_ZEROCONF")]
-		SERVER_ZEROCONF = 7,
+		ZeroConfServer = 7,
 	}
 }

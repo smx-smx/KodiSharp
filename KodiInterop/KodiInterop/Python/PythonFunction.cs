@@ -28,16 +28,19 @@ namespace Smx.KodiInterop.Python
 			this.Function = functionName;
 		}
 
-		/// <summary>
-		/// Constructor for function call on class instance
-		/// </summary>
-		/// <param name="functionName"></param>
-		public PythonFunction(string functionName) : this("", functionName) { }
-
         public dynamic Call(params object[] args)
         {
             return PythonInterop.CallFunction(this, args);
         }
+
+		/// <summary>
+		/// Specifies a function inside a class instance
+		/// </summary>
+		/// <param name="functionName"></param>
+		/// <returns></returns>
+		public static PythonFunction ClassFunction(string functionName) {
+			return new PythonFunction("", functionName);
+		}
 
 		public override string ToString() {
 			string result = this.Module;
