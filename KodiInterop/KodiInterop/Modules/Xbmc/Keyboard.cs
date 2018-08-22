@@ -9,6 +9,13 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		private PyVariable Instance = PyVariableManager.Get.NewVariable();
 
+		private static PythonFunction _getText = PythonFunction.ClassFunction("getText");
+		private static PythonFunction _setHeading = PythonFunction.ClassFunction("setHeading");
+		private static PythonFunction _setDefault = PythonFunction.ClassFunction("setDefault");
+		private static PythonFunction _setHiddenInput = PythonFunction.ClassFunction("setHiddenInput");
+		private static PythonFunction _isConfirmed = PythonFunction.ClassFunction("isConfirmed");
+		private static PythonFunction _doModal = PythonFunction.ClassFunction("doModal");
+
 		/// <summary>
 		/// Creates a new Keyboard  object with default text
 		/// heading and hidden input flag if supplied.
@@ -28,36 +35,25 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// </summary>
 		public string Text {
 			get {
-				return Instance.CallFunction(
-					PythonFunction.ClassFunction("getText")
-				);
+				return Instance.CallFunction(_getText);
 			}
 		}
 
 		private string Heading {
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setHeading"),
-					value
-				);
+				Instance.CallFunction(_setHeading, value);
 			}
 		}
 
 		public string DefaultText {
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setDefault"),
-					value
-				);
+				Instance.CallFunction(_setDefault, value);
 			}
 		}
 
 		public bool HiddenInput {
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setHiddenInput"),
-					value
-				);
+				Instance.CallFunction(_setHiddenInput, value);
 			}
 		}
 
@@ -66,9 +62,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// </summary>
 		public bool Confirmed {
 			get {
-				return Convert.ToBoolean(Instance.CallFunction(
-					PythonFunction.ClassFunction("isConfirmed")
-				));
+				return Convert.ToBoolean(Instance.CallFunction(_isConfirmed));
 			}
 		}
 
@@ -78,12 +72,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// </summary>
 		/// <param name="timeout">milliseconds to autoclose dialog. (default=do not autoclose)</param>
 		public void DoModal(TimeSpan? timeout = null) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("doModal"),
-				new List<object> {
-					timeout?.TotalMilliseconds
-				}
-			);
+			Instance.CallFunction(_doModal, timeout?.TotalMilliseconds);
 		}
 	}
 }

@@ -3,8 +3,7 @@ using System;
 
 namespace Smx.KodiInterop.Python
 {
-	public class PythonFunction
-    {
+	public class PythonFunction {
 		public string Module = "";
 		public string Function = "";
 
@@ -28,10 +27,9 @@ namespace Smx.KodiInterop.Python
 			this.Function = functionName;
 		}
 
-        public dynamic Call(params object[] args)
-        {
-            return PythonInterop.CallFunction(this, args);
-        }
+		public dynamic Call(params object[] args) {
+			return PythonInterop.CallFunction(this, args);
+		}
 
 		/// <summary>
 		/// Specifies a function inside a class instance

@@ -10,9 +10,16 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
+		private static PythonFunction _ctor = new PythonFunction(PyModule.Xbmc, "PlayList");
+		private static PythonFunction _getPlayListId = PythonFunction.ClassFunction("getPlayListId");
+		private static PythonFunction _clear = PythonFunction.ClassFunction("clear");
+		private static PythonFunction _remove = PythonFunction.ClassFunction("remove");
+		private static PythonFunction _add = PythonFunction.ClassFunction("add");
+		private static PythonFunction _size = PythonFunction.ClassFunction("size");
+
 		public PlayList(PlayListType type) {
 			Instance.CallAssign(
-				new PythonFunction(PyModule.Xbmc, "PlayList"),
+				_ctor,
 				new List<object> { type.GetString() },
 				EscapeFlags.None
 			);
@@ -20,9 +27,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public int Id {
 			get {
-				return Convert.ToInt32(Instance.CallFunction(
-					PythonFunction.ClassFunction("getPlayListId")
-				));
+				return Convert.ToInt32(Instance.CallFunction(_getPlayListId));
 			}
 		}
 
@@ -34,21 +39,15 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Clear() {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("clear")
-			);
+			Instance.CallFunction(_clear);
 		}
 
 		public void Remove(string item) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("remove"), item
-			);
+			Instance.CallFunction(_remove, item);
 		}
 
 		public void Insert(int index, string item) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("add"), item, null, index
-			);
+			Instance.CallFunction(_add, item, null, index);
 		}
 
 		public void Add(string url) {
@@ -56,16 +55,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Add(string url, ListItem listItem = null) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("add"), url, listItem
-			);
+			Instance.CallFunction(_add, url, listItem);
 		}
 
 		public int Count {
 			get {
-				return Convert.ToInt32(Instance.CallFunction(
-					PythonFunction.ClassFunction("size")
-				));
+				return Convert.ToInt32(Instance.CallFunction(_size));
 			}
 		}
 		#endregion

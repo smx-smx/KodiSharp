@@ -14,12 +14,25 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		private PyVariable MusicInfoInstance;
 		private PyVariable VideoInfoInstance;
 
+		private static PythonFunction _ctor = new PythonFunction(PyModule.XbmcGui, "ListItem");
+		private static PythonFunction _getDuration = PythonFunction.ClassFunction("getduration");
+		private static PythonFunction _getFilename = PythonFunction.ClassFunction("getfilename");
+		private static PythonFunction _isSelected = PythonFunction.ClassFunction("isSelected");
+		private static PythonFunction _select = PythonFunction.ClassFunction("select");
+		private static PythonFunction _getLabel = PythonFunction.ClassFunction("getLabel");
+		private static PythonFunction _setLabel = PythonFunction.ClassFunction("setLabel");
+		private static PythonFunction _getLabel2 = PythonFunction.ClassFunction("getLabel2");
+		private static PythonFunction _setLabel2 = PythonFunction.ClassFunction("setLabel2");
+		private static PythonFunction _setPath = PythonFunction.ClassFunction("setPath");
+		private static PythonFunction _getProperty = PythonFunction.ClassFunction("getProperty");
+		private static PythonFunction _setProperty = PythonFunction.ClassFunction("setProperty");
+		private static PythonFunction _getArt = PythonFunction.ClassFunction("getArt");
+		private static PythonFunction _setArt = PythonFunction.ClassFunction("setArt");
+
 		[Obsolete]
 		public TimeSpan Duration {
 			get {
-				double duration = Convert.ToDouble(Instance.CallFunction(
-					PythonFunction.ClassFunction("getduration")
-				));
+				double duration = Convert.ToDouble(Instance.CallFunction(_getDuration));
 				return TimeSpan.FromSeconds(duration);
 			}
 		}
@@ -27,9 +40,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		[Obsolete]
 		public string Filename {
 			get {
-				return Instance.CallFunction(
-					PythonFunction.ClassFunction("getfilename")
-				);
+				return Instance.CallFunction(_getFilename);
 			}
 		}
 
@@ -60,51 +71,37 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public bool Selected {
 			get {
-				return Convert.ToBoolean(Instance.CallFunction(
-					PythonFunction.ClassFunction("isSelected")
-				));
+				return Convert.ToBoolean(Instance.CallFunction(_isSelected));
 			}
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("select"), new List<object> { value }
-				);
+				Instance.CallFunction(_select, value);
 			}
 		}
 
 		public string Label {
 			get {
-				return Instance.CallFunction(
-					PythonFunction.ClassFunction("getLabel")
-				);
+				return Instance.CallFunction(_getLabel);
 			}
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setLabel"), new List<object> { value }
-				);
+				Instance.CallFunction(_setLabel, value);
 			}
 		}
 
 		public string Label2 {
 			get {
-				return Instance.CallFunction(
-					PythonFunction.ClassFunction("getLabel2")
-				);
+				return Instance.CallFunction(_getLabel2);
 			}
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setLabel2"), new List<object> { value }
-				);
+				Instance.CallFunction(_setLabel2, value);
 			}
 		}
 
 		public string Path {
 			get {
-				return this.GetProperty("path");
+				return GetProperty("path");
 			}
 			set {
-				Instance.CallFunction(
-					PythonFunction.ClassFunction("setPath"), new List<object> { value }
-				);
+				Instance.CallFunction(_setPath, value);
 			}
 		}
 
@@ -131,8 +128,8 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			this.Url = url;
 			this.IsFolder = isFolder;
 			Instance.CallAssign(
-				new PythonFunction(PyModule.XbmcGui, "ListItem"),
-				new List<object> { label, label2, iconImage, thumbnailImage, path }
+				_ctor,
+				label, label2, iconImage, thumbnailImage, path
 			);
 
 			if(art != null)
@@ -142,27 +139,19 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		}
 
 		public string GetProperty(string key) {
-			return Instance.CallFunction(
-				PythonFunction.ClassFunction("getProperty"), new List<object> { key }
-			);
+			return Instance.CallFunction(_getProperty, key);
 		}
 
 		public void SetProperty(string key, object value) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("setProperty"), new List<object> { key, value }
-			);
+			Instance.CallFunction(_setProperty, key, value);
 		}
 
 		public string GetArt(string key) {
-			return Instance.CallFunction(
-				PythonFunction.ClassFunction("getArt"), new List<object> { key }
-			);
+			return Instance.CallFunction(_getArt, key);
 		}
 
 		public void SetArt(Dictionary<Art, string> art) {
-			Instance.CallFunction(
-				PythonFunction.ClassFunction("setArt"), art.ToPythonCode()
-			);
+			Instance.CallFunction(_setArt, art.ToPythonCode());
 		}
 
 		public void Dispose() {
