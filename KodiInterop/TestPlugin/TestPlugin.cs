@@ -134,6 +134,16 @@ namespace TestPlugin
 
 			//Thread.Sleep(TimeSpan.FromSeconds(1));
 			player.Play("http://www.bensound.com/royalty-free-music?download=memories");
+
+			while (!player.IsPlayingAudio) {
+				Kodi.Sleep(TimeSpan.FromSeconds(1));
+			}
+
+			for(int i=10; i<100; i+=5) {
+				ApplicationBuiltins.SetVolume(i, true);
+				Kodi.Sleep(TimeSpan.FromMilliseconds(200));
+			}
+
 			/* Keep monitoring for a bit */
 			Kodi.Sleep(TimeSpan.FromSeconds(10));
 		}

@@ -32,7 +32,10 @@ namespace Smx.KodiInterop
 			return Utils.BuildUrl(this.BaseUrl, parameters);
 		}
 
+		public readonly bool DebugEnabled;
+
 		public KodiAddon(bool debug=false){
+			DebugEnabled = debug;
 			try {
                 if (debug)
                 {

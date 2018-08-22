@@ -31,33 +31,6 @@ namespace Smx.KodiInterop.Builtins
 			PythonInterop.CallBuiltin("EjectTray");
 		}
 
-#if __ANDROID__
-		/// <summary>
-		/// Launch an Android native app with the given package name
-		/// </summary>
-		/// <param name="package"></param>
-		/// <param name="intent"></param>
-		/// <param name="dataType"></param>
-		/// <param name="dataUri"></param>
-		[KodiMinApiVersion(13)]
-		public static void StartAndroidActivity(
-			string package,
-			string intent = null,
-			string dataType = null,
-			string dataUri = null
-		) {
-			List<string> arguments = new List<string> { package };
-			if (intent != null)
-				arguments.Add(intent);
-			if (dataType != null)
-				arguments.Add(dataType);
-			if (dataType != null)
-				arguments.Add(dataType);
-
-			PythonInterop.CallBuiltin("StartAndroidActivity", arguments);
-		}
-#endif
-
 		/// <summary>
 		/// Execute shell commands.
 		/// </summary>

@@ -23,6 +23,9 @@ namespace Smx.KodiInterop
 		/// <param name="value"></param>
 		public static void Print(object value) {
 			string valueStr = PythonInterop.EscapeArgument(value.ToString());
+			if (KodiBridge.RunningAddon.DebugEnabled) {
+				Console.Error.WriteLine($"[PyConsole] {valueStr}");
+			}
 			PythonInterop.Eval(string.Format("print {0}", valueStr));
 		}
 
@@ -40,6 +43,9 @@ namespace Smx.KodiInterop
 		}
 
 		public static void WriteLine(string value, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+			if (KodiBridge.RunningAddon.DebugEnabled) {
+				Console.Error.WriteLine($"[PyConsole] {value}");
+			}
 			string valueStr;
 			valueStr = PythonInterop.EscapeArgument(value, escapeMethod);
 			valueStr += PythonInterop.EscapeArgument(NewLine, EscapeFlags.Quotes);
@@ -52,6 +58,9 @@ namespace Smx.KodiInterop
 		/// <param name="value"></param>
 		public static void Write(object value, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			string valueStr = value.ToString();
+			if (KodiBridge.RunningAddon.DebugEnabled) {
+				Console.Error.WriteLine($"[PyConsole] {valueStr}");
+			}
 			valueStr = PythonInterop.EscapeArgument(valueStr, escapeMethod);
 
 			PythonInterop.Eval(string.Format("sys.stdout.write({0})", valueStr));
