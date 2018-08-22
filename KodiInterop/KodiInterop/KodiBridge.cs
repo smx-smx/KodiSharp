@@ -47,6 +47,42 @@ namespace Smx.KodiInterop
 
 		public static readonly Dictionary<Type, List<IKodiEventConsumer>> EventClasses = new Dictionary<Type, List<IKodiEventConsumer>>();
 
+		private static readonly Dictionary<string, KodiAddon> addonRefs = new Dictionary<string, KodiAddon>();
+		private static WeakReference<KodiAddon> runningAddon = new WeakReference<KodiAddon>(null);
+
+		public static KodiAddon GetPersistentAddon(string addonUrl) {
+			if (addonRefs.TryGetValue(addonUrl, out KodiAddon instance))
+				return instance;
+			return null;
+		}
+		
+		public static void RegisterPersistentAddon(string addonUrl, KodiAddon instance) {
+			addonRefs.Add(addonUrl, instance);
+		}
+
+		public static void ScheduleAddonTermination(string addonUrl) {
+			if (addonRefs.ContainsKey(addonUrl)) {
+				// Remove the strong reference, allowing the addon to be Garbage collected
+				addonRefs.Remove(addonUrl);
+				GC.Collect();
+			}
+		}
+
+		public static void SetRunningAddon(string addonUrl, KodiAddon addonInstance) {
+			runningAddon.SetTarget(addonInstance);
+		}
+
+		/// <summary>
+		/// The currently running addon
+		/// </summary>
+		public static KodiAddon RunningAddon {
+			get {
+				if (runningAddon.TryGetTarget(out KodiAddon target))
+					return target;
+				return null;
+			}
+		}
+
 		static KodiBridge()
 		{
 			asyncMessageConsumer.Start();
@@ -81,11 +117,6 @@ namespace Smx.KodiInterop
 
         public static void RegisterMonitor(XbmcMonitor monitor) => RegisterEventClass(monitor);
         public static void RegisterPlayer(XbmcPlayer player) => RegisterEventClass(player);
-
-		/// <summary>
-		/// The currently running addon
-		/// </summary>
-		public static KodiAddon RunningAddon = null;
 
 		public static void SaveException(Exception ex){
 			PyConsole.Write(ex.ToString());

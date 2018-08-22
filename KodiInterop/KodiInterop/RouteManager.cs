@@ -6,14 +6,10 @@ using System.Web;
 
 namespace Smx.KodiInterop
 {
-	public static class RouteManager
+	public class RouteManager
     {
 		public delegate void RouteCallback(NameValueCollection parameters);
-		public static readonly Dictionary<string, RouteCallback> Routes;
-
-		static RouteManager() {
-			Routes = new Dictionary<string, RouteCallback>();
-		}
+		public readonly Dictionary<string, RouteCallback> Routes = new Dictionary<string, RouteCallback>();
 
 		private static string RemoveTrailingSlash(string path) {
 			if (path.EndsWith("/") && path.Length > 1)
@@ -21,11 +17,15 @@ namespace Smx.KodiInterop
 			return path;
 		}
 
+		public RouteManager(KodiAddon addon) {
+			RegisterRoutes(addon);
+		}
+
 		/// <summary>
 		/// Install Routes from the specified class
 		/// </summary>
 		/// <param name="addonClass">The class that will be looked up</param>
-		public static void RegisterRoutes(KodiAddon addon) {
+		private void RegisterRoutes(KodiAddon addon) {
 			Type addonClass = addon.GetType();
 
 			Routes.Clear();
@@ -56,7 +56,7 @@ namespace Smx.KodiInterop
 		/// Handle a request by using the registered routes
 		/// </summary>
 		/// <param name="request">request URL</param>
-		public static void HandleRequest(string request) {
+		public void HandleRequest(string request) {
 			Uri url = new Uri(request);
 			var qs = HttpUtility.ParseQueryString(url.Query);
 

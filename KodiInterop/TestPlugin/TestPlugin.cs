@@ -25,7 +25,7 @@ namespace TestPlugin
 	{
 		public static string TempDir = XbmcPath.translatePath(SpecialPaths.Temp);
 
-        public TestPlugin() : base(true)
+        public TestPlugin() : base(persist: true, debug: true)
         {
         }
 
@@ -228,7 +228,7 @@ namespace TestPlugin
 		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
 #endif
 		public static int Main() {
-			return new TestPlugin().Run();
+			return GetInstance<TestPlugin>(typeof(TestPlugin), debug: true, persist: true).Run();
 		}
 	}
 }
