@@ -12,7 +12,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <returns></returns>
 		public static string getCacheThumbName(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModule.Xbmc, "getCacheThumbName"),
+				new PyFunction(PyModule.Xbmc, "getCacheThumbName"),
 				path
 			);
 		}
@@ -25,7 +25,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <returns></returns>
 		public static string makeLegalFilename(string filename, bool fatX = false) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModule.Xbmc, "makeLegalFilename"),
+				new PyFunction(PyModule.Xbmc, "makeLegalFilename"),
 				filename, fatX
 			);
 		}
@@ -37,7 +37,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <returns></returns>
 		public static string translatePath(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModule.Xbmc, "translatePath"),
+				new PyFunction(PyModule.Xbmc, "translatePath"),
 				path
 			);
 		}
@@ -49,7 +49,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <returns></returns>
 		public static string validatePath(string path) {
 			return PythonInterop.CallFunction(
-				new PythonFunction(PyModule.Xbmc, "validatePath"),
+				new PyFunction(PyModule.Xbmc, "validatePath"),
 				path
 			);
 		}

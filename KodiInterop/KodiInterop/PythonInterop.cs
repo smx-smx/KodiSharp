@@ -113,7 +113,7 @@ namespace Smx.KodiInterop
 			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText)).Value;
 		}
 
-		public static dynamic CallFunction(PythonFunction pythonFunction, IEnumerable<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
+		public static dynamic CallFunction(PyFunction pythonFunction, IEnumerable<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
 			List<string> textArguments = null;
 			if (arguments != null)
 				 textArguments = EscapeArguments(arguments, flags);
@@ -125,10 +125,10 @@ namespace Smx.KodiInterop
 		}
 
 		public static dynamic CallFunction(PyModule module, string functionName, List<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
-			return CallFunction(new PythonFunction(module, functionName), arguments, flags);
+			return CallFunction(new PyFunction(module, functionName), arguments, flags);
 		}
 
-		public static dynamic CallFunction(PythonFunction pythonFunction, params object[] arguments) {
+		public static dynamic CallFunction(PyFunction pythonFunction, params object[] arguments) {
 			return CallFunction(pythonFunction, arguments.ToList());
 		}
 

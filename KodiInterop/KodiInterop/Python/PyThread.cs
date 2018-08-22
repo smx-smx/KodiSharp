@@ -14,7 +14,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="threadFuncName">The name of the function</param>
 		public PyThread(string threadFuncName) {
 			Instance.CallAssign(
-				new PythonFunction("threading", "Thread"),
+				new PyFunction("threading", "Thread"),
 				new List<object> {
 					null, threadFuncName
 				}, EscapeFlags.None

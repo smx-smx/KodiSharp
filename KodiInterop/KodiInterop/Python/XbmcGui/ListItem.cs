@@ -14,20 +14,20 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		private PyVariable MusicInfoInstance;
 		private PyVariable VideoInfoInstance;
 
-		private static PythonFunction _ctor = new PythonFunction(PyModule.XbmcGui, "ListItem");
-		private static PythonFunction _getDuration = PythonFunction.ClassFunction("getduration");
-		private static PythonFunction _getFilename = PythonFunction.ClassFunction("getfilename");
-		private static PythonFunction _isSelected = PythonFunction.ClassFunction("isSelected");
-		private static PythonFunction _select = PythonFunction.ClassFunction("select");
-		private static PythonFunction _getLabel = PythonFunction.ClassFunction("getLabel");
-		private static PythonFunction _setLabel = PythonFunction.ClassFunction("setLabel");
-		private static PythonFunction _getLabel2 = PythonFunction.ClassFunction("getLabel2");
-		private static PythonFunction _setLabel2 = PythonFunction.ClassFunction("setLabel2");
-		private static PythonFunction _setPath = PythonFunction.ClassFunction("setPath");
-		private static PythonFunction _getProperty = PythonFunction.ClassFunction("getProperty");
-		private static PythonFunction _setProperty = PythonFunction.ClassFunction("setProperty");
-		private static PythonFunction _getArt = PythonFunction.ClassFunction("getArt");
-		private static PythonFunction _setArt = PythonFunction.ClassFunction("setArt");
+		private static PyFunction _ctor = new PyFunction(PyModule.XbmcGui, "ListItem");
+		private static PyFunction _getDuration = PyFunction.ClassFunction("getduration");
+		private static PyFunction _getFilename = PyFunction.ClassFunction("getfilename");
+		private static PyFunction _isSelected = PyFunction.ClassFunction("isSelected");
+		private static PyFunction _select = PyFunction.ClassFunction("select");
+		private static PyFunction _getLabel = PyFunction.ClassFunction("getLabel");
+		private static PyFunction _setLabel = PyFunction.ClassFunction("setLabel");
+		private static PyFunction _getLabel2 = PyFunction.ClassFunction("getLabel2");
+		private static PyFunction _setLabel2 = PyFunction.ClassFunction("setLabel2");
+		private static PyFunction _setPath = PyFunction.ClassFunction("setPath");
+		private static PyFunction _getProperty = PyFunction.ClassFunction("getProperty");
+		private static PyFunction _setProperty = PyFunction.ClassFunction("setProperty");
+		private static PyFunction _getArt = PyFunction.ClassFunction("getArt");
+		private static PyFunction _setArt = PyFunction.ClassFunction("setArt");
 
 		[Obsolete]
 		public TimeSpan Duration {

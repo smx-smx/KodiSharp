@@ -3,7 +3,7 @@ using System;
 
 namespace Smx.KodiInterop.Python
 {
-	public class PythonFunction {
+	public class PyFunction {
 		public string Module = "";
 		public string Function = "";
 
@@ -12,7 +12,7 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="module"></param>
 		/// <param name="functionName"></param>
-		public PythonFunction(PyModule module, string functionName) {
+		public PyFunction(PyModule module, string functionName) {
 			this.Module = module.GetString();
 			this.Function = functionName;
 		}
@@ -22,7 +22,7 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="moduleName"></param>
 		/// <param name="functionName"></param>
-		public PythonFunction(string moduleName, string functionName) {
+		public PyFunction(string moduleName, string functionName) {
 			this.Module = moduleName;
 			this.Function = functionName;
 		}
@@ -36,8 +36,8 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="functionName"></param>
 		/// <returns></returns>
-		public static PythonFunction ClassFunction(string functionName) {
-			return new PythonFunction("", functionName);
+		public static PyFunction ClassFunction(string functionName) {
+			return new PyFunction("", functionName);
 		}
 
 		public override string ToString() {

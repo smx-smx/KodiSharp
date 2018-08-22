@@ -9,12 +9,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		private PyVariable Instance = PyVariableManager.Get.NewVariable();
 
-		private static PythonFunction _getText = PythonFunction.ClassFunction("getText");
-		private static PythonFunction _setHeading = PythonFunction.ClassFunction("setHeading");
-		private static PythonFunction _setDefault = PythonFunction.ClassFunction("setDefault");
-		private static PythonFunction _setHiddenInput = PythonFunction.ClassFunction("setHiddenInput");
-		private static PythonFunction _isConfirmed = PythonFunction.ClassFunction("isConfirmed");
-		private static PythonFunction _doModal = PythonFunction.ClassFunction("doModal");
+		private static PyFunction _getText = PyFunction.ClassFunction("getText");
+		private static PyFunction _setHeading = PyFunction.ClassFunction("setHeading");
+		private static PyFunction _setDefault = PyFunction.ClassFunction("setDefault");
+		private static PyFunction _setHiddenInput = PyFunction.ClassFunction("setHiddenInput");
+		private static PyFunction _isConfirmed = PyFunction.ClassFunction("isConfirmed");
+		private static PyFunction _doModal = PyFunction.ClassFunction("doModal");
 
 		/// <summary>
 		/// Creates a new Keyboard  object with default text
@@ -25,7 +25,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <param name="hidden">True for hidden text entry.</param>
 		public Keyboard(string defaultText = null, string heading = null, bool hidden = false) {
 			Instance.CallAssign(
-				new PythonFunction(PyModule.Xbmc, "Keyboard"),
+				new PyFunction(PyModule.Xbmc, "Keyboard"),
 				defaultText, heading, hidden
 			);
 		}

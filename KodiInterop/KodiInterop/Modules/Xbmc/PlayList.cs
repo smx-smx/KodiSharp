@@ -10,12 +10,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
-		private static PythonFunction _ctor = new PythonFunction(PyModule.Xbmc, "PlayList");
-		private static PythonFunction _getPlayListId = PythonFunction.ClassFunction("getPlayListId");
-		private static PythonFunction _clear = PythonFunction.ClassFunction("clear");
-		private static PythonFunction _remove = PythonFunction.ClassFunction("remove");
-		private static PythonFunction _add = PythonFunction.ClassFunction("add");
-		private static PythonFunction _size = PythonFunction.ClassFunction("size");
+		private static PyFunction _ctor = new PyFunction(PyModule.Xbmc, "PlayList");
+		private static PyFunction _getPlayListId = PyFunction.ClassFunction("getPlayListId");
+		private static PyFunction _clear = PyFunction.ClassFunction("clear");
+		private static PyFunction _remove = PyFunction.ClassFunction("remove");
+		private static PyFunction _add = PyFunction.ClassFunction("add");
+		private static PyFunction _size = PyFunction.ClassFunction("size");
 
 		public PlayList(PlayListType type) {
 			Instance.CallAssign(

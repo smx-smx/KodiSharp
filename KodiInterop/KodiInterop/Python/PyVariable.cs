@@ -34,7 +34,7 @@ namespace Smx.KodiInterop.Python
 		}
 
 		public dynamic CallFunction(
-			PythonFunction function,
+			PyFunction function,
 			string argumentsBody
 		) {
 			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
@@ -43,7 +43,7 @@ namespace Smx.KodiInterop.Python
 		}
 
 		public dynamic CallFunction(
-			PythonFunction function,
+			PyFunction function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
 		) {
@@ -60,10 +60,10 @@ namespace Smx.KodiInterop.Python
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
 		){
-			return CallFunction(PythonFunction.ClassFunction(function), arguments, escapeMethod);
+			return CallFunction(PyFunction.ClassFunction(function), arguments, escapeMethod);
 		}
 
-		public dynamic CallFunction(PythonFunction function, params object[] args) {
+		public dynamic CallFunction(PyFunction function, params object[] args) {
 			return CallFunction(function, args.ToList());
 		}
 
@@ -75,7 +75,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="escapeMethod"></param>
 		/// <returns></returns>
 		public dynamic CallAssign(
-			PythonFunction function,
+			PyFunction function,
 			List<object> arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
 			PyVariable target = null
@@ -103,10 +103,10 @@ namespace Smx.KodiInterop.Python
 			PyVariable target = null
 		)
 		{
-			return CallAssign(PythonFunction.ClassFunction(function), arguments, escapeMethod, target);
+			return CallAssign(PyFunction.ClassFunction(function), arguments, escapeMethod, target);
 		}
 
-		public dynamic CallAssign(PythonFunction function, params object[] args) {
+		public dynamic CallAssign(PyFunction function, params object[] args) {
 			return CallAssign(function, args.ToList());
 		}
 

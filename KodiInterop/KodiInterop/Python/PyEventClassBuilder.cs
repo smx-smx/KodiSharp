@@ -50,7 +50,7 @@ namespace Smx.KodiInterop.Python
             if(arguments != null)
                 args.AddRange(arguments);
 
-			instance.CallAssign(PythonFunction.ClassFunction(this.ClassName), args);
+			instance.CallAssign(PyFunction.ClassFunction(this.ClassName), args);
 			return instance;
 		}
 

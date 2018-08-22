@@ -10,23 +10,23 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
-		private static PythonFunction _ctor = new PythonFunction(PyModule.XbmcAddon, "Addon");
-		private static PythonFunction _getAddonInfo = PythonFunction.ClassFunction("getAddonInfo");
+		private static PyFunction _ctor = new PyFunction(PyModule.XbmcAddon, "Addon");
+		private static PyFunction _getAddonInfo = PyFunction.ClassFunction("getAddonInfo");
 
-		private static PythonFunction _getSetting = PythonFunction.ClassFunction("getSetting");
-		private static PythonFunction _getSettingBool = PythonFunction.ClassFunction("getSettingBool");
-		private static PythonFunction _getSettingInt = PythonFunction.ClassFunction("getSettingInt");
-		private static PythonFunction _getSettingNumber = PythonFunction.ClassFunction("getSettingNumber");
-		private static PythonFunction _getSettingString = PythonFunction.ClassFunction("getSettingString");
+		private static PyFunction _getSetting = PyFunction.ClassFunction("getSetting");
+		private static PyFunction _getSettingBool = PyFunction.ClassFunction("getSettingBool");
+		private static PyFunction _getSettingInt = PyFunction.ClassFunction("getSettingInt");
+		private static PyFunction _getSettingNumber = PyFunction.ClassFunction("getSettingNumber");
+		private static PyFunction _getSettingString = PyFunction.ClassFunction("getSettingString");
 
-		private static PythonFunction _setSetting = PythonFunction.ClassFunction("setSetting");
-		private static PythonFunction _setSettingBool = PythonFunction.ClassFunction("setSettingBool");
-		private static PythonFunction _setSettingInt = PythonFunction.ClassFunction("setSettingInt");
-		private static PythonFunction _setSettingNumber = PythonFunction.ClassFunction("setSettingNumber");
-		private static PythonFunction _setSettingString = PythonFunction.ClassFunction("setSettingString");
+		private static PyFunction _setSetting = PyFunction.ClassFunction("setSetting");
+		private static PyFunction _setSettingBool = PyFunction.ClassFunction("setSettingBool");
+		private static PyFunction _setSettingInt = PyFunction.ClassFunction("setSettingInt");
+		private static PyFunction _setSettingNumber = PyFunction.ClassFunction("setSettingNumber");
+		private static PyFunction _setSettingString = PyFunction.ClassFunction("setSettingString");
 
-		private static PythonFunction _openSettings = PythonFunction.ClassFunction("openSettings");
-		private static PythonFunction _getLocalizedString = PythonFunction.ClassFunction("getLocalizedString");
+		private static PyFunction _openSettings = PyFunction.ClassFunction("openSettings");
+		private static PyFunction _getLocalizedString = PyFunction.ClassFunction("getLocalizedString");
 
 		/// <summary>
 		/// Creates a new AddOn class.
@@ -56,7 +56,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		}
 
 		public T GetSetting<T>(string setting) where T : IConvertible {
-			PythonFunction func;
+			PyFunction func;
 
 			switch (Type.GetTypeCode(typeof(T))) {
 				case TypeCode.Boolean:
@@ -81,7 +81,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		}
 
 	    public void SetSetting<T>(string setting, object value) where T : IConvertible {
-		    PythonFunction func;
+		    PyFunction func;
 
 		    switch (Type.GetTypeCode(typeof(T))) {
 			    case TypeCode.Boolean:
