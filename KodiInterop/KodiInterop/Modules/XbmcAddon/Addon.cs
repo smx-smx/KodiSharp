@@ -3,10 +3,11 @@ using Smx.KodiInterop.Python;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Modules.XbmcAddon
 {
-    public class Addon
+    public class Addon : IDisposable
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
@@ -128,5 +129,9 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		public string GetLocalizedString(int id) {
 		    return Instance.CallFunction(_getLocalizedString, id);
 	    }
-    }
+
+		public void Dispose() {
+			Instance.Dispose();
+		}
+	}
 }

@@ -77,8 +77,10 @@ class Bridge(object):
     def run(self):
         g_closed.clear()
 
+        print("GOING TO CALL C# ENTRY")
         self.module.PluginMain()
 
+        print("RETURNED FROM C#")
         # wait synchonously for C# to unblock us
         g_closed.wait()
 

@@ -69,7 +69,9 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
 			Console.WriteLine("=> Registering EventClass " + typeof(XbmcPlayer).FullName);
-			KodiBridge.RegisterPlayer(this);
+
+			KodiBridgeInstance bridge = KodiBridge.RunningAddon.Bridge;
+			bridge.RegisterPlayer(this);
 		}
 
 		public XbmcPlayer(PyVariable player) {
@@ -235,7 +237,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public void Dispose()
 		{
 			Instance.Dispose();
-			KodiBridge.UnregisterEventClass(this);
+			KodiBridge.RunningAddon.Bridge.UnregisterEventClass(this);
 		}
 	}
 }

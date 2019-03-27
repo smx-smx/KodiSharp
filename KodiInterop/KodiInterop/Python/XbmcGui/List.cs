@@ -1,5 +1,6 @@
 ﻿using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
+using System;
 using System.Collections.Generic;
 
 namespace Smx.KodiInterop.Modules.XbmcGui
@@ -32,16 +33,16 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			}
 			listCode += "]";
 
-			PyVariable listVar = PyVariableManager.Get.NewVariable(evalCode: listCode);
-
-			PythonInterop.CallFunction(
-				new PyFunction(PyModule.XbmcPlugin, "addDirectoryItems"),
-				new List<object> {
-					KodiBridge.RunningAddon.Handle,
-					listVar,
-					items.Count
-				}
-			);
+			using (PyVariable listVar = PyVariableManager.Get.NewVariable(evalCode: listCode)) {
+				PythonInterop.CallFunction(
+					new PyFunction(PyModule.XbmcPlugin, "addDirectoryItems"),
+					new List<object> {
+						KodiBridge.RunningAddon.Handle,
+						listVar,
+						items.Count
+					}
+				);
+			}
 		}
 
 		public static void Show(bool succeded = true, bool updateListing = false, bool cacheToDisc = true) {

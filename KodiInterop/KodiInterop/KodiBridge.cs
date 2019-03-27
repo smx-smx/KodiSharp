@@ -39,13 +39,9 @@ namespace Smx.KodiInterop
 		/// </summary>
 		private static readonly CancellationTokenSource taskCts = new CancellationTokenSource();
 
-		private static object MessageLock = new object();
 		private static readonly ManualResetEvent RPCInitialized = new ManualResetEvent(false);
 
-		private static readonly BlockingCollection<RPCRequest> MessageQueue = new BlockingCollection<RPCRequest>();
-		private static readonly Task asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
-
-		public static readonly Dictionary<Type, List<IKodiEventConsumer>> EventClasses = new Dictionary<Type, List<IKodiEventConsumer>>();
+		private static readonly AutoResetEvent addonFinished = new AutoResetEvent(true);
 
 		private static readonly Dictionary<string, KodiAddon> addonRefs = new Dictionary<string, KodiAddon>();
 		private static WeakReference<KodiAddon> runningAddon = new WeakReference<KodiAddon>(null);
@@ -68,7 +64,16 @@ namespace Smx.KodiInterop
 			}
 		}
 
-		public static void SetRunningAddon(string addonUrl, KodiAddon addonInstance) {
+		public static void SetRunningAddon(KodiAddon addonInstance) {
+			if(addonInstance == null) {
+				// Addon finished running, allow another addon to start
+				addonFinished.Set();
+			} else {
+				// Wait for the previous addon to finish
+				Console.WriteLine("!!! Waiting for previous addon to finish");
+				addonFinished.WaitOne();
+				Console.WriteLine("!!! Previous addon finished, starting up");
+			}
 			runningAddon.SetTarget(addonInstance);
 		}
 
@@ -83,52 +88,8 @@ namespace Smx.KodiInterop
 			}
 		}
 
-		static KodiBridge()
-		{
-			asyncMessageConsumer.Start();
-		}
-
-		private static void _messageConsumer()
-		{
-			while (!taskCts.IsCancellationRequested) {
-				try {
-					RPCRequest req = MessageQueue.Take(taskCts.Token);
-					//send the message, populate the reply and notify the listeners
-					req.Send();
-				} catch (OperationCanceledException) {
-					break;
-				}
-			}
-		}
-
-		private static void RegisterEventClass(IKodiEventConsumer classInstance)
-		{
-            Type classType = classInstance.GetType();
-			if (!EventClasses.ContainsKey(classType))
-				EventClasses.Add(classType, new List<IKodiEventConsumer>());
-			EventClasses[classType].Add(classInstance);
-		}
-
-		public static void UnregisterEventClass(IKodiEventConsumer classInstance)
-		{
-			Type classType = classInstance.GetType();
-			EventClasses[classType].Remove(classInstance);
-		}
-
-        public static void RegisterMonitor(XbmcMonitor monitor) => RegisterEventClass(monitor);
-        public static void RegisterPlayer(XbmcPlayer player) => RegisterEventClass(player);
-
 		public static void SaveException(Exception ex){
 			PyConsole.Write(ex.ToString());
-		}
-
-		/// <summary>
-		/// Instructs python to abort message fetching
-		/// </summary>
-		private static void CloseRPC(){
-			PythonExitMessage exitMessage = new PythonExitMessage();
-			exitMessage.UnloadDLL = UnloadDLL;
-			SendMessage(exitMessage);
 		}
 
 		public static string EncodeNonAsciiCharacters(string value){
@@ -145,25 +106,6 @@ namespace Smx.KodiInterop
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Sends an RPC message to python
-		/// </summary>
-		/// <param name="message">message object to send</param>
-		/// <returns></returns>
-		public static string SendMessage(RPCMessage message){
-			RPCInitialized.WaitOne(); //Make sure the RPC is initialized before trying to use it
-
-			string reply = null;
-			lock (MessageLock) {
-				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(message));
-				reply = PySendMessage(messageString);
-			}
-			return reply;
-		}
-
-		public static void SendMessageAsync(RPCMessage message){
-			MessageQueue.Add(new RPCRequest(message));
-		}
 
 		//http://stackoverflow.com/a/1373295
 		private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args){
@@ -222,6 +164,8 @@ namespace Smx.KodiInterop
 		private static PySendStringDelegate _pySendString;
 		private static PyExitDelegate _pyExit;
 
+		public static KodiBridgeInstance GlobalStaticBridge { get; private set; }
+
 		/// <summary>
 		/// </summary>
 		/// <param name="messageData"></param>
@@ -238,6 +182,8 @@ namespace Smx.KodiInterop
 			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 			SetAssemblyResolver();
 			SetPythonCulture();
+
+			GlobalStaticBridge = CreateBridgeInstance();
 			RPCInitialized.Set();
 			return true;
 		}
@@ -287,6 +233,10 @@ private static bool Initialize(
 		}
 #endif
 
+		public static KodiBridgeInstance CreateBridgeInstance() {
+			return new KodiBridgeInstance(_pySendString, _pyExit);
+		}
+
 #if !UNIX
 		[DllExport("PostEvent", CallingConvention=CallingConvention.Cdecl)]
 #endif
@@ -306,12 +256,13 @@ private static bool Initialize(
 					return false;
 			}
 
-			if (!EventClasses.ContainsKey(classType))
+			KodiBridgeInstance bridge = RunningAddon.Bridge;
+			if (!bridge.EventClasses.ContainsKey(classType))
 			{
 				return false;
 			}
 
-			List<IKodiEventConsumer> instances = EventClasses[classType];
+			List<IKodiEventConsumer> instances = bridge.EventClasses[classType];
 			foreach (IKodiEventConsumer instance in instances) {
 				instance.TriggerEvent(ev);
 			}
@@ -326,21 +277,11 @@ private static bool Initialize(
 		[DllExport("StopRPC", CallingConvention = CallingConvention.Cdecl)]
 #endif
 		private static bool _StopRPC() {
-            /* 
+			/* 
 			 * this alias is needed to avoid "Method not Found" exception
 			 * in PluginMain's "finally" block
 			 * */
-            return StopRPC();
-		}
-
-		public static bool StopRPC() {
-			Console.WriteLine("Shutting Down...");
-			taskCts.Cancel();
-			asyncMessageConsumer.Wait();
-
-			CloseRPC();
-			RPCInitialized.Reset();
-			return true;
+			return RunningAddon.Bridge.StopRPC();
 		}
 	}
 }

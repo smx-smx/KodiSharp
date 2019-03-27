@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-    public class Keyboard
+    public class Keyboard : IDisposable
     {
 		private PyVariable Instance = PyVariableManager.Get.NewVariable();
 
@@ -73,6 +73,10 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <param name="timeout">milliseconds to autoclose dialog. (default=do not autoclose)</param>
 		public void DoModal(TimeSpan? timeout = null) {
 			Instance.CallFunction(_doModal, timeout?.TotalMilliseconds);
+		}
+
+		public void Dispose() {
+			Instance.Dispose();
 		}
 	}
 }

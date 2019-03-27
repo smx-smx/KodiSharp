@@ -32,7 +32,7 @@ namespace Smx.KodiInterop
 			FileStream outStream = new FileStream(safeOutHandle, FileAccess.Write);
 			FileStream errStream = new FileStream(safeErrHandle, FileAccess.Write);
 
-			Encoding encoding = System.Text.Encoding.GetEncoding(MY_CODE_PAGE);
+			Encoding encoding = Encoding.GetEncoding(MY_CODE_PAGE);
 
 			StreamReader standardInput = new StreamReader(inStream, encoding);
 			StreamWriter standardOutput = new StreamWriter(outStream, encoding);

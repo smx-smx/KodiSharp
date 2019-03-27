@@ -25,7 +25,9 @@ namespace TestPlugin
 	{
 		public static string TempDir = XbmcPath.translatePath(SpecialPaths.Temp);
 
-        public TestPlugin() : base(persist: true, debug: true)
+		public override string PluginId => "plugin.video.test";
+
+		public TestPlugin() : base(persist: true, debug: true)
         {
         }
 
@@ -37,11 +39,10 @@ namespace TestPlugin
 		[Route("/")]
 		public void MainHandler(NameValueCollection parameters)
 		{
-			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: "AudioPlayer",
-					url: addon.BuildNavUrl("/audio"),
+					url: BuildNavUrl("/audio"),
 					isFolder: true,
 					art: new Dictionary<Art, string> {
 						{ Art.Poster, "https://upload.wikimedia.org/wikipedia/commons/2/25/Kodi-logo-Thumbnail-light-transparent.png" },
@@ -50,17 +51,17 @@ namespace TestPlugin
 				),
 				new ListItem(
 					label: "Events",
-					url: addon.BuildNavUrl("/events"),
+					url: BuildNavUrl("/events"),
 					isFolder: true
 				),
 				new ListItem(
 					label: "Nav",
-					url: addon.BuildNavUrl("/nav"),
+					url: BuildNavUrl("/nav"),
 					isFolder: true
 				),
 				new ListItem(
 					label: "Playlist",
-					url: addon.BuildNavUrl("/playlist"),
+					url: BuildNavUrl("/playlist"),
 					isFolder: true
 				),
 				new ListItem("Item 2"),
@@ -172,8 +173,6 @@ namespace TestPlugin
 		[Route("/nav")]
 		public void NavHandler(NameValueCollection parameters)
 		{
-			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
-
 			string itemLabel = "Go to Main";
 			if (TestPluginState.LastMainPageVisitTime != null) {
 				itemLabel += string.Format(" (Last Visited: {0})", TestPluginState.LastMainPageVisitTime.Value.ToString());
@@ -182,7 +181,7 @@ namespace TestPlugin
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
 					label: itemLabel,
-					url: addon.BuildNavUrl("/"),
+					url: BuildNavUrl("/"),
 					isFolder: true
 				),
 			};
@@ -201,25 +200,27 @@ namespace TestPlugin
 		{
 			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 
-			ConsoleHelper.CreateConsole();
+			//ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");
 
-			var sum = PyVariableManager.NewVariable();
-			sum.Value = "1+2";
-			PyConsole.WriteLine("Result: " + sum);
+			using(var sum = PyVariableManager.NewVariable()) {
+				sum.Value = "1+2";
+				PyConsole.WriteLine("Result: " + sum);
+			}
 
-			Console.WriteLine("Settings['test'] => " + addon.Settings["test"]);
+			//Console.WriteLine("Settings['test'] => " + addon.Settings["test"]);
 
-			var dict = PyVariableManager.NewVariable();
-			Dictionary<string, string> TestDict = new Dictionary<string, string> {
-				{"hello", "python" },
-				{"dict", "test" }
-			};
-			dict.Value = TestDict.ToPythonCode();
-			PyConsole.WriteLine("Dict: " + dict);
+			using (var dict = PyVariableManager.NewVariable()) {
+				Dictionary<string, string> TestDict = new Dictionary<string, string> {
+					{"hello", "python" },
+					{"dict", "test" }
+				};
+				dict.Value = TestDict.ToPythonCode();
+				PyConsole.WriteLine("Dict: " + dict);
+			}
 
 			PyConsole.WriteLine("Hello Python");
-
+			
 			//ConsoleHelper.FreeConsole();
 			return 0;
 		}

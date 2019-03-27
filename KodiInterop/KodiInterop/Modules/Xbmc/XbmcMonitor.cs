@@ -77,7 +77,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public void Dispose() {
 			Instance.Dispose();
-			KodiBridge.UnregisterEventClass(this);
+			KodiBridge.RunningAddon.Bridge.UnregisterEventClass(this);
 		}
 
 		public XbmcMonitor() {
@@ -85,7 +85,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
 			Console.WriteLine("=> Registering EventClass " + typeof(XbmcMonitor).FullName);
-			KodiBridge.RegisterMonitor(this);
+			KodiBridge.RunningAddon.Bridge.RegisterMonitor(this);
 		}
 	}
 }

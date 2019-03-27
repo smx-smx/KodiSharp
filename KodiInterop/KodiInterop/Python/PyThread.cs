@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Python
 {
-    public class PyThread
+    public class PyThread : IDisposable
     {
 		public PyVariable Instance { get; } = PyVariableManager.Get.NewVariable();
 
@@ -28,5 +28,9 @@ namespace Smx.KodiInterop.Python
 		public void Join() {
 			Instance.CallFunction("join");
 		}
-    }
+
+		public void Dispose() {
+			Instance.Dispose();
+		}
+	}
 }

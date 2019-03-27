@@ -1,6 +1,7 @@
 ﻿using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {

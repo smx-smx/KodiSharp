@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-    public class InfoTagMusic
+    public class InfoTagMusic : IDisposable
     {
 		public readonly PyVariable Instance;
 
@@ -16,5 +16,9 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public InfoTagMusic() {
 			this.Instance = PyVariableManager.Get.NewVariable();
 		}
-    }
+
+		public void Dispose() {
+			Instance.Dispose();
+		}
+	}
 }

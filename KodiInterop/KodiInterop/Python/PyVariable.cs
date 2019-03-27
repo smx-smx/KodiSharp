@@ -3,6 +3,7 @@ using Smx.KodiInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Python
 {
@@ -37,9 +38,9 @@ namespace Smx.KodiInterop.Python
 			PyFunction function,
 			string argumentsBody
 		) {
-			return PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
+			return (PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
 				this.PyName, function.Function, argumentsBody
-			)).Value;
+			))).Value;
 		}
 
 		public dynamic CallFunction(
@@ -106,7 +107,7 @@ namespace Smx.KodiInterop.Python
 			return CallAssign(PyFunction.ClassFunction(function), arguments, escapeMethod, target);
 		}
 
-		public dynamic CallAssign(PyFunction function, params object[] args) {
+		public Task<dynamic> CallAssign(PyFunction function, params object[] args) {
 			return CallAssign(function, args.ToList());
 		}
 
@@ -130,14 +131,11 @@ namespace Smx.KodiInterop.Python
 			this.Basename = basename;
 		}
 
-		~PyVariable() {
-            this.Dispose();
-		}
-
 		public void Dispose() {
             if (this.Disposable)
             {
-				PyVariableManager.Get.DeleteVariable(this);
+				//$TODO: this causes crashes
+				//PyVariableManager.Get.DeleteVariable(this);
             }
 		}
 

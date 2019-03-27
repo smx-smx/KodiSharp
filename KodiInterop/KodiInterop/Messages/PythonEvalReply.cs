@@ -10,5 +10,7 @@ namespace Smx.KodiInterop.Messages
 		public dynamic Value { get; set; }
 		[JsonProperty(PropertyName = "exit_code")]
 		public int ExitCode { get; set; }
+		[JsonProperty(PropertyName = "error")]
+		public string Error { get; set; }
 	}
 }

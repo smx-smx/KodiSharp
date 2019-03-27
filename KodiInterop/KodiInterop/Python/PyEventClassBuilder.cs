@@ -3,10 +3,11 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Python
 {
-    public class PyEventClassBuilder
+    public class PyEventClassBuilder 
 	{
 		public string ClassName { get; private set; }
 		public string EventDest { get; private set; }
@@ -50,8 +51,7 @@ namespace Smx.KodiInterop.Python
             if(arguments != null)
                 args.AddRange(arguments);
 
-			instance.CallAssign(PyFunction.ClassFunction(this.ClassName), args);
-			return instance;
+			return instance.CallAssign(PyFunction.ClassFunction(this.ClassName), args);
 		}
 
 		public string GetCode() {

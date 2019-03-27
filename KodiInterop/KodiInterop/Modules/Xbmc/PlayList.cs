@@ -6,7 +6,7 @@ using Smx.KodiInterop.Modules.XbmcGui;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-	public class PlayList //: IList<string>
+	public class PlayList: IDisposable //: IList<string>
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 
@@ -29,6 +29,10 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			get {
 				return Convert.ToInt32(Instance.CallFunction(_getPlayListId));
 			}
+		}
+
+		public void Dispose() {
+			Instance.Dispose();
 		}
 
 		#region IList

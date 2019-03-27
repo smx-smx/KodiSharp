@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Python
 {
@@ -144,5 +145,13 @@ namespace Smx.KodiInterop.Python
         {
             throw new NotImplementedException();
         }
-    }
+
+		bool IDictionary<string, string>.Remove(string key) {
+			return Remove(key);
+		}
+
+		bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) {
+			return Remove(item);
+		}
+	}
 }

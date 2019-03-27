@@ -8,6 +8,7 @@ using System.Linq;
 using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
 using Smx.KodiInterop.Messages;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop
 {
@@ -110,7 +111,7 @@ namespace Smx.KodiInterop
 			if (arguments != null)
 				argumentsText = string.Join(",", arguments.ToArray());
 
-			return EvalToResult(string.Format("{0}({1})", functionName, argumentsText)).Value;
+			return (EvalToResult(string.Format("{0}({1})", functionName, argumentsText))).Value;
 		}
 
 		public static dynamic CallFunction(PyFunction pythonFunction, IEnumerable<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
@@ -166,8 +167,16 @@ namespace Smx.KodiInterop
 				Code = code
 			};
 
-			string replyString = KodiBridge.SendMessage(msg);
+			KodiBridgeInstance bridge = KodiBridge.RunningAddon?.Bridge ?? KodiBridge.GlobalStaticBridge;
+			string replyString = bridge.QueueMessage(msg);
+
+			Console.Error.WriteLine(replyString);
+
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			if(reply.ExitCode == 1) {
+				throw new InvalidOperationException($"eval of '{code}' failed: '{reply.Error}'");
+			}
+
 			return reply;
 		}
 

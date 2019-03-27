@@ -24,6 +24,8 @@ namespace Smx.KodiInterop
 		public Addon Addon { get; private set; }
 		public RouteManager Router { get; private set; }
 
+		public KodiBridgeInstance Bridge { get; private set; }
+
 		public readonly PyVariableManager PyVariableManager;
 
 		public string BuildNavUrl(string path, NameValueCollection parameters = null){
@@ -38,13 +40,7 @@ namespace Smx.KodiInterop
 		public readonly bool DebugEnabled;
 
 		private void Initialize() {
-			// Instance of XbmcAddon
-			this.Addon = new Addon();
-
-			// Settings accessor
-			this.Settings = new KodiAddonSettings(this.Addon);
-
-			//string addonName = BaseUrl.Replace("plugin://", "").Replace("/", "");
+			this.Bridge = KodiBridge.CreateBridgeInstance();
 
 			// If we're being started as a service, don't run addon specific tasks
 			if (this.IsService) {
@@ -52,10 +48,18 @@ namespace Smx.KodiInterop
 				return;
 			}
 
-			this.Handle = Convert.ToInt32(PythonInterop.EvalToResult("sys.argv[1]").Value);
-			this.Parameters = PythonInterop.EvalToResult("sys.argv[2]").Value;
+			this.Handle = Convert.ToInt32((PythonInterop.EvalToResult("sys.argv[1]")).Value);
+			this.Parameters = (PythonInterop.EvalToResult("sys.argv[2]")).Value;
 			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 				this.BaseUrl, this.Handle, this.Parameters));
+
+			// Instance of XbmcAddon
+			this.Addon = new Addon(PluginId);
+
+			// Settings accessor
+			this.Settings = new KodiAddonSettings(this.Addon);
+
+			//string addonName = BaseUrl.Replace("plugin://", "").Replace("/", "");
 		}
 
 		public KodiAddon(bool persist = false, bool debug=false){
@@ -107,13 +111,25 @@ namespace Smx.KodiInterop
 			}
 
 			// Set running addon
-			KodiBridge.SetRunningAddon(BaseUrl, instance);
+			KodiBridge.SetRunningAddon(instance);
 
 			// Initialize addon fields.
 			// If the addon is persistent, it updates fields that might have changed
 			instance.Initialize();
 
 			return instance;
+		}
+
+		private void BeforeReturn() {
+			KodiBridge.SetRunningAddon(null);
+
+			if (!IsPersistent) {
+				KodiBridge.ScheduleAddonTermination(BaseUrl);
+			}
+			/*
+			 * tell Python that we are done (TODO: Wait for threads here)
+			 * */
+			Bridge.StopRPC();
 		}
 
 		public int Run() {
@@ -126,26 +142,19 @@ namespace Smx.KodiInterop
 					Router.HandleRequest(this.BaseUrl + this.Parameters);
 				}
 				int result = this.PluginMain();
-
+				BeforeReturn();
+				Console.WriteLine("RETURN TO PYTHON");
 				return result;
 			} catch (Exception ex) {
 				// This takes the exception and stores it, not allowing it to bubble up
 				KodiBridge.SaveException(ex);
+				BeforeReturn();
+				Console.WriteLine("RETURN TO PYTHON");
 				return 1;
-			} finally {
-				KodiBridge.SetRunningAddon(null, null);
-
-				if (!IsPersistent) {
-					KodiBridge.ScheduleAddonTermination(BaseUrl);
-				}
-                /*
-				 * When we get here, we have already returned from PluginMain
-				 * tell Python that we are done (TODO: Wait for threads here)
-				 * */
-				KodiBridge.StopRPC();
 			}
 		}
 
+		public abstract string PluginId { get; }
 		public abstract int PluginMain();
     }
 }

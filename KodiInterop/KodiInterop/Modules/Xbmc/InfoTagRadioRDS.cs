@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Smx.KodiInterop.Modules.Xbmc
 {
-    public class InfoTagRadioRDS
+    public class InfoTagRadioRDS : IDisposable
     {
 		public readonly PyVariable Instance;
 
@@ -15,5 +15,9 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public InfoTagRadioRDS() {
 			this.Instance = PyVariableManager.Get.NewVariable();
 		}
-    }
+
+		public void Dispose() {
+			Instance.Dispose();
+		}
+	}
 }

@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Android.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Builtins\Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Kodi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KodiBridgeInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\KodiEventMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\MessageReplyEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\RPCRequest.cs" />

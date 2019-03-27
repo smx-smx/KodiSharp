@@ -9,7 +9,7 @@ from csharp.assembly import Assembly, AssemblyFunc
 
 #### Config
 me = os.path.abspath(os.path.dirname(__file__))
-assembly_path = os.path.join(me, "KodiInterop/TestPlugin/bin/x86/Debug", "TestPlugin.dll")
+assembly_path = os.path.join(me, "KodiInterop/TestPlugin/bin/x64/Debug", "TestPlugin.dll")
 monohost_path = os.path.join(me, "KodiInterop/Mono/build", "libmonoHost.so")
 plugin_namespace = "TestPlugin"
 plugin_main = "Main"
