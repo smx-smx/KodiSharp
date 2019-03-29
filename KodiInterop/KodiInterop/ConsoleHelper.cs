@@ -24,9 +24,9 @@ namespace Smx.KodiInterop
 			IntPtr stdout = GetStdHandle(STD_OUTPUT_HANDLE);
 			IntPtr stderr = GetStdHandle(STD_ERROR_HANDLE);
 
-			SafeFileHandle safeInHandle = new SafeFileHandle(stdin, true);
-			SafeFileHandle safeOutHandle = new SafeFileHandle(stdout, true);
-			SafeFileHandle safeErrHandle = new SafeFileHandle(stderr, true);
+			SafeFileHandle safeInHandle = new SafeFileHandle(stdin, false);
+			SafeFileHandle safeOutHandle = new SafeFileHandle(stdout, false);
+			SafeFileHandle safeErrHandle = new SafeFileHandle(stderr, false);
 
 			FileStream inStream = new FileStream(safeInHandle, FileAccess.Read);
 			FileStream outStream = new FileStream(safeOutHandle, FileAccess.Write);
