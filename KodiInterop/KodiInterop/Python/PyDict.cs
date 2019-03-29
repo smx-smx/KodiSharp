@@ -12,7 +12,9 @@ namespace Smx.KodiInterop.Python
     {
         private readonly PyVariable Instance;
 
-        public PyVariable GetInstance()
+		public const string EmptyDict = "{}";
+
+		public PyVariable GetInstance()
         {
             return Instance;
         }
@@ -20,7 +22,7 @@ namespace Smx.KodiInterop.Python
         public PyDict(PyVariable var)
         {
             Instance = var;
-            Instance.EvalAssign("{}");
+            Instance.EvalAssign(EmptyDict);
         }
 
 		
@@ -120,6 +122,7 @@ namespace Smx.KodiInterop.Python
 
 		public bool Remove(string key)
         {
+			key = PythonInterop.EscapeArgument(key, EscapeFlags.Quotes);
             PythonInterop.Eval($"del {Instance.PyName}[{key}]");
             Keys.Remove(key);
             return !ContainsKey(key);

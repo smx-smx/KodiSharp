@@ -107,7 +107,7 @@ namespace Smx.KodiInterop.Python
 			return CallAssign(PyFunction.ClassFunction(function), arguments, escapeMethod, target);
 		}
 
-		public Task<dynamic> CallAssign(PyFunction function, params object[] args) {
+		public dynamic CallAssign(PyFunction function, params object[] args) {
 			return CallAssign(function, args.ToList());
 		}
 
@@ -135,7 +135,7 @@ namespace Smx.KodiInterop.Python
             if (this.Disposable)
             {
 				//$TODO: this causes crashes
-				//PyVariableManager.Get.DeleteVariable(this);
+				PyVariableManager.Get.DeleteVariable(this);
             }
 		}
 

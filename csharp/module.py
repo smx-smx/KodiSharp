@@ -9,7 +9,8 @@ class Module(object):
     def __init__(self, lib_path):
         # Handle to the loaded library
         self._imports = {}
-	print("Loading %s" % lib_path)
+        print("Loading %s" % lib_path)
+        
         self._library = CDLL(lib_path)
         print("Library %s" % self._library)
 

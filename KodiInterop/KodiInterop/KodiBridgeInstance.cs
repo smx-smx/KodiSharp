@@ -24,11 +24,6 @@ namespace Smx.KodiInterop
 	public class KodiBridgeInstance
 	{
 		/// <summary>
-		/// Whether to unload the DLL when the Plugin is closed
-		/// </summary>
-		private readonly bool persistent;
-
-		/// <summary>
 		/// Cancellation Token for the periodic message queue flusher
 		/// </summary>
 		private readonly CancellationTokenSource taskCts = new CancellationTokenSource();
@@ -90,9 +85,9 @@ namespace Smx.KodiInterop
 		/// <summary>
 		/// Instructs python to abort message fetching
 		/// </summary>
-		private void CloseRPC() {
+		private void CloseRPC(bool UnloadDll) {
 			PythonExitMessage exitMessage = new PythonExitMessage();
-			exitMessage.UnloadDLL = !persistent;
+			exitMessage.UnloadDLL = UnloadDLL;
 			SendMessage(new RPCRequest {
 				message = exitMessage,
 				onReply = (reply) => {
@@ -101,9 +96,9 @@ namespace Smx.KodiInterop
 			});
 		}
 
-		public bool StopRPC() {
+		public bool StopRPC(bool UnloadDll) {
 			Console.WriteLine("Shutting Down...");
-			CloseRPC();
+			CloseRPC(UnloadDLL);
 			taskCts.Cancel();
 			asyncMessageConsumer.Wait();
 			Console.WriteLine("Done!");
@@ -136,7 +131,7 @@ namespace Smx.KodiInterop
 				RPCCanSend.Reset();
 
 				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(request.message));
-				Console.WriteLine(messageString);
+				//Console.WriteLine(messageString);
 				reply = PySendMessage(messageString);
 
 				request.onReply(reply);

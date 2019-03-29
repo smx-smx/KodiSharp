@@ -152,22 +152,22 @@ namespace TestPlugin
 		[Route("/events")]
 		public void EventsNavHandler(NameValueCollection parameters)
 		{
-            XbmcMonitor m = new XbmcMonitor();
-            m.ScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev)
-            {
-                Console.WriteLine("=> Screensaver Activated!");
-            });
+			using (XbmcMonitor m = new XbmcMonitor()) {
+				m.ScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+					Console.WriteLine("=> Screensaver Activated!");
+				});
 
-			m.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
-				Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
-			});
+				m.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
+					Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
+				});
 
-			Thread.Sleep(TimeSpan.FromSeconds(1));
-			Console.WriteLine("Triggering screensaver");
-			SystemBuiltins.ActivateScreensaver();
+				Thread.Sleep(TimeSpan.FromSeconds(1));
+				Console.WriteLine("Triggering screensaver");
+				SystemBuiltins.ActivateScreensaver();
 
-			/* Keep monitoring for a bit */
-			Kodi.Sleep(TimeSpan.FromSeconds(10));
+				/* Keep monitoring for a bit */
+				Kodi.Sleep(TimeSpan.FromSeconds(10));
+			}
 		}
 
 		[Route("/nav")]

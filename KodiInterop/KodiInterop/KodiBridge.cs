@@ -39,8 +39,6 @@ namespace Smx.KodiInterop
 		/// </summary>
 		private static readonly CancellationTokenSource taskCts = new CancellationTokenSource();
 
-		private static readonly ManualResetEvent RPCInitialized = new ManualResetEvent(false);
-
 		private static readonly AutoResetEvent addonFinished = new AutoResetEvent(true);
 
 		private static readonly Dictionary<string, KodiAddon> addonRefs = new Dictionary<string, KodiAddon>();
@@ -53,7 +51,7 @@ namespace Smx.KodiInterop
 		}
 		
 		public static void RegisterPersistentAddon(string addonUrl, KodiAddon instance) {
-			addonRefs.Add(addonUrl, instance);
+			addonRefs[addonUrl] = instance;
 		}
 
 		public static void ScheduleAddonTermination(string addonUrl) {
@@ -167,10 +165,10 @@ namespace Smx.KodiInterop
 		public static KodiBridgeInstance GlobalStaticBridge { get; private set; }
 
 		/// <summary>
+		/// Wrapper to PySendMessageDelegate that does *not* free the string, like in MarshalAs (causing a python crash when it tries to free the string again)
 		/// </summary>
 		/// <param name="messageData"></param>
 		/// <returns></returns>
-		// Wrapper to PySendMessageDelegate that does *not* free the string, like in MarshalAs (causing a python crash when it tries to free the string again)
 		public static string PySendMessage(string messageData) {
 			IntPtr pyStr = _pySendString(messageData);
 			if (pyStr == IntPtr.Zero)
@@ -184,7 +182,6 @@ namespace Smx.KodiInterop
 			SetPythonCulture();
 
 			GlobalStaticBridge = CreateBridgeInstance();
-			RPCInitialized.Set();
 			return true;
 		}
 
@@ -194,9 +191,6 @@ namespace Smx.KodiInterop
 			IntPtr exitCallback,
 			bool enableDebug = false
 		){
-			if (RPCInitialized.WaitOne(0))
-				return true; //already initialized
-
 			Console.WriteLine("Ptr1: {0}", sendMessageCallback.ToString("x"));
 			Console.WriteLine("Ptr2: {0}", exitCallback.ToString("x"));
 
@@ -267,21 +261,6 @@ private static bool Initialize(
 				instance.TriggerEvent(ev);
 			}
 			return true;
-		}
-
-		/// <summary>
-		/// Signals python to close RPC
-		/// </summary>
-		/// <returns></returns>
-#if !UNIX
-		[DllExport("StopRPC", CallingConvention = CallingConvention.Cdecl)]
-#endif
-		private static bool _StopRPC() {
-			/* 
-			 * this alias is needed to avoid "Method not Found" exception
-			 * in PluginMain's "finally" block
-			 * */
-			return RunningAddon.Bridge.StopRPC();
 		}
 	}
 }

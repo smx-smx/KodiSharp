@@ -68,17 +68,14 @@ class RPC(object):
             ## cannot use print if invoked from a callback
             #print(message)
         except Exception as exc:
-            print("Invalid Message Data")
             RPC.on_exception(exc)
             return RPC.json_error(RPCError.ERROR, exc)
 
         msg_type = message.get('type')
         if not msg_type:
-            print("Invalid Message Type")
             return RPC.json_error(RPCError.ERROR)
 
         if msg_type == 'exit':
-            print("We got exit, bye")
             g_closed.set()
             return RPC.json_error(RPCError.SUCCESS)
         elif msg_type == 'eval':
@@ -87,9 +84,8 @@ class RPC(object):
                 try:
                     g_state.eval(exec_code)
                 except Exception as exc:
-                    print("EVAL EXCEPTION: " + exc)
                     RPC.on_exception(exc)
-                    return RPC.json_error(RPCError.ERROR)
+                    return RPC.json_error(RPCError.ERROR, exc)
         elif msg_type == 'del_var':
             var_name = message.get('var_name')
             if var_name:
@@ -97,7 +93,6 @@ class RPC(object):
 
         result = g_state.get_result()
         typeName = result.__class__.__name__
-        print("=> TypeName is " + typeName)
 
         jDict = {
             "type": typeName,

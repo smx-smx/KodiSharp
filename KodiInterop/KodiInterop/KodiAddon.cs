@@ -129,7 +129,7 @@ namespace Smx.KodiInterop
 			/*
 			 * tell Python that we are done (TODO: Wait for threads here)
 			 * */
-			Bridge.StopRPC();
+			Bridge.StopRPC(IsPersistent == false);
 		}
 
 		public int Run() {

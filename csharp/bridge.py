@@ -26,9 +26,6 @@ common_imports = {
 
     ## Send the event message in JSON format
     "PostEvent" : ([c_char_p], c_bool),
-
-    ## Signals Python to stop listening for messages
-    "StopRPC": ([], c_bool),
 }
 
 monohost_imports = {

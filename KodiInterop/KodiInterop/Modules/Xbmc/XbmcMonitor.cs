@@ -76,8 +76,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Dispose() {
-			Instance.Dispose();
 			KodiBridge.RunningAddon.Bridge.UnregisterEventClass(this);
+			Instance.Dispose();
 		}
 
 		public XbmcMonitor() {
