@@ -1,8 +1,4 @@
-﻿#if !UNIX
-using RGiesecke.DllExport;
-#endif
-
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Smx.KodiInterop;
 using System.Collections.Generic;
 using System;
@@ -27,7 +23,13 @@ namespace TestPlugin
 
 		public override string PluginId => "plugin.video.test";
 
-		public TestPlugin() : base(persist: true, debug: true)
+#if DEBUG
+		const bool DEBUG = true;
+#else
+		const bool DEBUG = false;
+#endif
+
+		public TestPlugin() : base(persist: true)
         {
         }
 
@@ -37,7 +39,7 @@ namespace TestPlugin
 		}
 
 		[Route("/")]
-		public void MainHandler(NameValueCollection parameters)
+		public int MainHandler(NameValueCollection parameters)
 		{
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
@@ -74,7 +76,7 @@ namespace TestPlugin
 			UiBuiltins.Notification(
 				header: "My Notification",
 				message: "Hello World from C#",
-				duration: TimeSpan.FromSeconds(10)
+				duration: TimeSpan.FromSeconds(1)
 			);
 
 			/*
@@ -83,10 +85,12 @@ namespace TestPlugin
 			 * This is possible due to Assembly Domain that is created by the CLR once the plugin is loaded for the first time. 
 			 **/
 			TestPluginState.LastMainPageVisitTime = DateTime.Now;
+
+			return 0;
 		}
 
 		[Route("/playlist")]
-		public void PlaylistHandler(NameValueCollection parameters) {
+		public int PlaylistHandler(NameValueCollection parameters) {
 			Uri uri = new Uri("http://www.amclassical.com/piano/");
 
 			var data = new HttpClient()
@@ -116,14 +120,20 @@ namespace TestPlugin
 				while (!player.IsPlayingAudio) {
 					Kodi.Sleep(TimeSpan.FromMilliseconds(200));
 				}
+				var info = player.MusicInfoTag;
 				Console.WriteLine($"[NOW PLAYING]: {player.PlayingFile}");
+				Console.WriteLine("=====================");
+				Console.WriteLine($"{info.URL}, {info.Title}");
+
 				Kodi.Sleep(TimeSpan.FromSeconds(5));
 				player.PlayNext();
 			}
+
+			return 0;
 		}
 
 		[Route("/audio")]
-		public void AudioNavHandler(NameValueCollection parameters)
+		public int AudioNavHandler(NameValueCollection parameters)
 		{
 			XbmcPlayer player = new XbmcPlayer();
 			player.PlayBackStarted += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
@@ -147,31 +157,39 @@ namespace TestPlugin
 
 			/* Keep monitoring for a bit */
 			Kodi.Sleep(TimeSpan.FromSeconds(10));
+
+			return 0;
 		}
 
 		[Route("/events")]
-		public void EventsNavHandler(NameValueCollection parameters)
+		public int EventsNavHandler(NameValueCollection parameters)
 		{
 			using (XbmcMonitor m = new XbmcMonitor()) {
-				m.ScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
+				m.OnScreensaverActivated += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
 					Console.WriteLine("=> Screensaver Activated!");
 				});
 
-				m.Notification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
+				m.OnScreensaverDeactivated += new EventHandler<EventArgs>(delegate(object s, EventArgs ev) {
+					Console.WriteLine("=> Screensaver Deactivated!");
+				});
+
+				m.OnNotification += new EventHandler<NotificationEventArgs>(delegate (object s, NotificationEventArgs ev) {
 					Console.WriteLine(string.Format("=> Notification from {0}({1}) ==> {2}", ev.Sender, ev.Method, ev.Data));
 				});
 
-				Thread.Sleep(TimeSpan.FromSeconds(1));
+				Kodi.Sleep(TimeSpan.FromSeconds(1));
 				Console.WriteLine("Triggering screensaver");
 				SystemBuiltins.ActivateScreensaver();
 
-				/* Keep monitoring for a bit */
-				Kodi.Sleep(TimeSpan.FromSeconds(10));
+				if (!m.AbortRequested) {
+					m.WaitForAbort(TimeSpan.FromSeconds(10));
+				}
 			}
+			return 0;
 		}
 
 		[Route("/nav")]
-		public void NavHandler(NameValueCollection parameters)
+		public int NavHandler(NameValueCollection parameters)
 		{
 			string itemLabel = "Go to Main";
 			if (TestPluginState.LastMainPageVisitTime != null) {
@@ -190,13 +208,11 @@ namespace TestPlugin
 
 			List.Add(items);
 			List.Show();
+
+			return 0;
 		}
 
-		/// <summary>
-		/// Plugin Main Logic
-		/// </summary>
-		/// <returns></returns>
-		public override int PluginMain()
+		public override int DefaultRoute()
 		{
 			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
 
@@ -225,11 +241,9 @@ namespace TestPlugin
 			return 0;
 		}
 
-#if !UNIX
-		[DllExport("PluginMain", CallingConvention = CallingConvention.Cdecl)]
-#endif
-		public static int Main() {
-			return GetInstance<TestPlugin>(typeof(TestPlugin), debug: true, persist: true).Run();
+		[PluginEntry]
+		public static int PluginMain() {
+			return GetInstance<TestPlugin>(typeof(TestPlugin), enableDebug: DEBUG, persist: true).Run();
 		}
 	}
 }

@@ -4,6 +4,7 @@ using Smx.KodiInterop.Modules.Xbmc;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,12 +40,20 @@ namespace Smx.KodiInterop
 
 		public readonly Dictionary<Type, List<IKodiEventConsumer>> EventClasses = new Dictionary<Type, List<IKodiEventConsumer>>();
 
-		private readonly PySendStringDelegate sendMessageCallback;
+		//private readonly PySendStringDelegate sendMessageCallback;
+		private readonly IKodiBridge PlatformSendString;
+
 		private readonly PyExitDelegate exitCallback;
 
-		public KodiBridgeInstance(PySendStringDelegate sendMessageCallback, PyExitDelegate exitCallback) {
-			this.sendMessageCallback = sendMessageCallback;
-			this.exitCallback = exitCallback;
+
+		public KodiBridgeInstance(IntPtr sendStringFuncPtr, IntPtr exitFuncPtr) {
+			if (IsLinux) {
+				this.PlatformSendString = new KodiMonoBridge(sendStringFuncPtr);
+			} else {
+				this.PlatformSendString = new KodiWindowsBridge(sendStringFuncPtr);
+			}
+
+			this.exitCallback = Marshal.GetDelegateForFunctionPointer<PyExitDelegate>(exitFuncPtr);
 
 			asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
 			asyncMessageConsumer.Start();
@@ -132,7 +141,7 @@ namespace Smx.KodiInterop
 
 				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(request.message));
 				//Console.WriteLine(messageString);
-				reply = PySendMessage(messageString);
+				reply = PlatformSendString.PySendMessage(messageString);
 
 				request.onReply(reply);
 			}

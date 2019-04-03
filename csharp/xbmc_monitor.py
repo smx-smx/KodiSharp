@@ -3,8 +3,10 @@ import json
 
 class xbmc_monitor(xbmc.Monitor):
 
-	def __init__(self, bridge):
+	def __init__(self):
 		super(xbmc_monitor, self).__init__()
+
+	def set_bridge(self, bridge):
 		self.bridge = bridge
 
 	def post(self, eventName, *args, **kwargs):

@@ -65,8 +65,6 @@ class RPC(object):
         
         try:
             message = json.loads(data)
-            ## cannot use print if invoked from a callback
-            #print(message)
         except Exception as exc:
             RPC.on_exception(exc)
             return RPC.json_error(RPCError.ERROR, exc)
@@ -86,16 +84,10 @@ class RPC(object):
                 except Exception as exc:
                     RPC.on_exception(exc)
                     return RPC.json_error(RPCError.ERROR, exc)
-        elif msg_type == 'del_var':
-            var_name = message.get('var_name')
-            if var_name:
-                g_state.del_var(var_name)
 
         result = g_state.get_result()
-        typeName = result.__class__.__name__
 
         jDict = {
-            "type": typeName,
             "value": result,
             "exit_code": RPCError.SUCCESS,
             "error" : ""

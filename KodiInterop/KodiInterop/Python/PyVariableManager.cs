@@ -15,7 +15,9 @@ namespace Smx.KodiInterop.Python
 		private const string LastResultVarName = "LastResult";
 
         private PyDict variables = new PyDict(new PyVariable("self.Variables"));
-		public static PyVariable LastResult = new PyVariable($"self.{LastResultVarName}");
+		public static PyVariable LastResult {
+			get => new PyVariable($"self.{LastResultVarName}");
+		}
 
 		public PyVariableManager()
 		{

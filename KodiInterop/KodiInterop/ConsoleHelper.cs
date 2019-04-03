@@ -16,7 +16,8 @@ namespace Smx.KodiInterop
 		private static readonly int MY_CODE_PAGE = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 
 		public static void CreateConsole(){
-#if !UNIX
+			if (KodiBridge.IsLinux)
+				return;
 			AllocConsole();
 			SetConsoleCtrlHandler(null, true);
 
@@ -44,7 +45,6 @@ namespace Smx.KodiInterop
 			Console.SetIn(standardInput);
 			Console.SetOut(standardOutput);
 			Console.SetError(standardError);
-#endif
 		}
 
 		delegate bool HandlerRoutine(uint dwControlType);

@@ -8,7 +8,7 @@ namespace Smx.KodiInterop
 {
 	public class RouteManager
     {
-		public delegate void RouteCallback(NameValueCollection parameters);
+		public delegate int RouteCallback(NameValueCollection parameters);
 		public readonly Dictionary<string, RouteCallback> Routes = new Dictionary<string, RouteCallback>();
 
 		private static string RemoveTrailingSlash(string path) {
@@ -56,7 +56,7 @@ namespace Smx.KodiInterop
 		/// Handle a request by using the registered routes
 		/// </summary>
 		/// <param name="request">request URL</param>
-		public void HandleRequest(string request) {
+		public int HandleRequest(string request) {
 			Uri url = new Uri(request);
 			var qs = HttpUtility.ParseQueryString(url.Query);
 
@@ -70,11 +70,11 @@ namespace Smx.KodiInterop
 			PyConsole.WriteLine(string.Format("Checking route for '{0}'", path));
 			if (!Routes.ContainsKey(path)) {
 				PyConsole.WriteLine(string.Format("Route not found for path '{0}'", path));
-				return;
+				return 1;
 			}
 			Console.WriteLine("Going to call " + path);
 
-			Routes[path](qs);
+			return Routes[path](qs);
 		}
 	}
 }

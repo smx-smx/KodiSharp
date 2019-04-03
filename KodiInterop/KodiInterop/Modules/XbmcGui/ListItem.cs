@@ -1,5 +1,6 @@
 ﻿using Smx.KodiInterop.Modules.Xbmc;
 using Smx.KodiInterop.Python;
+using Smx.KodiInterop.Python.XbmcGui;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,9 +12,6 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 		public string Url { get; private set; }
 		public bool IsFolder { get; private set; }
-
-		private PyVariable MusicInfoInstance;
-		private PyVariable VideoInfoInstance;
 
 		private static PyFunction _ctor = new PyFunction(PyModule.XbmcGui, "ListItem");
 		private static PyFunction _getDuration = PyFunction.ClassFunction("getduration");
@@ -29,6 +27,9 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		private static PyFunction _setProperty = PyFunction.ClassFunction("setProperty");
 		private static PyFunction _getArt = PyFunction.ClassFunction("getArt");
 		private static PyFunction _setArt = PyFunction.ClassFunction("setArt");
+		private static PyFunction _getVotes = PyFunction.ClassFunction("getVotes");
+		private static PyFunction _getMusicInfoTag = PyFunction.ClassFunction("getMusicInfoTag");
+		private static PyFunction _getVideoInfoTag = PyFunction.ClassFunction("getVideoInfoTag");
 
 		[Obsolete]
 		public TimeSpan Duration {
@@ -47,26 +48,21 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public InfoTagMusic MusicInfoTag {
 			get {
-				throw new NotImplementedException();
-				/*
-				this.MusicInfoInstance = PyVariableManager.NewVariable(isObject: true);
-				this.MusicInfoInstance.CallAssign(
-					new PythonFunction("getMusicInfoTag")
+				return new InfoTagMusic(
+					PyVariableManager.Get
+						.NewVariable()
+						.CallAssign(_getMusicInfoTag)
 				);
-				*/
-
 			}
 		}
 
 		public InfoTagVideo VideoInfoTag {
 			get {
-				throw new NotImplementedException();
-				/*
-				this.VideoInfoInstance = PyVariableManager.NewVariable(isObject: true);
-				this.VideoInfoInstance = Instance.CallAssign(
-					new PythonFunction("getVideoInfoTag")
+				return new InfoTagVideo(
+					PyVariableManager.Get
+						.NewVariable()
+						.CallAssign(_getVideoInfoTag)
 				);
-				*/
 			}
 		}
 
@@ -75,7 +71,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				return Convert.ToBoolean(Instance.CallFunction(_isSelected));
 			}
 			set {
-				Instance.CallFunction(_select, value);
+				Instance.CallFunction(_select, new object[] { value });
 			}
 		}
 
@@ -84,7 +80,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				return Instance.CallFunction(_getLabel);
 			}
 			set {
-				Instance.CallFunction(_setLabel, value);
+				Instance.CallFunction(_setLabel, new object[] { value });
 			}
 		}
 
@@ -93,7 +89,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				return Instance.CallFunction(_getLabel2);
 			}
 			set {
-				Instance.CallFunction(_setLabel2, value);
+				Instance.CallFunction(_setLabel2, new object[] { value });
 			}
 		}
 
@@ -102,7 +98,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				return GetProperty("path");
 			}
 			set {
-				Instance.CallFunction(_setPath, value);
+				Instance.CallFunction(_setPath, new object[] { value });
 			}
 		}
 
@@ -153,6 +149,10 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public void SetArt(Dictionary<Art, string> art) {
 			Instance.CallFunction(_setArt, art.ToPythonCode());
+		}
+
+		public string GetVotes(Votes voteKey) {
+			return Instance.CallFunction(_getVotes, voteKey.GetString());
 		}
 
 		public void Dispose() {

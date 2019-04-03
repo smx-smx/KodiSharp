@@ -11,62 +11,62 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		public readonly PyVariable Instance;
 		
-		public event EventHandler<EventArgs> AbortRequested;
-		public event EventHandler<LibraryEventArgs> CleanStarted;
-		public event EventHandler<LibraryEventArgs> CleanFinished;
-		public event EventHandler<DatabaseEventArgs> DatabaseScanStarted;
-		public event EventHandler<DatabaseEventArgs> DatabaseUpdated;
-		public event EventHandler<EventArgs> DPMSActivated;
-		public event EventHandler<EventArgs> DPMSDeactivated;
-		public event EventHandler<EventArgs> ScreensaverActivated;
-		public event EventHandler<EventArgs> ScreensaverDeactivated;
-		public event EventHandler<LibraryEventArgs> ScanStarted;
-		public event EventHandler<LibraryEventArgs> ScanFinished;
-		public event EventHandler<EventArgs> SettingsChanged;
-		public event EventHandler<NotificationEventArgs> Notification;
+		public event EventHandler<EventArgs> OnAbortRequested;
+		public event EventHandler<LibraryEventArgs> OnCleanStarted;
+		public event EventHandler<LibraryEventArgs> OnCleanFinished;
+		public event EventHandler<DatabaseEventArgs> OnDatabaseScanStarted;
+		public event EventHandler<DatabaseEventArgs> OnDatabaseUpdated;
+		public event EventHandler<EventArgs> OnDPMSActivated;
+		public event EventHandler<EventArgs> OnDPMSDeactivated;
+		public event EventHandler<EventArgs> OnScreensaverActivated;
+		public event EventHandler<EventArgs> OnScreensaverDeactivated;
+		public event EventHandler<LibraryEventArgs> OnScanStarted;
+		public event EventHandler<LibraryEventArgs> OnScanFinished;
+		public event EventHandler<EventArgs> OnSettingsChanged;
+		public event EventHandler<NotificationEventArgs> OnNotification;
 
 		public bool TriggerEvent(KodiEventMessage e) {
 			switch (e.Source) {
 				case "onAbortRequested":
-					AbortRequested?.Invoke(null, new EventArgs());
+					OnAbortRequested?.Invoke(null, new EventArgs());
 					break;
 				case "onCleanStarted":
-					CleanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
+					OnCleanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onCleanFinished":
-					CleanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
+					OnCleanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onDPMSActivated":
-					DPMSActivated?.Invoke(null, new EventArgs());
+					OnDPMSActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDPMSDeactivated":
-					DPMSDeactivated?.Invoke(null, new EventArgs());
+					OnDPMSDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onDatabaseScanStarted":
-					DatabaseScanStarted?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
+					OnDatabaseScanStarted?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onDatabaseUpdated":
-					DatabaseUpdated?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
+					OnDatabaseUpdated?.Invoke(null, new DatabaseEventArgs(e.EventArgs[0]));
 					break;
 				case "onNotification":
-					Notification?.Invoke(null, new NotificationEventArgs(
+					OnNotification?.Invoke(null, new NotificationEventArgs(
 						e.EventArgs[0], e.EventArgs[1], e.EventArgs[2]
 					));
 					break;
 				case "onScanStarted":
-					ScanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
+					OnScanStarted?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScanFinished":
-					ScanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
+					OnScanFinished?.Invoke(null, new LibraryEventArgs(e.EventArgs[0]));
 					break;
 				case "onScreensaverActivated":
-					ScreensaverActivated?.Invoke(null, new EventArgs());
+					OnScreensaverActivated?.Invoke(null, new EventArgs());
 					break;
 				case "onScreensaverDeactivated":
-					ScreensaverDeactivated?.Invoke(null, new EventArgs());
+					OnScreensaverDeactivated?.Invoke(null, new EventArgs());
 					break;
 				case "onSettingsChanged":
-					SettingsChanged?.Invoke(null, new EventArgs());
+					OnSettingsChanged?.Invoke(null, new EventArgs());
 					break;
 				default:
 					PyConsole.WriteLine(string.Format("Unknown event '{0}' not handled", e.Source));
@@ -76,8 +76,21 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Dispose() {
-			KodiBridge.RunningAddon.Bridge.UnregisterEventClass(this);
+			KodiBridge
+				.RunningAddon
+				.Bridge
+				.UnregisterEventClass(this);
 			Instance.Dispose();
+		}
+
+		public bool AbortRequested {
+			get => Convert.ToBoolean(Instance.CallFunction("abortRequested"));
+		}
+
+		public bool WaitForAbort(TimeSpan timeSpan) {
+			return Convert.ToBoolean(Instance.CallFunction("waitForAbort", new List<object> {
+				(ulong)timeSpan.TotalSeconds
+			}));
 		}
 
 		public XbmcMonitor() {
@@ -85,7 +98,10 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
 			Console.WriteLine("=> Registering EventClass " + typeof(XbmcMonitor).FullName);
-			KodiBridge.RunningAddon.Bridge.RegisterMonitor(this);
+			KodiBridge
+				.RunningAddon
+				.Bridge
+				.RegisterMonitor(this);
 		}
 	}
 }

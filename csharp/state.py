@@ -39,7 +39,9 @@ class State(object):
         return self.LastResult
 
     def new_monitor(self):
-        return xbmc_monitor(self.bridge)
+        monitor = xbmc_monitor()
+        monitor.set_bridge(self.bridge)
+        return monitor
 
     def new_player(self):
         player = xbmc_player()

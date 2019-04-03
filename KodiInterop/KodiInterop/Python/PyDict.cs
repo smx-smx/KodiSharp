@@ -42,12 +42,13 @@ namespace Smx.KodiInterop.Python
             }
         }
 
-        public PyVariable GetVariable(string name)
+        public PyVariable GetVariable(string name, bool isDisposable = true)
         {
             string pyName = PythonInterop.EscapeArgument(name);
             return new PyVariable(
 				evalCode: $"{Instance.PyName}[{pyName}]",
-				basename: name
+				basename: name,
+				disposable: isDisposable
 			);
         }
 

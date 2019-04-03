@@ -9,6 +9,7 @@ using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
 using Smx.KodiInterop.Messages;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Smx.KodiInterop
 {
@@ -168,9 +169,10 @@ namespace Smx.KodiInterop
 			};
 
 			KodiBridgeInstance bridge = KodiBridge.RunningAddon?.Bridge ?? KodiBridge.GlobalStaticBridge;
+
 			string replyString = bridge.QueueMessage(msg);
 
-			//Console.Error.WriteLine(replyString);
+			Console.Error.WriteLine(replyString);
 
 			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
 			if(reply.ExitCode == 1) {

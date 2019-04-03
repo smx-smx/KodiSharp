@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Smx.KodiInterop.Builtins;
+using Smx.KodiInterop.Modules.Xbmc;
 using Smx.KodiInterop.Modules.XbmcAddon;
 using Smx.KodiInterop.Python;
 
@@ -18,7 +20,8 @@ namespace Smx.KodiInterop
 		public string Parameters { get; private set; }
 		public bool IsService { get; private set; }
 
-		public readonly bool IsPersistent;
+
+		//public XbmcMonitor Monitor { get; private set; }
 
 		public KodiAddonSettings Settings { get; private set; }
 		public Addon Addon { get; private set; }
@@ -37,7 +40,8 @@ namespace Smx.KodiInterop
 			return Utils.BuildUrl(this.BaseUrl, parameters);
 		}
 
-		public readonly bool DebugEnabled;
+		public bool DebugEnabled { get; private set; }
+		public bool IsPersistent { get; private set; }
 
 		private void Initialize() {
 			this.Bridge = KodiBridge.CreateBridgeInstance();
@@ -53,11 +57,16 @@ namespace Smx.KodiInterop
 			PyConsole.WriteLine(string.Format("BaseUrl: {0}, Handle: {1}, Parameters: {2}",
 				this.BaseUrl, this.Handle, this.Parameters));
 
+			PyVariableManager.Reset();
+
+
 			// Instance of XbmcAddon
 			this.Addon = new Addon(PluginId);
 
 			// Settings accessor
 			this.Settings = new KodiAddonSettings(this.Addon);
+
+			//this.Monitor = new XbmcMonitor();
 
 			//string addonName = BaseUrl.Replace("plugin://", "").Replace("/", "");
 		}
@@ -83,11 +92,11 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="addonType">The class of the addon to create</param>
-		/// <param name="debug">Enables or disabled the debugging console (works on windows only)</param>
+		/// <param name="enableDebug">Enables or disabled the debugging console (works on windows only)</param>
 		/// <param name="persist">Whether or not to reuse a previous addon instance</param>
 		/// <returns></returns>
-		public static T GetInstance<T>(Type addonType, bool debug = false, bool persist = false) where T: KodiAddon {
-			if (debug) {
+		public static T GetInstance<T>(Type addonType, bool enableDebug = false, bool persist = false) where T: KodiAddon {
+			if (enableDebug) {
 				ConsoleHelper.CreateConsole();
 			}
 
@@ -109,6 +118,9 @@ namespace Smx.KodiInterop
 					KodiBridge.RegisterPersistentAddon(BaseUrl, instance);
 				}
 			}
+
+			instance.DebugEnabled = enableDebug;
+			instance.IsPersistent = persist;
 
 			// Set running addon
 			KodiBridge.SetRunningAddon(instance);
@@ -138,10 +150,12 @@ namespace Smx.KodiInterop
 				//this.Settings = new KodiAddonSettings();
 
 				// If we have routes, invoke the request handler
+				int result = 1;
 				if (Router.Routes.Count > 0) {
-					Router.HandleRequest(this.BaseUrl + this.Parameters);
+					result = Router.HandleRequest(this.BaseUrl + this.Parameters);
+				} else {
+					result = this.DefaultRoute();
 				}
-				int result = this.PluginMain();
 				BeforeReturn();
 				Console.WriteLine("RETURN TO PYTHON");
 				return result;
@@ -155,6 +169,10 @@ namespace Smx.KodiInterop
 		}
 
 		public abstract string PluginId { get; }
-		public abstract int PluginMain();
+
+		public virtual int DefaultRoute() {
+			UiBuiltins.Notification(header: "KodiSharp", message: "No Routes found", duration: TimeSpan.FromSeconds(30));
+			return 0;
+		}
     }
 }

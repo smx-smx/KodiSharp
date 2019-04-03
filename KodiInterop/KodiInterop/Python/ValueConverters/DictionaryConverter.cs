@@ -15,7 +15,9 @@ namespace Smx.KodiInterop.Python
 				));
 				sb.Append(",");
 			}
-			sb.Length--; //remove last ','
+			if (dict.Keys.Count > 0) {
+				sb.Length--; //remove last ','
+			}
 			sb.Append("}");
 			return sb.ToString();
 		}

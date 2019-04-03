@@ -131,7 +131,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public InfoTagMusic MusicInfoTag {
 			get {
 				var InfoTag = PyVariableManager.Get.NewVariable();
-				Instance.CallAssign("getMusicInfoTag", target: InfoTag);
+				Instance.CallFunction("getMusicInfoTag", target: InfoTag);
 				return new InfoTagMusic(InfoTag);
 			}
 		}
@@ -139,7 +139,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public InfoTagVideo VideoInfoTag {
 			get {
 				var InfoTag = PyVariableManager.Get.NewVariable();
-				Instance.CallAssign("getVideoInfoTag", target: InfoTag);
+				Instance.CallFunction("getVideoInfoTag", target: InfoTag);
 				return new InfoTagVideo(InfoTag);
 			}
 		}

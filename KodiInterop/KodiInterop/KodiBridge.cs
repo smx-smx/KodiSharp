@@ -2,9 +2,6 @@
 using System.Threading;
 using System.Runtime.InteropServices;
 using Smx.KodiInterop.Messages;
-#if !UNIX
-using RGiesecke.DllExport;
-#endif
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -15,12 +12,15 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Smx.KodiInterop.Modules.Xbmc;
+using System.Linq;
 
-#if UNIX
+
+/**
+ * Required for Mono
+ **/
 using System.Configuration;
 using System.Web.Configuration;
 using System.Runtime.CompilerServices;
-#endif
 
 namespace Smx.KodiInterop
 {
@@ -115,14 +115,6 @@ namespace Smx.KodiInterop
 		}
 
 		/// <summary>
-		/// Set an Assembly resolver to lookup in the plugin current directory
-		/// </summary>
-		private static void SetAssemblyResolver(){
-			AppDomain currentDomain = AppDomain.CurrentDomain;
-			currentDomain.AssemblyResolve += new ResolveEventHandler(LoadFromSameFolder);
-		}
-
-		/// <summary>
 		/// Set the Culture to be as close to python as possible
 		/// </summary>
 		private static void SetPythonCulture()
@@ -148,93 +140,60 @@ namespace Smx.KodiInterop
 			Environment.Exit(1);
 		}
 
-#if UNIX
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate IntPtr PySendStringDelegate([MarshalAs(UnmanagedType.LPStr)] string messageData);
-#else
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate IntPtr PySendStringDelegate([MarshalAs(UnmanagedType.AnsiBStr)] string messageData);
-#endif
-
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate void PyExitDelegate();
 
-		private static PySendStringDelegate _pySendString;
-		private static PyExitDelegate _pyExit;
+		private static IntPtr _pySendStringPtr;
+		private static IntPtr _pyExitPtr;
 
 		public static KodiBridgeInstance GlobalStaticBridge { get; private set; }
 
-		/// <summary>
-		/// Wrapper to PySendMessageDelegate that does *not* free the string, like in MarshalAs (causing a python crash when it tries to free the string again)
-		/// </summary>
-		/// <param name="messageData"></param>
-		/// <returns></returns>
-		public static string PySendMessage(string messageData) {
-			IntPtr pyStr = _pySendString(messageData);
-			if (pyStr == IntPtr.Zero)
-				return "";
-			return Marshal.PtrToStringAnsi(pyStr);
-		}
 
 		private static bool CommonInit() {
 			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
-			SetAssemblyResolver();
 			SetPythonCulture();
 
 			GlobalStaticBridge = CreateBridgeInstance();
 			return true;
 		}
 
-#if UNIX
-		private static bool Initialize(
-			IntPtr sendMessageCallback,
-			IntPtr exitCallback,
-			bool enableDebug = false
-		){
-			Console.WriteLine("Ptr1: {0}", sendMessageCallback.ToString("x"));
-			Console.WriteLine("Ptr2: {0}", exitCallback.ToString("x"));
-
-			_pySendString = Marshal.GetDelegateForFunctionPointer(sendMessageCallback, typeof(PySendStringDelegate)) as PySendStringDelegate;
-			_pyExit = Marshal.GetDelegateForFunctionPointer(exitCallback, typeof(PyExitDelegate)) as PyExitDelegate;
-			return CommonInit();
+		public static bool IsLinux {
+			get {
+				int p = (int)Environment.OSVersion.Platform;
+				return (p == 4) || (p == 6) || (p == 128);
+			}
 		}
-#else
 
-			/// <summary>
-			/// Called by Python to prepare the C# environment before running the plugin
-			/// </summary>
-			/// <returns></returns>
-		[DllExport("Initialize", CallingConvention=CallingConvention.Cdecl)]
-private static bool Initialize(
-			[MarshalAs(UnmanagedType.FunctionPtr)] PySendStringDelegate sendMessageCallback,
-			[MarshalAs(UnmanagedType.FunctionPtr)] PyExitDelegate exitCallback,
+		/// <summary>
+		/// Called by Python to prepare the C# environment before running the plugin
+		/// </summary>
+		/// <returns></returns>
+		public static bool Initialize(
+			IntPtr sendMessageCallbackPtr,
+			IntPtr exitCallbackPtr,
 			bool enableDebug = false
 		)
 		{
-#if DEBUG
-			ConsoleHelper.CreateConsole();
-			if (!Debugger.IsAttached && enableDebug) {
-				Debugger.Launch();
+			if (enableDebug) {
+				ConsoleHelper.CreateConsole();
+				if (!Debugger.IsAttached && enableDebug) {
+					Debugger.Launch();
+				}
+
 			}
-#endif
 
 			//Console.WriteLine(string.Format("Function Pointer: 0x{0:X}", Marshal.GetFunctionPointerForDelegate(sendMessageCallback)));
 			//Console.WriteLine(string.Format("Function Pointer: 0x{0:X}", Marshal.GetFunctionPointerForDelegate(exitCallback)));
-			_pySendString = sendMessageCallback;
-			_pyExit = exitCallback;
-
+			_pySendStringPtr = sendMessageCallbackPtr;
+			_pyExitPtr = exitCallbackPtr ;
 			return CommonInit();
 		}
-#endif
 
 		public static KodiBridgeInstance CreateBridgeInstance() {
-			return new KodiBridgeInstance(_pySendString, _pyExit);
+			return new KodiBridgeInstance(_pySendStringPtr, _pyExitPtr);
 		}
 
-#if !UNIX
-		[DllExport("PostEvent", CallingConvention=CallingConvention.Cdecl)]
-#endif
-		private static bool PostEvent([MarshalAs(UnmanagedType.AnsiBStr)] string eventMessage){
+		public static bool PostEvent([MarshalAs(UnmanagedType.AnsiBStr)] string eventMessage){
 			KodiEventMessage ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
 			Type classType;
 
@@ -256,10 +215,10 @@ private static bool Initialize(
 				return false;
 			}
 
-			List<IKodiEventConsumer> instances = bridge.EventClasses[classType];
-			foreach (IKodiEventConsumer instance in instances) {
-				instance.TriggerEvent(ev);
-			}
+			bridge.EventClasses[classType].All((kevc) => {
+				kevc.TriggerEvent(ev);
+				return true;
+			});
 			return true;
 		}
 	}

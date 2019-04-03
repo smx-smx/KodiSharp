@@ -13,14 +13,6 @@ namespace Smx.KodiInterop.Python
 		public readonly string PyName;
 		private readonly bool Disposable;
 
-		public string TypeName {
-			get {
-				return PythonInterop.GetVariable(this).TypeName;
-			}
-		}
-
-		private Messages.PythonEvalReply lastMsg;
-
 		public dynamic Value {
 			get {
 				return PythonInterop.GetVariable(this).Value;
@@ -36,9 +28,14 @@ namespace Smx.KodiInterop.Python
 
 		public dynamic CallFunction(
 			PyFunction function,
-			string argumentsBody
+			string argumentsBody,
+			PyVariable target = null
 		) {
-			return (PythonInterop.EvalToResult(string.Format("{0}.{1}({2})",
+
+			if (target == null)
+				target = PyVariableManager.LastResult;
+
+			return (PythonInterop.EvalToVar(target, string.Format("{0}.{1}({2})",
 				this.PyName, function.Function, argumentsBody
 			))).Value;
 		}
@@ -46,22 +43,24 @@ namespace Smx.KodiInterop.Python
 		public dynamic CallFunction(
 			PyFunction function,
 			List<object> arguments = null,
-			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
+			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
+			PyVariable target = null
 		) {
 			if (arguments == null) {
 				arguments = new List<object>();
 			}
 
 			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
-			return CallFunction(function, string.Join(", ", textArguments));
+			return CallFunction(function, string.Join(", ", textArguments), target: target);
 		}
 
 		public dynamic CallFunction(
 			string function,
 			List<object> arguments = null,
-			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems
-		){
-			return CallFunction(PyFunction.ClassFunction(function), arguments, escapeMethod);
+			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
+			PyVariable target = null
+		) {
+			return CallFunction(PyFunction.ClassFunction(function), arguments, escapeMethod, target: target);
 		}
 
 		public dynamic CallFunction(PyFunction function, params object[] args) {
@@ -87,8 +86,9 @@ namespace Smx.KodiInterop.Python
 				argumentsText = string.Join(", ", textArguments);
 			}
 
-			if (target == null)
+			if (target == null) {
 				target = this;
+			}
 
 			PythonInterop.EvalToVar(target, "{0}({1})", new List<object> {
 				function.ToString(), argumentsText
@@ -134,7 +134,7 @@ namespace Smx.KodiInterop.Python
 		public void Dispose() {
             if (this.Disposable)
             {
-				//$TODO: this causes crashes
+				Console.WriteLine("...Deleting " + this.PyName);
 				PyVariableManager.Get.DeleteVariable(this);
             }
 		}

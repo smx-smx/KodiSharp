@@ -37,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\IValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\PyVariableConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Python\ValueConverters\StringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcGui\Votes.cs" />
     <None Include="$(MSBuildThisFileDirectory)packages.config" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoNativeBridge.cs" />
   </ItemGroup>
@@ -57,9 +58,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PythonExitMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcAddon\Addon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcAddon\AddonInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\XbmcGui\Art.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\XbmcGui\List.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Python\XbmcGui\ListItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcGui\Art.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcGui\List.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\XbmcGui\ListItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\EventTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\InfoTagMusic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Xbmc\InfoTagRadioRDS.cs" />

@@ -4,7 +4,7 @@ using System;
 namespace Smx.KodiInterop.Python
 {
 	public class PyFunction {
-		public string Module = "";
+		public string LeftHand = "";
 		public string Function = "";
 
 		/// <summary>
@@ -13,7 +13,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="module"></param>
 		/// <param name="functionName"></param>
 		public PyFunction(PyModule module, string functionName) {
-			this.Module = module.GetString();
+			this.LeftHand = module.GetString();
 			this.Function = functionName;
 		}
 
@@ -23,7 +23,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="moduleName"></param>
 		/// <param name="functionName"></param>
 		public PyFunction(string moduleName, string functionName) {
-			this.Module = moduleName;
+			this.LeftHand = moduleName;
 			this.Function = functionName;
 		}
 
@@ -41,7 +41,7 @@ namespace Smx.KodiInterop.Python
 		}
 
 		public override string ToString() {
-			string result = this.Module;
+			string result = this.LeftHand;
 			if (result.Length > 0)
 				result += ".";
 			result += this.Function;
