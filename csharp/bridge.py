@@ -36,16 +36,13 @@ proxy_imports = {
 }
 
 class Bridge(object):
-    def __init__(self, library_path, assembly, enable_debug=False):
+    def __init__(self, library_path, assembly_path, enable_debug=False):
         self.is_windows = "win" in sys.platform
 
         print(library_path)
         self.module = Module(library_path)
 
-        #print("Init State: %s" % extra_vars)
-        #state = State(**extra_vars)
         state = State(self)
-
         self.rpc = RPC(state)
 
         # Prepare delegates
@@ -55,14 +52,12 @@ class Bridge(object):
         self._imp_common()
         self._imp_proxy()
 
-        #self.module.setMainMethodName(str(assembly.entry))
-
         pluginDir = os.path.dirname(
             os.path.abspath(
                 sys.modules['__main__'].__file__
             )
         )
-        self.plugin_handle = self.module.clrInit(assembly.path, pluginDir)
+        self.plugin_handle = self.module.clrInit(assembly_path, pluginDir)
 
         # Call initialize from the plugin
         self.module.Initialize(
