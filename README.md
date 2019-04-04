@@ -2,13 +2,6 @@
 Use Kodi python APIs in C#, and write rich addons using the .NET framework
 ![TestPlugin](https://raw.githubusercontent.com/smx-smx/KodiSharp/master/img/KodiSharp.png)
 
-
-## How to use
-- Make a copy of this repository and rename the TestPlugin project to fit your needs. You can keep the project to have references/dependencies already set-up.
-- Edit the addon names in addon.xml and default.py aswell
-- Build the solution, then copy addon.xml, default.py and the compiled assemblies under \<kodi\>/addons/\<youraddon\>, or build in place in the addons folder
-- Launch Kodi and go to the installed add-ons list (in settings). You should see the new add-on with a disabled state. Enable it
-
 ## Features
 - Events support (xbmc.Monitor)
 - Python interfaces
@@ -20,7 +13,7 @@ Use Kodi python APIs in C#, and write rich addons using the .NET framework
 - C# Bindings of Kodi modules (xbmc, xbmcgui, ...)
 - URL Routing (handlers for different sections of the plugin)
 - Support for Service addons (executed in background, as defined in addon.xml)
-- Static variables persisting across script invocations (made possible by the .NET CLR that persists in the Kodi process). You can keep variables in a static class instance without having to pass them around
+- Addons can run in the background, and persist across script invocation.
 
 ### Samples
 You can load the TestPlugin project for a working sample.
@@ -28,28 +21,18 @@ You can load the TestPlugin project for a working sample.
 On Windows you can also try the SpeechRecognizerPlugin project, which is an example of speech recognition inside a Kodi Addon. Note that the speech recognition API uses the UWP APIs, and requires that you have enabled speech services. On Windows 10, you can do that from the privacy menu in the modern control panel.
 
 ## Debugging
-First of all, target kodi.exe as the process we want to debug
+First of all, target kodi.exe as the process we want to debug for your Class Library project
  - Right click on the plugin project
  - Properties
  - Debug
  - Start external program -> Browse for Kodi.exe
 
-Next, to debug the C# code under visual studio, change this line in default.py
+Next, to debug the C# code under visual studio, set `enable_debug` to true in `default.py`, at the following line
 ```python
-Initialize(MessageCallbackFunc, False)
+bridge = Bridge(lib_path, plugin_dll, enable_debug=False)
 ```
-to
-```python
-Initialize(MessageCallbackFunc, True)
-```
-The last argument to `Initialize` indicates whether the debugger should be launched.
-Next time you run the plugin, a debugger selection window should pop up.
 
-You should then see a breakpoint on
-```c#
-Debugger.Launch()
-```
-and you can continue with the normal plugin execution
+When you run your plugin, the JIT Debugger Window will pop-up.
 
 ### Optional: Automatically start and debug the plugin from Visual Studio
 Navigate to "%appdata%\Kodi\userdata"
@@ -60,20 +43,57 @@ xbmc.executebuiltin("RunAddon(plugin.video.test)")
 ```
 Replace "plugin.video.test" with the plugin name you used in addon.xml
 
-This method also avoids having to select the debugger every time
+This method avoids having to select the debugger from the JIT window every time
 
-## NOTES
-- The project must target either x86 or x64 for UnmanagedExports to generate the proper code (**NOT AnyCpu**). If you use the wrong architecture type you may have issues like "[your plugin] is not a valid win 32 application". On windows, kodi builds are generally x86.
-- If you want to make a new project from scratch, make sure to:
-  - Clone this repo to your new addon solution
-  - Add the KodiInterop shared project to the solution
-  - Add a reference to the KodiInterop project to your Addon project
-  - Install the nuget packages "Newtonsoft.Json" and "UnmanagedExports"
-  - Copy default.py and addon.xml to your new addon folder, then add them to your solution as link. Edit them accordingly to change the DLL path and the addon name/author
+### How to use
+Create a new C# Class Library, add the `KodiInterop` assembly/project as reference.
+Model the plugin class like this
+
+```csharp
+using Smx.KodiInterop;
+using Smx.KodiInterop.Builtins;
+
+namespace TestPlugin
+{
+    public class TestPlugin : KodiAddon
+    
+    [Route("/")]
+	public int MainHandler(NameValueCollection parameters){
+        UiBuiltins.Notification(
+            header: "My Notification",
+            message: "Hello World from C#",
+            duration: TimeSpan.FromSeconds(1)
+        );
+    }
+
+    [PluginEntry]
+    public static int PluginMain() {
+        return GetInstance<TestPlugin>(typeof(TestPlugin), enableDebug: true, persist: true).Run();
+    }
+}
+```
+
+Edit `default.py` to specify the location of the plugin assembly
+```python
+import sys
+from csharp.bridge import Bridge
+
+if "win" in sys.platform:
+    lib_path = "path_to_CLRHost.dll"    # for Windows
+else:
+    lib_path = "path_to_MonoHost.dll"   # for Unix
+    
+assembly_path = "path_to_TestPlugin.dll"
+
+bridge = Bridge(lib_path, assembly_path, enable_debug=False)
+bridge.run()
+```
+
+**NOTE**: it's important to use `os.path.join` to construct paths
+
+
 
 ## TODO
-- Remove UnmanagedExports
-- Add infrastructure to handle plugin loading/unloading in separate assembly domains
 - Implement remaining builtins
 - Implement remaining modules functionality (xbmc, xbmcgui, ...)
 - Implement a JSON interface (via executeJSONRPC)
