@@ -37,6 +37,11 @@
 #define FN_ININTIALIZE "KodiBridgeABI:GetInitializeFunc"
 #define FN_GETPOSTEVENT "KodiBridgeABI:GetPostEventFunc"
 
+
+#if !defined(_WIN32) && !defined(__cdecl)
+#define __cdecl __attribute__((__cdecl__))
+#endif
+
 extern "C" {
 	typedef size_t PLGHANDLE;
 
