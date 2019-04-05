@@ -29,10 +29,6 @@ namespace TestPlugin
 		const bool DEBUG = false;
 #endif
 
-		public TestPlugin() : base(persist: true)
-        {
-        }
-
 		private static void testException()
 		{
 			throw new Exception("I should appear in kodi.log");

@@ -75,37 +75,16 @@ public:
 ref class PluginInstance : MarshalByRefObject {
 private:
 	Assembly^ pluginAssembly;
-	
 	MethodInfo^ PluginMainMethod;
-
-	void FindPluginMain() {
-		auto types = pluginAssembly->DefinedTypes;
-		for each (auto ti in types)
-		{
-			auto methods = ti->GetMethods(BindingFlags::Public | BindingFlags::NonPublic | BindingFlags::Static);
-			for each (auto method in methods)
-			{
-				for each (auto attr in method->CustomAttributes)
-				{
-					if (attr->AttributeType != PluginEntryAttribute::typeid) {
-						continue;
-					}
-
-					PluginMainMethod = method;
-					return;
-				}
-			}
-		}
-	}
 
 public:
 	PluginInstance(String^ assemblyPath, List<String^>^ asmSearchPaths) {
 		pluginAssembly = (gcnew PathListAssemblyLoader(asmSearchPaths))->LoadFrom(assemblyPath);
-		FindPluginMain();
+		PluginMainMethod = KodiAbstractBridge::FindPluginMain();
 	}
 
-	bool Initialize(IntPtr cb1, IntPtr cb2, bool debug) {
-		return KodiBridge::Initialize(cb1, cb2, debug);
+	bool Initialize(IntPtr cb1, IntPtr cb2, bool enableDebug) {
+		return KodiBridge::Initialize(cb1, cb2, enableDebug);
 	}
 	
 	bool PostEvent(String^ eventMessage) {
@@ -141,13 +120,8 @@ size_t str_hash(const char *str)
 }
 
 extern "C" {
-	typedef char *(*message_callback_t)(char *);
+	typedef char *(*message_callback_t)(const char *);
 	typedef void(*exit_callback_t)();
-
-	__declspec(dllexport)
-	extern bool __cdecl Initialize(PLGHANDLE handle, message_callback_t cb1, exit_callback_t cb2, bool debug) {
-		return gPlugins.at(handle).instance->Initialize(IntPtr(cb1), IntPtr(cb2), debug);
-	}
 
 	__declspec(dllexport)
 	extern bool __cdecl PostEvent(PLGHANDLE handle, const char *eventMessage) {
@@ -159,9 +133,11 @@ extern "C" {
 		return gPlugins.at(handle).instance->PluginMain();
 	}
 
-
 	__declspec(dllexport)
-	extern const PLGHANDLE __cdecl clrInit(const char *assemblyPath, const char *pluginFolder) {
+	extern const PLGHANDLE __cdecl clrInit(
+		const char *assemblyPath, const char *pluginFolder,
+		message_callback_t cb1, exit_callback_t cb2, bool enableDebug
+	) {
 #ifdef _DEBUG
 		if (!Debugger::IsAttached) {
 			Debugger::Launch();
@@ -181,6 +157,7 @@ extern "C" {
 		PLGHANDLE handle = str_hash(pluginName.c_str());
 
 		if(gPlugins.find(handle) != gPlugins.end()){
+			gPlugins.at(handle).instance->Initialize(IntPtr(cb1), IntPtr(cb2), enableDebug);
 			return handle;
 		}
 
@@ -231,6 +208,7 @@ extern "C" {
 			nullptr, args,
 			nullptr, nullptr
 		);
+		pl->Initialize(IntPtr(cb1), IntPtr(cb2),enableDebug);
 
 		gPlugins.emplace(handle, PluginInstanceData(newDomain, pl));
 		return handle;

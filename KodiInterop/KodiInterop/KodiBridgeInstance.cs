@@ -33,8 +33,6 @@ namespace Smx.KodiInterop
 
 		private readonly ManualResetEvent RPCCanSend = new ManualResetEvent(false);
 
-		private readonly AutoResetEvent addonFinished = new AutoResetEvent(true);
-
 		private readonly BlockingCollection<RPCRequest> MessageQueue = new BlockingCollection<RPCRequest>();
 		private readonly Task asyncMessageConsumer;
 
@@ -47,17 +45,11 @@ namespace Smx.KodiInterop
 
 
 		public KodiBridgeInstance(IntPtr sendStringFuncPtr, IntPtr exitFuncPtr) {
-			if (IsLinux) {
-				this.PlatformSendString = new KodiMonoBridge(sendStringFuncPtr);
-			} else {
-				this.PlatformSendString = new KodiWindowsBridge(sendStringFuncPtr);
-			}
-
+			this.PlatformSendString = new KodiBridgeABI(sendStringFuncPtr);
 			this.exitCallback = Marshal.GetDelegateForFunctionPointer<PyExitDelegate>(exitFuncPtr);
 
 			asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
 			asyncMessageConsumer.Start();
-
 			RPCCanSend.Set();
 		}
 
@@ -140,7 +132,6 @@ namespace Smx.KodiInterop
 				RPCCanSend.Reset();
 
 				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(request.message));
-				//Console.WriteLine(messageString);
 				reply = PlatformSendString.PySendMessage(messageString);
 
 				request.onReply(reply);

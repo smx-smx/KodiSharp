@@ -157,6 +157,10 @@ namespace Smx.KodiInterop
 			return true;
 		}
 
+		public static bool IsRunningOnMono() {
+			return Type.GetType("Mono.Runtime") != null;
+		}
+
 		public static bool IsLinux {
 			get {
 				int p = (int)Environment.OSVersion.Platform;
@@ -176,7 +180,7 @@ namespace Smx.KodiInterop
 		{
 			if (enableDebug) {
 				ConsoleHelper.CreateConsole();
-				if (!Debugger.IsAttached && enableDebug) {
+				if (!Debugger.IsAttached) {
 					Debugger.Launch();
 				}
 

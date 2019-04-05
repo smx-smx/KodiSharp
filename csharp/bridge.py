@@ -18,11 +18,8 @@ on_message_delegate = CFUNCTYPE(c_char_p, c_char_p)
 on_exit_delegate = CFUNCTYPE(None)
 
 common_imports = {
-    ## Prepares the plugin to be ran
-    "Initialize": ([c_size_t, on_message_delegate, on_exit_delegate, c_bool], c_bool),
-
     ## Invokes the entry point
-    "PluginMain": ([c_size_t, ], c_int),
+    "PluginMain": ([c_size_t], c_int),
 
     ## Send the event message in JSON format
     "PostEvent" : ([c_size_t, c_char_p], c_bool),
@@ -30,7 +27,7 @@ common_imports = {
 
 proxy_imports = {
     #"createInstance": ([c_char_p, c_char_p], c_int),
-    "clrInit": ([c_char_p, c_char_p], c_size_t),
+    "clrInit": ([c_char_p, c_char_p, on_message_delegate, on_exit_delegate, c_bool], c_size_t),
     #"setMainMethodName": ([c_char_p], None),
     "clrDeInit": ([c_size_t], None)
 }
@@ -57,16 +54,14 @@ class Bridge(object):
                 sys.modules['__main__'].__file__
             )
         )
-        self.plugin_handle = self.module.clrInit(assembly_path, pluginDir)
 
-        # Call initialize from the plugin
-        self.module.Initialize(
-            self.plugin_handle,
+        # Initialize AppDomain and call initialize from the plugin
+        self.plugin_handle = self.module.clrInit(
+            assembly_path, pluginDir,
             self.on_message,
             self.on_exit,
             enable_debug
         )
-
     def run(self):
         g_closed.clear()
 

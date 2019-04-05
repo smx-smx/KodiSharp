@@ -105,8 +105,7 @@
     <Compile Include="KodiApiVersionAttribute.cs" />
     <Compile Include="KodiBridge.cs" />
     <Compile Include="KodiBridgeInstance.cs" />
-    <Compile Include="KodiMonoBridge.cs" />
-    <Compile Include="KodiWindowsBridge.cs" />
+    <Compile Include="KodiBridgeABI.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="Messages\KodiEventMessage.cs" />
     <Compile Include="Messages\MessageReplyEventArgs.cs" />
