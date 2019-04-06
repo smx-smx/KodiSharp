@@ -27,9 +27,10 @@ First of all, target kodi.exe as the process we want to debug for your Class Lib
  - Debug
  - Start external program -> Browse for Kodi.exe
 
-Next, to debug the C# code under visual studio, set `enable_debug` to true in `default.py`, at the following line
+### How to enable debugging
+Set `enable_debug` to `True` in `default.py`, at the following line
 ```python
-bridge = Bridge(lib_path, plugin_dll, enable_debug=False)
+bridge = Bridge(lib_path, assembly_path, enable_debug=False)
 ```
 
 When you run your plugin, the JIT Debugger Window will pop-up.
@@ -73,21 +74,27 @@ namespace TestPlugin
 }
 ```
 
-Edit `default.py` to specify the location of the plugin assembly
-```python
-import sys
-from csharp.bridge import Bridge
-
-if "win" in sys.platform:
-    lib_path = "path_to_CLRHost.dll"    # for Windows
-else:
-    lib_path = "path_to_MonoHost.dll"   # for Unix
-    
-assembly_path = "path_to_TestPlugin.dll"
-
-bridge = Bridge(lib_path, assembly_path, enable_debug=False)
-bridge.run()
+### Compile MonoHost
+```sh
+cd MonoHost
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```
+
+
+Edit `default.py` to specify the location of the plugin assembly. The script is configured for an in-tree build of the project.
+
+You can use it as a starting point, changing the following variables accordingly:
+
+| File  | Variable | Default Location |
+| ------------- | -------------| ------------- |
+|Mono Host|`monohost_path`|`KodiInterop/Mono/build/libMonoHost.so\|dll\|dylib`|
+|CLR Host|`clrhost_path`|`KodiInterop/bin/<build_arch>/<build_type>/CLRHost.dll`|
+|Plugin Assembly|`assembly_path`|`KodiInterop/TestPlugin/bin/<build_arch>/<build_type>/TestPlugin.dll`|
+
+If you are on Windows, you can set `mono_on_windows=True` if you want to use Mono instead of .NET
 
 **NOTE**: it's important to use `os.path.join` to construct paths
 
