@@ -17,11 +17,11 @@ link_directories(
 	${MONO_LIBRARY_DIRS}
 )
 
-add_library(monoHost SHARED host.cpp)
+add_library(MonoHost SHARED host.cpp)
 
 set(LIBS ${MONO_LIBRARIES})
 if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	list(APPEND LIBS stdc++fs)
 endif()
 
-target_link_libraries(monoHost ${LIBS})
+target_link_libraries(MonoHost ${LIBS})

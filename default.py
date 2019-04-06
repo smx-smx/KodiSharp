@@ -14,7 +14,7 @@ build_type = "Debug"
 
 assembly_path = os.path.join(me, "KodiInterop", "TestPlugin", "bin", build_arch, build_type, "TestPlugin.dll")
 
-mono_on_windows = False	
+mono_on_windows = False
 if not "win" in sys.platform or mono_on_windows:
 	if sys.platform == "darwin":
 		nativeLibSuffix = "dylib"
@@ -23,7 +23,7 @@ if not "win" in sys.platform or mono_on_windows:
 	else:
 		nativeLibSuffix = "so"
 
-	monoLibName = "libmonoHost.{}".format(nativeLibSuffix)
+	monoLibName = "libMonoHost.{}".format(nativeLibSuffix)
 	monohost_path = os.path.join(me, "KodiInterop", "Mono", "build", monoLibName)
 	lib_path = monohost_path
 else:

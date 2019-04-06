@@ -15,8 +15,6 @@ namespace Smx.KodiInterop
 	internal struct RPCRequest
 	{
 		public RPCMessage message;
-		//public 
-		public PyMessageDelegate callback;
 		public PyMessageDelegate onReply;
 	}
 

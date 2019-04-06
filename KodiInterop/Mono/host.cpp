@@ -33,8 +33,9 @@
 #endif
 
 
+#define TARGET_ASSEMBLY "KodiInterop"
 #define FN_GETPLUGINMAIN "KodiBridgeABI:GetPluginMainFunc"
-#define FN_ININTIALIZE "KodiBridgeABI:GetInitializeFunc"
+#define FN_GETINITIALIZE "KodiBridgeABI:GetInitializeFunc"
 #define FN_GETPOSTEVENT "KodiBridgeABI:GetPostEventFunc"
 
 
@@ -213,12 +214,12 @@ extern "C" {
 		if (!gMonoInitialized) {
 			DPRINTF("initializing mono\n");
 
-			// Load the default mono configuration file
 			rootDomain = mono_jit_init_version("KodiSharp", "v4.0");
 			if (!rootDomain) {
 				fprintf(stderr, "Failed to initialize mono\n");
 				return NULL_PLGHANDLE;
 			}
+			// Load the default mono configuration file
 			mono_config_parse(nullptr);
 
 			gMonoInitialized = true;
@@ -269,23 +270,28 @@ extern "C" {
 
 		MonoThread *thread = mono_thread_attach(newDomain);
 
-		DPRINTF("%d\n", numAssemblies);
 		mono_assembly_foreach([](void *refAsmPtr, void *userdata) {
 			void **pPointers = (void **)userdata;
 			PluginMainProc* ppPluginMain = (PluginMainProc *)pPointers[0];
 			InitializeProc* ppInitialize = (InitializeProc *)pPointers[1];
 			PostEventProc *ppPostEvent = (PostEventProc *)pPointers[2];
-			
-			if (*ppPluginMain != nullptr && *ppInitialize != nullptr && *ppPostEvent != nullptr)
+
+			if (*ppPluginMain != nullptr &&
+				*ppInitialize != nullptr &&
+				*ppPostEvent != nullptr
+			){
+				return;
+			}
+
+			MonoAssembly *refAsm = (MonoAssembly *)refAsmPtr;
+			const char *asmName = mono_assembly_name_get_name(mono_assembly_get_name(refAsm));
+			if(strcmp(asmName, TARGET_ASSEMBLY) != 0)
 				return;
 
 			message_callback_t *pcb1 = (message_callback_t *)pPointers[3];
 			exit_callback_t *pcb2 = (exit_callback_t *)pPointers[4];
 			bool *pDebugEnable = (bool *)pPointers[5];
-
-
-			MonoAssembly *refAsm = (MonoAssembly *)refAsmPtr;
-			const char *asmName = mono_assembly_name_get_name(mono_assembly_get_name(refAsm));
+			//DPRINTF("Loaded asembly: %s\n", asmName);
 
 			MonoImage *refAsmImage = mono_assembly_get_image(refAsm);
 			if (refAsmImage == nullptr) {
@@ -293,15 +299,13 @@ extern "C" {
 				return;
 			}
 
-			DPRINTF("Loaded '%s'\n", asmName);
-
 			if (*ppPluginMain == nullptr) {
 				void *args[] = { pcb1, pcb2, pDebugEnable };
 				*ppPluginMain = (PluginMainProc)callDelegateGetter(refAsmImage, FN_GETPLUGINMAIN, args);
 			}
 
 			if (*ppInitialize == nullptr) {
-				*ppInitialize = (InitializeProc)callDelegateGetter(refAsmImage, FN_ININTIALIZE, nullptr);
+				*ppInitialize = (InitializeProc)callDelegateGetter(refAsmImage, FN_GETINITIALIZE, nullptr);
 			}
 
 			if(*ppPostEvent == nullptr)
@@ -311,7 +315,7 @@ extern "C" {
 
 	
 		DPRINTF("PluginMain: %p\n", pPluginMain);
-		DPRINTF("Initialize: %p\n", pPluginMain);
+		DPRINTF("Initialize: %p\n", pInitialize);
 		DPRINTF("PostEvent : %p\n", pPostEvent);
 		if (pPluginMain == nullptr || pInitialize == nullptr || pPostEvent == nullptr) {
 			fprintf(stderr, "Cannot resolve methods\n");

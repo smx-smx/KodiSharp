@@ -119,6 +119,8 @@ size_t str_hash(const char *str)
 	return hash;
 }
 
+//#define LAUNCH_DEBUGGER
+
 extern "C" {
 	typedef char *(*message_callback_t)(const char *);
 	typedef void(*exit_callback_t)();
@@ -138,15 +140,15 @@ extern "C" {
 		const char *assemblyPath, const char *pluginFolder,
 		message_callback_t cb1, exit_callback_t cb2, bool enableDebug
 	) {
-#ifdef _DEBUG
-		if (!Debugger::IsAttached) {
-			Debugger::Launch();
+		if (enableDebug) {
+			if (!Debugger::IsAttached) {
+				Debugger::Launch();
+			}
+			while (!Debugger::IsAttached) {
+				Thread::Sleep(TimeSpan::FromSeconds(1));
+			}
+			//Debugger::Break();
 		}
-		while (!Debugger::IsAttached) {
-			Thread::Sleep(TimeSpan::FromSeconds(1));
-		}
-		//Debugger::Break();
-#endif
 
 		/**
 		 * Get Paths
