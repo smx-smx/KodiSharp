@@ -13,6 +13,7 @@ using namespace System::Reflection;
 using namespace System::Diagnostics;
 using namespace System::Threading;
 using namespace System::Runtime::InteropServices;
+using namespace System::Runtime::Remoting;
 using namespace System::Windows::Forms;
 using namespace Smx::KodiInterop;
 
@@ -78,7 +79,7 @@ private:
 	MethodInfo^ PluginMainMethod;
 
 public:
-	Object^ InitializeLifetimeServices() override {
+	Object^ InitializeLifetimeService() override {
 		return nullptr;
 	}
 
@@ -224,8 +225,10 @@ extern "C" {
 	__declspec(dllexport)
 	extern bool __cdecl clrDeInit(PLGHANDLE handle) {
 		PluginInstanceData data = gPlugins[handle];
-		AppDomain::Unload(data.appDomain);
 
+		// shouldn't be necessary since we're about to dispose the AppDomain
+		RemotingServices::Disconnect(data.instance);
+		AppDomain::Unload(data.appDomain);
 		gPlugins.erase(handle);
 		return true;
 	}
