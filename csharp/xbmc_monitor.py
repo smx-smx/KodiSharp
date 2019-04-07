@@ -16,7 +16,7 @@ class xbmc_monitor(xbmc.Monitor):
 			"args": args,
 			"kwargs": kwargs
 		}
-		self.bridge.module.PostEvent(json.dumps(jDict))
+		self.bridge.post_event(json.dumps(jDict))
 
 	def onAbortRequested(self, *args, **kwargs):
 		self.post("onAbortRequested", *args, **kwargs)

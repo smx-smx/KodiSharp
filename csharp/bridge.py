@@ -62,6 +62,10 @@ class Bridge(object):
             self.on_exit,
             enable_debug
         )
+
+    def post_event(self, jsonString):
+        self.module.PostEvent(self.plugin_handle, jsonString)
+
     def run(self):
         g_closed.clear()
 

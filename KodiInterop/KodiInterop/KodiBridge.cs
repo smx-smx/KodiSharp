@@ -197,7 +197,7 @@ namespace Smx.KodiInterop
 			return new KodiBridgeInstance(_pySendStringPtr, _pyExitPtr);
 		}
 
-		public static bool PostEvent([MarshalAs(UnmanagedType.AnsiBStr)] string eventMessage){
+		public static bool PostEvent([MarshalAs(UnmanagedType.LPStr)] string eventMessage){
 			KodiEventMessage ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
 			Type classType;
 

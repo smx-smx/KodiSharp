@@ -35,7 +35,7 @@ class xbmc_player(xbmc.Player):
 			"args": args,
 			"kwargs": kwargs
 		}
-		self.bridge.module.PostEvent(self.bridge.plugin_handle, json.dumps(jDict))
+		self.bridge.post_event(json.dumps(jDict))
 
 	def onPlayBackEnded(self, *args, **kwargs):
 		self.post("onPlayBackEnded", *args, **kwargs)
