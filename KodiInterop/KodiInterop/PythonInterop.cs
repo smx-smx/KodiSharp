@@ -170,7 +170,7 @@ namespace Smx.KodiInterop
 
 			KodiBridgeInstance bridge = KodiBridge.RunningAddon?.Bridge ?? KodiBridge.GlobalStaticBridge;
 
-			string replyString = bridge.QueueMessage(msg);
+			string replyString = bridge.SendMessage(msg);
 
 			Console.Error.WriteLine(replyString);
 

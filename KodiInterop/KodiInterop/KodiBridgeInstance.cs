@@ -12,54 +12,20 @@ using static Smx.KodiInterop.KodiBridge;
 
 namespace Smx.KodiInterop
 {
-	internal struct RPCRequest
-	{
-		public RPCMessage message;
-		public PyMessageDelegate onReply;
-	}
-
 	public delegate void PyMessageDelegate(string reply);
 
 	public class KodiBridgeInstance
 	{
-		/// <summary>
-		/// Cancellation Token for the periodic message queue flusher
-		/// </summary>
-		private readonly CancellationTokenSource taskCts = new CancellationTokenSource();
-
 		private object MessageLock = new object();
-
-		private readonly ManualResetEvent RPCCanSend = new ManualResetEvent(false);
-
-		private readonly BlockingCollection<RPCRequest> MessageQueue = new BlockingCollection<RPCRequest>();
-		private readonly Task asyncMessageConsumer;
-
 		public readonly Dictionary<Type, List<IKodiEventConsumer>> EventClasses = new Dictionary<Type, List<IKodiEventConsumer>>();
 
-		//private readonly PySendStringDelegate sendMessageCallback;
-		private readonly IKodiBridge PlatformSendString;
-
+		private readonly IKodiBridge nativeBridge;
 		private readonly PyExitDelegate exitCallback;
 
 
 		public KodiBridgeInstance(IntPtr sendStringFuncPtr, IntPtr exitFuncPtr) {
-			this.PlatformSendString = new KodiBridgeABI(sendStringFuncPtr);
+			this.nativeBridge = new KodiBridgeABI(sendStringFuncPtr);
 			this.exitCallback = Marshal.GetDelegateForFunctionPointer<PyExitDelegate>(exitFuncPtr);
-
-			asyncMessageConsumer = new Task(new Action(_messageConsumer), taskCts.Token);
-			asyncMessageConsumer.Start();
-			RPCCanSend.Set();
-		}
-
-		private void _messageConsumer() {
-			while (!taskCts.IsCancellationRequested) {
-				try {
-					RPCRequest req = MessageQueue.Take(taskCts.Token);
-					SendMessage(req);
-				} catch (OperationCanceledException) {
-					break;
-				}
-			}
 		}
 
 		private void RegisterEventClass(IKodiEventConsumer classInstance) {
@@ -87,19 +53,12 @@ namespace Smx.KodiInterop
 		private void CloseRPC(bool UnloadDll) {
 			PythonExitMessage exitMessage = new PythonExitMessage();
 			exitMessage.UnloadDLL = UnloadDLL;
-			SendMessage(new RPCRequest {
-				message = exitMessage,
-				onReply = (reply) => {
-					RPCCanSend.Reset();
-				},
-			});
+			SendMessage(exitMessage);
 		}
 
 		public bool StopRPC(bool UnloadDll) {
 			Console.WriteLine("Shutting Down...");
 			CloseRPC(UnloadDLL);
-			taskCts.Cancel();
-			asyncMessageConsumer.Wait();
 			Console.WriteLine("Done!");
 			return true;
 		}
@@ -123,35 +82,13 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <param name="request">message object to send</param>
 		/// <returns></returns>
-		private string SendMessage(RPCRequest request) {
-			string reply = null;
+		public string SendMessage(RPCMessage message) {
+			string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(message));
+			string reply;
 			lock (MessageLock) {
-				RPCCanSend.WaitOne();
-				RPCCanSend.Reset();
-
-				string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(request.message));
-				reply = PlatformSendString.PySendMessage(messageString);
-
-				request.onReply(reply);
+				reply = nativeBridge.PySendMessage(messageString);
 			}
 			return reply;
-		}
-
-		public string QueueMessage(RPCMessage message) {
-			TaskCompletionSource<string> taskCompletionSource = new TaskCompletionSource<string>();
-
-			PyMessageDelegate onReplyDelegate = (reply) => {
-				RPCCanSend.Set();
-				taskCompletionSource.SetResult(reply);
-			};
-
-			RPCRequest req = new RPCRequest {
-				message = message,
-				onReply = onReplyDelegate
-			};
-			MessageQueue.Add(req);
-
-			return taskCompletionSource.Task.Result; 
 		}
 	}
 }
