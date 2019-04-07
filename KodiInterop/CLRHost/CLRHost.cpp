@@ -78,6 +78,10 @@ private:
 	MethodInfo^ PluginMainMethod;
 
 public:
+	Object^ InitializeLifetimeServices() override {
+		return nullptr;
+	}
+
 	PluginInstance(String^ assemblyPath, List<String^>^ asmSearchPaths) {
 		pluginAssembly = (gcnew PathListAssemblyLoader(asmSearchPaths))->LoadFrom(assemblyPath);
 		PluginMainMethod = KodiAbstractBridge::FindPluginMain();
@@ -97,12 +101,13 @@ public:
 };
 
 struct PluginInstanceData {
-	PluginInstanceData(){}
 public:
 	gcroot<AppDomain^> appDomain;
 	gcroot<PluginInstance^> instance;
 
-	PluginInstanceData(AppDomain^ appDomain, PluginInstance^ instance) : appDomain(appDomain), instance(instance){}
+	PluginInstanceData() {}
+	PluginInstanceData(AppDomain^ appDomain, PluginInstance^ instance) : appDomain(appDomain), instance(instance){
+	}
 };
 
 static std::map<PLGHANDLE, PluginInstanceData> gPlugins;
