@@ -34,9 +34,6 @@ class State(object):
 
     def __init__(self, bridge):
         self.bridge = bridge
-    
-    def set_handle(self, handle):
-        self.handle = handle
 
     def get_result(self):
         return self.LastResult

@@ -73,20 +73,16 @@ class Bridge(object):
         self.module.PluginMain(self.plugin_handle)
 
         print("RETURNED FROM C#")
-        # wait synchonously for C# to unblock us
+        # wait for C# to unblock us
         g_closed.wait()
 
-    @staticmethod
-    def _reaper():
-        g_closed.set()
-
+    '''
+    C# Calls this method when it's done and handles control back to Python
+    '''
     @staticmethod
     def on_exit():
         print("=> OnExit called")
-        # Start a thread so C# can return from the exit call
-        # while we unblock the RPC state
-        rt = threading.Thread(target=Bridge._reaper)
-        rt.start()
+        g_closed.set()
         pass
 
     def _imp_common(self):
