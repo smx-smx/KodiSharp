@@ -34,6 +34,8 @@ namespace TestPlugin
 			throw new Exception("I should appear in kodi.log");
 		}
 
+		private DateTime? LastNavVisited = null;
+
 		[Route("/")]
 		public int MainHandler(NameValueCollection parameters)
 		{
@@ -74,13 +76,6 @@ namespace TestPlugin
 				message: "Hello World from C#",
 				duration: TimeSpan.FromSeconds(1)
 			);
-
-			/*
-			 * Persistent variables preserve their value between multiple plugin invokations,
-			 * unlike python in XBMC where everything is destroyed when the plugin is invoked again (e.g navigating between pages).
-			 * This is possible due to Assembly Domain that is created by the CLR once the plugin is loaded for the first time. 
-			 **/
-			TestPluginState.LastMainPageVisitTime = DateTime.Now;
 
 			return 0;
 		}
@@ -188,9 +183,10 @@ namespace TestPlugin
 		public int NavHandler(NameValueCollection parameters)
 		{
 			string itemLabel = "Go to Main";
-			if (TestPluginState.LastMainPageVisitTime != null) {
-				itemLabel += string.Format(" (Last Visited: {0})", TestPluginState.LastMainPageVisitTime.Value.ToString());
+			if (LastNavVisited != null) {
+				itemLabel += string.Format(" (Last Visited: {0})", LastNavVisited.Value.ToString());
 			}
+			LastNavVisited = DateTime.Now;
 
 			List<ListItem> items = new List<ListItem> {
 				new ListItem(
@@ -204,7 +200,6 @@ namespace TestPlugin
 
 			List.Add(items);
 			List.Show();
-
 			return 0;
 		}
 
