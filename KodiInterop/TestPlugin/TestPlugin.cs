@@ -64,8 +64,22 @@ namespace TestPlugin
 					url: BuildNavUrl("/playlist"),
 					isFolder: true
 				),
-				new ListItem("Item 2"),
-				new ListItem("Item 3")
+				new ListItem(
+					label: "Video",
+					url: BuildNavUrl("/video"),
+					art: new Dictionary<Art, string>() {
+						{ Art.Fanart, "https://mango.blender.org/wp-content/gallery/4k-renders/26_thom_robot.jpg" },
+						{ Art.Poster, "https://mango.blender.org/wp-content/themes/tearsofsteel/images/logo.png" },
+					}
+				),
+				new ListItem(
+					label: "Video2",
+					url: BuildNavUrl("/video2"),
+					art: new Dictionary<Art, string>() {
+						{ Art.Poster, "https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg?x81236" },
+						{ Art.Fanart, "https://peach.blender.org/wp-content/uploads/bbb-splash.png?x81236" }
+					}
+				)
 			};
 
 			List.Add(items);
@@ -77,6 +91,19 @@ namespace TestPlugin
 				duration: TimeSpan.FromSeconds(1)
 			);
 
+			return 0;
+		}
+
+
+		[Route("/video")]
+		public int VideoHandler(NameValueCollection parameters) {
+			new XbmcPlayer().Play("http://ftp.halifax.rwth-aachen.de/blender/demo/movies/ToS/ToS-4k-1920.mov");
+			return 0;
+		}
+
+		[Route("/video2")]
+		public int VideoHandler2(NameValueCollection parameters) {
+			new XbmcPlayer().Play("http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4");
 			return 0;
 		}
 
@@ -141,7 +168,7 @@ namespace TestPlugin
 				Kodi.Sleep(TimeSpan.FromSeconds(1));
 			}
 
-			for(int i=10; i<100; i+=5) {
+			for(int i=10; i<=100; i+=5) {
 				ApplicationBuiltins.SetVolume(i, true);
 				Kodi.Sleep(TimeSpan.FromMilliseconds(200));
 			}
