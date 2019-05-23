@@ -102,7 +102,7 @@ namespace SpeechRecognizerAddon
 
 		[PluginEntry]
 		public static int PluginMain() {
-			return GetInstance<SpeechRecognizerAddon>(typeof(SpeechRecognizerAddon), enableDebug: true, persist: true).Run();
+			return GetInstance<SpeechRecognizerAddon>(enableDebug: true, persist: true).Run();
 		}
 	}
 }

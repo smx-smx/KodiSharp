@@ -91,11 +91,10 @@ namespace Smx.KodiInterop
 		/// Creates a new addon instance.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="addonType">The class of the addon to create</param>
 		/// <param name="enableDebug">Enables or disabled the debugging console (works on windows only)</param>
 		/// <param name="persist">Whether or not to reuse a previous addon instance</param>
 		/// <returns></returns>
-		public static T GetInstance<T>(Type addonType, bool enableDebug = false, bool persist = false) where T: KodiAddon {
+		public static T GetInstance<T>(bool enableDebug = false, bool persist = false) where T: KodiAddon {
 			if (enableDebug) {
 				ConsoleHelper.CreateConsole();
 			}
@@ -113,7 +112,7 @@ namespace Smx.KodiInterop
 			}
 
 			if (instance == null) {
-				instance = (T)Activator.CreateInstance(addonType);
+				instance = (T)Activator.CreateInstance(typeof(T));
 				if (persist) {
 					KodiBridge.RegisterPersistentAddon(BaseUrl, instance);
 				}
