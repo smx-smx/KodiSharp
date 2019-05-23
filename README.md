@@ -69,7 +69,7 @@ namespace TestPlugin
 
     [PluginEntry]
     public static int PluginMain() {
-        return GetInstance<TestPlugin>(typeof(TestPlugin), enableDebug: true, persist: true).Run();
+        return GetInstance<TestPlugin>(enableDebug: true, persist: true).Run();
     }
 }
 ```
