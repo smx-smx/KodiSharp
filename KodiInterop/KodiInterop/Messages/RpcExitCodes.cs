@@ -7,6 +7,7 @@ namespace Smx.KodiInterop.Messages
     public enum RpcExitCodes
     {
 		Success = 0,
-		ResultNotSerializable = 1
+		Error = 1,
+		ResultNotSerializable = 2
     }
 }

@@ -11,6 +11,10 @@ from lock import g_closed
 class RPCError:
     SUCCESS = 0
     ERROR = 1
+    '''
+    eval result is not serializable/representable
+    this is not an error. it indicates that the result is a complex data type
+    '''
     RESULT_NOT_SERIALIZABLE = 2
 
 
@@ -98,12 +102,11 @@ class RPC(object):
         except TypeError as e:
             jDict['value'] = None
             jDict['exit_code'] = RPCError.RESULT_NOT_SERIALIZABLE
-            jDict['error'] = repr(e)
+            jsonData = json.dumps(jDict)
         except Exception as e:
             jDict['value'] = None
             jDict['exit_code'] = RPCError.ERROR
             jDict['error'] = repr(e)
-        finally:
             jsonData = json.dumps(jDict)
 
         return jsonData
