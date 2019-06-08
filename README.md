@@ -1,6 +1,54 @@
 # KodiSharp
-Use Kodi python APIs in C#, and write rich addons using the .NET framework
+Write rich Kodi addons using the .NET framework (C#/VB.NET/F#/...)
 ![TestPlugin](https://raw.githubusercontent.com/smx-smx/KodiSharp/master/img/KodiSharp.png)
+
+## Why?
+The idea started when i was writing an addon for Kodi. I was frustrated by the way addons work.
+
+Every time you click on a menu entry, **all variables are destroyed** and the script is re-invoked again.
+
+You can pass some data to the new script by using a querystring, but the size is limited and the only workaround is to use temporary files.
+
+On top of that, not all Python modules can be used. They have to be repackaged specifically for Kodi.
+
+
+By using the .NET runtime, we can
+
+- Use Nuget to manage dependencies
+- Use a hosted .NET runtime, which is never destroyed and can keep variables alive.
+- Run background activities without blocking the Kodi process 
+- Use the .NET ecosystem: rich APIs, fast runtime (NOTE: see *Performance*)
+
+## How does it work?
+KodiSharp works by injecting the .NET Runtime into the Kodi process.
+
+The .NET Runtime is provided by CLRHost (for Windows users) or MonoHost (Windows/Mac/Linux), which offer functionality to load and run addons written in .NET (C#/VB.Net/F#).
+
+Python uses `ctypes` to load one of the providers and to interact with .NET
+
+This gives us an important advantage over stdout based REPL (spawning a .NET process and reading its output - e.g https://github.com/CRialDev/KSHarp)
+
+Once the .NET runtime is loaded in the process, it persists until the host process (Kodi) terminates
+
+We can run plugins quickly by recycling their instances: persist both static and instance variables (**no more temporary files!**).
+
+The plugin gets detatched and reattached when required. If the plugin is no longer needed, it can be disposed explicitly by the developer.
+
+### Performance
+
+To achieve Python interoperability, KodiSharp uses an in-process JSON RPC that evaluates Python code.
+
+I explored the possibility of using the Python interpreter directly through `libpython`, but it isn't worth the extra effort. Ultimately, we'd still use `PyRun_SimpleString`, and the improvements would be minimal.
+
+In the current implementation, every call to Kodi APIs has to undergo the following steps, involving a round-trip:
+- [C#] Escape call arguments
+- [C#] Encode to JSON
+- [C#] Pass the JSON message to Python
+- [Python] Decode the JSON message
+- [Python] Eval the code
+- [Python] Send the result back to Python, from a special accumulator variable called `LastResult`
+
+Due to this, code making frequent calls to Kodi or Python should be optimized to reduce the transitions where possible
 
 ## Features
 - Events support (xbmc.Monitor)
