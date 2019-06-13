@@ -45,21 +45,21 @@ In the current implementation, every call to Kodi APIs has to undergo the follow
 - [C#] Encode to JSON
 - [C#] Pass the JSON message to Python
 - [Python] Decode the JSON message
-- [Python] Eval the code
-- [Python] Send the result back to Python, from a special accumulator variable called `LastResult`
+- [Python] Eval the code and store the result in a special accumulator variable called `LastResult`
+- [Python] Send the result back to C# in JSON format
 
 Due to this, code making frequent calls to Kodi or Python should be optimized to reduce the transitions where possible
 
 ## Features
-- Events support (xbmc.Monitor)
+- Events support (xbmc.Monitor and xbmc.Player)
 - Python interfaces
     - Code eval
     - Variable management
     - Value escaping
     - Function calls
     - Python console logging
-- C# Bindings of Kodi modules (xbmc, xbmcgui, ...)
-- URL Routing (handlers for different sections of the plugin)
+- C# Bindings for Kodi modules (xbmc, xbmcgui, ...)
+- URL Routing: define handlers for different plugin sections/functionalities, and connect them to menu entries
 - Support for Service addons (executed in background, as defined in addon.xml)
 - Addons can run in the background, and persist across script invocation.
 
@@ -75,15 +75,17 @@ First of all, target kodi.exe as the process we want to debug for your Class Lib
  - Debug
  - Start external program -> Browse for Kodi.exe
 
-### How to enable debugging
+### How to enable debugging (for Windows)
+This method works only on Windows, since it uses `AllocConsole` and `Debugger.Launch`, features that are not available on Unix
+
 Set `enable_debug` to `True` in `default.py`, at the following line
 ```python
 bridge = Bridge(lib_path, assembly_path, enable_debug=False)
 ```
 
-When you run your plugin, the JIT Debugger Window will pop-up.
+If you are on Windows, the JIT Debugger Window will pop-up and a console window will appear
 
-### Optional: Automatically start and debug the plugin from Visual Studio
+#### Optional: Automatically start and debug the plugin from Visual Studio
 Navigate to "%appdata%\Kodi\userdata"
 Create a file called "autoexec.py" and insert the following code to start your plugin when kodi starts
 ```python
