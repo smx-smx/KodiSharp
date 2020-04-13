@@ -72,8 +72,6 @@
     <Compile Include="KodiBridgeABI.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="Messages\KodiEventMessage.cs" />
-    <Compile Include="Messages\MessageReplyEventArgs.cs" />
-    <Compile Include="Messages\PythonDeleteVariableMessage.cs" />
     <Compile Include="Messages\PythonEvalMessage.cs" />
     <Compile Include="Messages\PythonEvalReply.cs" />
     <Compile Include="Messages\PythonExitMessage.cs" />
@@ -113,11 +111,8 @@
     <Compile Include="PyConsole.cs" />
     <Compile Include="PythonInterop.cs" />
     <Compile Include="Python\PyDict.cs" />
-    <Compile Include="Python\PyEventClassBuilder.cs" />
-    <Compile Include="Python\PyFunctionBuilder.cs" />
     <Compile Include="Python\PyModules.cs" />
     <Compile Include="Python\PythonFunction.cs" />
-    <Compile Include="Python\PyThread.cs" />
     <Compile Include="Python\PyVariable.cs" />
     <Compile Include="Python\PyVariableManager.cs" />
     <Compile Include="Python\ValueConverters\ArrayConverter.cs" />
@@ -131,9 +126,7 @@
     <Compile Include="UrlNavigationEventArgs.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Python\Types\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

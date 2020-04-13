@@ -85,7 +85,7 @@ public:
 
 	PluginInstance(String^ assemblyPath, List<String^>^ asmSearchPaths) {
 		pluginAssembly = (gcnew PathListAssemblyLoader(asmSearchPaths))->LoadFrom(assemblyPath);
-		PluginMainMethod = KodiAbstractBridge::FindPluginMain();
+		PluginMainMethod = KodiBridgeABI::FindPluginMain();
 	}
 
 	bool Initialize(IntPtr cb1, IntPtr cb2, bool enableDebug) {

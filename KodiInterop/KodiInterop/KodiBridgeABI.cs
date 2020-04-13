@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Smx.KodiInterop
 {
+	/// <summary>
+	/// This class is invoked from native code
+	/// </summary>
 	public class KodiBridgeABI : KodiAbstractBridge
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -38,6 +41,26 @@ namespace Smx.KodiInterop
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate int PluginMainDelegate();
+
+		public static MethodInfo FindPluginMain() {
+			Assembly thisAsm = Assembly.GetExecutingAssembly();
+
+			var assemblies = AppDomain.CurrentDomain
+				.GetAssemblies()
+				.Where(asm => asm != thisAsm);
+
+			MethodInfo pluginEntry = null;
+			foreach (Assembly asm in assemblies) {
+				pluginEntry = asm.GetTypes()
+					.SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+					.Where(m => m.GetCustomAttribute<PluginEntryAttribute>() != null)
+					.FirstOrDefault();
+				if (pluginEntry != null)
+					break;
+			}
+
+			return pluginEntry;
+		}
 
 		public static IntPtr GetPluginMainFunc(
 			IntPtr sendMessageCallbackPtr,

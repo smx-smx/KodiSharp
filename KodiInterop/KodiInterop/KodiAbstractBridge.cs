@@ -25,25 +25,5 @@ namespace Smx.KodiInterop
 				return "";
 			return Marshal.PtrToStringAnsi(pyStr);
 		}
-
-		public static MethodInfo FindPluginMain() {
-			Assembly thisAsm = Assembly.GetExecutingAssembly();
-
-			var assemblies = AppDomain.CurrentDomain
-				.GetAssemblies()
-				.Where(asm => asm != thisAsm);
-
-			MethodInfo pluginEntry = null;
-			foreach (Assembly asm in assemblies) {
-				pluginEntry = asm.GetTypes()
-					.SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-					.Where(m => m.GetCustomAttribute<PluginEntryAttribute>() != null)
-					.FirstOrDefault();
-				if (pluginEntry != null)
-					break;
-			}
-
-			return pluginEntry;
-		}
 	}
 }
