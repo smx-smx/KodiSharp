@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Python.ValueConverters
 {
-	public static class ArrayConverter
+	public static class ListConverter
 	{
-		public static string ToPythonCode(this ICollection<string> array) {
+		public static string ToPythonCode<T>(this IList<T> list) where T : PythonConvertible {
 			StringBuilder sb = new StringBuilder("[");
 
 
-			var iter = array.GetEnumerator();
+			var iter = list.GetEnumerator();
 			while (iter.MoveNext()) {
-				string value = PythonInterop.EscapeArgument(iter.Current.ToString());
+				string value = iter.Current.ToPythonCode();
 				sb.Append(value + ",");
 			}
 			sb.Length--;

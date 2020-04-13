@@ -1,5 +1,6 @@
 ﻿using Smx.KodiInterop;
 using Smx.KodiInterop.Python;
+using Smx.KodiInterop.Python.ValueConverters;
 using System;
 using System.Collections.Generic;
 
@@ -21,17 +22,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public static void Add(IList<ListItem> items) {
 			var list = PyVariableManager.Get.NewVariable();
-			string listCode = "[";
-			for (int i = 0; i < items.Count; i++) {
-				listCode += string.Format("({0},{1},{2})",
-					PythonInterop.EscapeArgument(items[i].Url),
-					items[i].Instance.PyName,
-					items[i].IsFolder
-				);
-				if (i + 1 < items.Count)
-					listCode += ",";
-			}
-			listCode += "]";
+			string listCode = items.ToPythonCode();
 
 			using (PyVariable listVar = PyVariableManager.Get.NewVariable(evalCode: listCode)) {
 				PythonInterop.CallFunction(

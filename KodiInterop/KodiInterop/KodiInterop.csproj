@@ -117,8 +117,8 @@
     <Compile Include="Python\PyVariableManager.cs" />
     <Compile Include="Python\ValueConverters\ArrayConverter.cs" />
     <Compile Include="Python\ValueConverters\DictionaryConverter.cs" />
-    <Compile Include="Python\ValueConverters\IValueConverter.cs" />
-    <Compile Include="Python\ValueConverters\PyVariableConverter.cs" />
+    <Compile Include="Python\ValueConverters\PythonConvertible.cs" />
+    <Compile Include="Python\ValueConverters\ListConverter.cs" />
     <Compile Include="Python\ValueConverters\StringConverter.cs" />
     <Compile Include="RouteAttribute.cs" />
     <Compile Include="RouteManager.cs" />

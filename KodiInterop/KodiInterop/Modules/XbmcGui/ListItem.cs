@@ -1,5 +1,6 @@
 ﻿using Smx.KodiInterop.Modules.Xbmc;
 using Smx.KodiInterop.Python;
+using Smx.KodiInterop.Python.ValueConverters;
 using Smx.KodiInterop.Python.XbmcGui;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Modules.XbmcGui
 {
-	public class ListItem : IDisposable
+	public class ListItem : IDisposable, PythonConvertible
     {
 		public readonly PyVariable Instance = PyVariableManager.Get.NewVariable();
 		public string Url { get; private set; }
@@ -157,6 +158,14 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 
 		public void Dispose() {
 			Instance.Dispose();
+		}
+
+		public string ToPythonCode() {
+			return string.Format("({0},{1},{2})",
+				PythonInterop.EscapeArgument(Url),
+				Instance.PyName,
+				IsFolder
+			);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using Smx.KodiInterop;
+using Smx.KodiInterop.Python.ValueConverters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Smx.KodiInterop.Python
 {
-	public class PyVariable: IDisposable
+	public class PyVariable: IDisposable, PythonConvertible
 	{
 		public readonly string Basename;
 		public readonly string PyName;
@@ -141,6 +142,10 @@ namespace Smx.KodiInterop.Python
 
 		public override string ToString() {
 			return string.Format("{0} = {1}", this.PyName, this.Value);
+		}
+
+		public string ToPythonCode() {
+			return PyName;
 		}
 	}
 }

@@ -30,7 +30,7 @@ namespace Smx.KodiInterop
 				return "None";
 			}
 
-			//If it's a variable, return it's unquoted python name
+			//If it's a variable, return its unquoted python name
 			if (argument is PyVariable)
 				return (argument as PyVariable).PyName;
 
