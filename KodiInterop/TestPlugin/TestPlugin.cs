@@ -14,6 +14,7 @@ using Smx.KodiInterop.Python.ValueConverters;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Net.Http;
+using System.IO;
 
 namespace TestPlugin
 {
@@ -119,6 +120,8 @@ namespace TestPlugin
 
 			PlayList pl = new PlayList(PlayListType.Music);
 
+			List<ListItem> items = new List<ListItem> {};
+
 			var matches = new Regex("<a href=\"?(.*?)\"?>.*</a>").Matches(data);
 			var number = Math.Min(5, matches.Count);
 			for (var i = 0; i < number; i++) {
@@ -129,7 +132,10 @@ namespace TestPlugin
 				string url = uri.GetLeftPart(UriPartial.Authority) + path;
 
 				pl.Add(url);
+				items.Add(new ListItem(label: Path.GetFileName(path), url: url));
 			}
+			List.Add(items);
+			List.Show();
 
 			var player = new XbmcPlayer();
 			player.Play(pl);
