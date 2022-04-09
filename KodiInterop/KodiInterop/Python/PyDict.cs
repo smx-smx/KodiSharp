@@ -55,7 +55,9 @@ namespace Smx.KodiInterop.Python
         public ICollection<string> Keys { get; private set; } = new List<string>();
         public void Refresh()
         {
-            JArray result = Instance.CallFunction("keys");
+            JArray result = PythonInterop.EvalToResult(string.Format(
+                "list({0}.keys())", Instance.PyName)
+            ).Value;
             Keys = result.ToObject<List<string>>();
         }
 

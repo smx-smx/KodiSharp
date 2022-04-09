@@ -11,17 +11,27 @@ namespace Smx.KodiInterop
 	/// <summary>
 	/// This class is invoked from native code
 	/// </summary>
-	public class KodiBridgeABI : KodiAbstractBridge
+	public class KodiBridgeABI : IKodiBridge
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public new delegate IntPtr PySendStringDelegate([MarshalAs(UnmanagedType.LPStr)] string messageData);
+		//[return: MarshalAs(UnmanagedType.LPStr)]
+		public delegate IntPtr PySendStringDelegate(
+			[MarshalAs(UnmanagedType.LPStr)] string messageData);
 
 		private readonly PySendStringDelegate _delegate;
 
-		protected override Delegate PySendString {
-			get => _delegate;
-		}
 
+		/// <summary>
+		/// Wrapper to PySendMessageDelegate that does *not* free the string, like in MarshalAs (causing a python crash when it tries to free the string again)
+		/// </summary>
+		/// <param name="messageData"></param>
+		/// <returns></returns>
+		public string PySendMessage(string messageData) {
+			IntPtr pyStr = _delegate(messageData);
+			if (pyStr == IntPtr.Zero) return "";
+			return Marshal.PtrToStringAnsi(pyStr);
+		}
+			
 		public KodiBridgeABI(IntPtr pySendStringFuncPtr) {
 			_delegate = Marshal.GetDelegateForFunctionPointer<PySendStringDelegate>(pySendStringFuncPtr);
 		}

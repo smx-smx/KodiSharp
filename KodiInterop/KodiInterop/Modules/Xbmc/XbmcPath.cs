@@ -38,7 +38,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <returns></returns>
 		public static string translatePath(string path) {
 			return PythonInterop.CallFunction(
-				new PyFunction(PyModule.Xbmc, "translatePath"),
+				new PyFunction(PyModule.XbmcVfs, "translatePath"),
 				path
 			);
 		}

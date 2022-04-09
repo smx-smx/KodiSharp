@@ -2,13 +2,14 @@
 C# module loader
 """
 
+import ctypes
 import threading
 import os
 import sys
-from module import Module
-from rpc import RPC
-from state import State
-from lock import g_closed
+from .module import Module
+from .rpc import RPC
+from .state import State
+from .lock import g_closed
 
 from ctypes import *
 
@@ -57,7 +58,8 @@ class Bridge(object):
 
         # Initialize AppDomain and call initialize from the plugin
         self.plugin_handle = self.module.clrInit(
-            assembly_path, pluginDir,
+            assembly_path.encode('ascii'),
+            pluginDir.encode('ascii'),
             self.on_message,
             self.on_exit,
             enable_debug

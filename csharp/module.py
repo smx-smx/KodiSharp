@@ -4,7 +4,6 @@ Represent a native module
 
 from ctypes import *
 
-
 class Module(object):
     def __init__(self, lib_path):
         # Handle to the loaded library
@@ -18,7 +17,7 @@ class Module(object):
         if not isinstance(methods, dict):
             raise Exception("Pass a method dict, describing prototypes")
         for name, signature in methods.items():
-            if self.__dict__.has_key(name):
+            if name in self.__dict__:
                 raise Exception("Cannot import %s (conflicting property name)" % name)
             args, ret = signature
             # build property for function
@@ -38,5 +37,5 @@ class Module(object):
         """
         Gets only called if attribute is not found in object
         """
-        if self._imports.has_key(name):
+        if name in self._imports:
             return self._imports[name]

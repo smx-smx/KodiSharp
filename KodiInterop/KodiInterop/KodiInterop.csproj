@@ -64,7 +64,6 @@
     <Compile Include="EscapeFlags.cs" />
     <Compile Include="IKodiBridge.cs" />
     <Compile Include="Kodi.cs" />
-    <Compile Include="KodiAbstractBridge.cs" />
     <Compile Include="KodiAddon.cs" />
     <Compile Include="KodiApiVersionAttribute.cs" />
     <Compile Include="KodiBridge.cs" />

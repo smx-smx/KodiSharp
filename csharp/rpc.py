@@ -2,11 +2,14 @@
 JSON handling
 """
 
+from asyncore import write
+from email import utils
+from faulthandler import dump_traceback
 import json
 import sys
 
-from utils import Utils
-from lock import g_closed
+from .utils import Utils
+from .lock import g_closed
 
 class RPCError:
     SUCCESS = 0
@@ -52,7 +55,7 @@ class RPC(object):
         return json.dumps(jDict)
 
     @staticmethod
-    def on_message(data):
+    def on_message(data: str):
         """
         Parses eval messages from C#
 
@@ -102,6 +105,7 @@ class RPC(object):
         except TypeError as e:
             jDict['value'] = None
             jDict['exit_code'] = RPCError.RESULT_NOT_SERIALIZABLE
+            #jDict['exception'] = str(e)
             jsonData = json.dumps(jDict)
         except Exception as e:
             jDict['value'] = None
@@ -109,4 +113,4 @@ class RPC(object):
             jDict['error'] = repr(e)
             jsonData = json.dumps(jDict)
 
-        return jsonData
+        return jsonData.encode('ascii')

@@ -11,8 +11,8 @@ import sys
 
 import threading
 
-from xbmc_monitor import xbmc_monitor
-from xbmc_player import xbmc_player
+from .xbmc_monitor import xbmc_monitor
+from .xbmc_player import xbmc_player
 
 class MonitorThread(threading.Thread):
     def __init__(self, monitor):
