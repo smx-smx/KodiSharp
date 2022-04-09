@@ -18,6 +18,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		private int _videoStream;
 		private int _audioStream;
 
+		public event EventHandler<EventArgs> AVStarted;
+		public event EventHandler<EventArgs> AVChanged;
 		public event EventHandler<EventArgs> PlayBackEnded;
 		public event EventHandler<EventArgs> PlayBackPaused;
 		public event EventHandler<EventArgs> PlayBackResumed;
@@ -30,6 +32,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 		public bool TriggerEvent(KodiEventMessage e) {
 			switch (e.Source) {
+				case "onAVStarted":
+					AVStarted?.Invoke(null, new EventArgs());
+					break;
+				case "onAVChange":
+					AVChanged?.Invoke(null, new EventArgs());
+					break;
 				case "onPlayBackEnded":
 					PlayBackEnded?.Invoke(null, new EventArgs());
 					break;
@@ -178,6 +186,10 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			get {
 				return Convert.ToBoolean(Instance.CallFunction("isPlayingVideo"));
 			}
+		}
+
+		public double GetTime() {
+			return Convert.ToDouble(Instance.CallFunction("getTime"));
 		}
 
 		public void Pause() {

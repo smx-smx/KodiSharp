@@ -66,7 +66,10 @@ class Bridge(object):
         )
 
     def post_event(self, jsonString):
-        self.module.PostEvent(self.plugin_handle, jsonString)
+        self.module.PostEvent(
+            self.plugin_handle,
+            jsonString.encode('ascii')
+        )
 
     def run(self):
         g_closed.clear()

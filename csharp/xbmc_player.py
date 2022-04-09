@@ -37,6 +37,12 @@ class xbmc_player(xbmc.Player):
 		}
 		self.bridge.post_event(json.dumps(jDict))
 
+	def onAVStarted(self, *args, **kwargs):
+		self.post("onAVStarted", *args, **kwargs)
+
+	def onAVChange(self, *args, **kwargs):
+		self.post("onAVChange", *args, **kwargs)
+
 	def onPlayBackEnded(self, *args, **kwargs):
 		self.post("onPlayBackEnded", *args, **kwargs)
 	

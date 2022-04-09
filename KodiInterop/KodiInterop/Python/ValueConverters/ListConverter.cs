@@ -11,13 +11,17 @@ namespace Smx.KodiInterop.Python.ValueConverters
 		public static string ToPythonCode<T>(this IList<T> list) where T : PythonConvertible {
 			StringBuilder sb = new StringBuilder("[");
 
+			int count = 0;
 
 			var iter = list.GetEnumerator();
 			while (iter.MoveNext()) {
+				++count;
 				string value = iter.Current.ToPythonCode();
 				sb.Append(value + ",");
 			}
-			sb.Length--;
+			if (count > 0) {
+				sb.Length--;
+			}
 			sb.Append("]");
 
 			return sb.ToString();

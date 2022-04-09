@@ -15,6 +15,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Net.Http;
 using System.IO;
+using System.Linq;
 
 namespace TestPlugin
 {
@@ -110,7 +111,7 @@ namespace TestPlugin
 
 		[Route("/playlist")]
 		public int PlaylistHandler(NameValueCollection parameters) {
-			Uri uri = new Uri("http://www.amclassical.com/piano/");
+			Uri uri = new Uri("http://www.download2mp3.com/beethoven.htm");
 
 			var data = new HttpClient()
 				.GetAsync(uri)
@@ -122,28 +123,35 @@ namespace TestPlugin
 
 			List<ListItem> items = new List<ListItem> {};
 
-			var matches = new Regex("<a href=\"?(.*?)\"?>.*</a>").Matches(data);
-			var number = Math.Min(5, matches.Count);
-			for (var i = 0; i < number; i++) {
-				string path = matches[i].Groups[1].Value.ToLower();
-				if (!path.EndsWith("mp3"))
-					continue;
+			var links = new Regex("<a href=\"(.*?)\"")
+				.Matches(data)
+				.Cast<Match>()
+				.Where(m => m.Groups[1].Value.EndsWith(".mp3"))
+				.Select(m => {
+					return uri.GetLeftPart(UriPartial.Authority) + "/" + m.Groups[1].Value;
+				})
+				.Take(5)
+				.ToArray();
 
-				string url = uri.GetLeftPart(UriPartial.Authority) + path;
-
-				pl.Add(url);
-				items.Add(new ListItem(label: Path.GetFileName(path), url: url));
+			foreach(var linkUri in links) {
+				pl.Add(linkUri);
+				items.Add(new ListItem(
+					label: new Uri(linkUri).LocalPath,
+					url: linkUri));
 			}
+
 			List.Add(items);
 			List.Show();
 
 			var player = new XbmcPlayer();
 			player.Play(pl);
 
-			for(int i=0; i<pl.Count; i++) {
-				while (!player.IsPlayingAudio) {
-					Kodi.Sleep(TimeSpan.FromMilliseconds(200));
-				}
+			/**
+			 * go to the next playlist entry after 5 seconds
+			 * counted from when the playback started
+			 */
+			int currentIndex = 0;
+			player.AVStarted += (o, ev) => {
 				var info = player.MusicInfoTag;
 				Console.WriteLine($"[NOW PLAYING]: {player.PlayingFile}");
 				Console.WriteLine("=====================");
@@ -151,6 +159,12 @@ namespace TestPlugin
 
 				Kodi.Sleep(TimeSpan.FromSeconds(5));
 				player.PlayNext();
+				++currentIndex;
+			};
+
+			// keep the script alive until the playlist if over
+			while(currentIndex < pl.Count) {
+				Kodi.Sleep(TimeSpan.FromSeconds(1));
 			}
 
 			return 0;
