@@ -21,8 +21,7 @@ def getTestPlugin():
 		'config': 'Debug',
 		'fwk': 'netstandard2.0',
 		'dir' : os.path.join('KodiInterop', 'TestPlugin', 'bin'),
-		'file': 'TestPlugin.dll',
-		'rid': getRid()
+		'file': 'TestPlugin.dll'
 	}
 
 def getSpeechRecognizerPlugin():
