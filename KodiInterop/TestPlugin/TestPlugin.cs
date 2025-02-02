@@ -173,6 +173,9 @@ namespace TestPlugin
 		[Route("/audio")]
 		public int AudioNavHandler(NameValueCollection parameters)
 		{
+			// workaround for https://github.com/xbmc/xbmc/issues/16756 - "busy dialog already running"
+			Dialog.CloseAll(force: true);
+
 			XbmcPlayer player = new XbmcPlayer();
 			player.PlayBackStarted += new EventHandler<EventArgs>(delegate (object s, EventArgs ev) {
 				Console.WriteLine("=> Playback started!");
@@ -182,7 +185,7 @@ namespace TestPlugin
 			});
 
 			//Thread.Sleep(TimeSpan.FromSeconds(1));
-			player.Play("http://www.bensound.com/royalty-free-music?download=memories");
+			player.Play("https://archive.scene.org/pub/music/groups/farb-rausch/008b-kb-the_product_main.mp3");
 
 			while (!player.IsPlayingAudio) {
 				Kodi.Sleep(TimeSpan.FromSeconds(1));
