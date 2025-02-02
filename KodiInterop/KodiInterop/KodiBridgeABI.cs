@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Smx.KodiInterop
 {
@@ -18,16 +19,23 @@ namespace Smx.KodiInterop
 
 		private readonly PySendStringDelegate _delegate;
 
+		private static unsafe int strlen(IntPtr ptr){
+			int l = 0;
+			byte* dptr = (byte *)ptr.ToPointer();
+			while(*dptr++ != 0) ++l;
+			return l;
+		}
+
 
 		/// <summary>
 		/// Wrapper to PySendMessageDelegate that does *not* free the string, like in MarshalAs (causing a python crash when it tries to free the string again)
 		/// </summary>
 		/// <param name="messageData"></param>
 		/// <returns></returns>
-		public string PySendMessage(string messageData) {
+		public unsafe string PySendMessage(string messageData) {
 			IntPtr pyStr = _delegate(messageData);
 			if (pyStr == IntPtr.Zero) return "";
-			return Marshal.PtrToStringAnsi(pyStr);
+			return Encoding.UTF8.GetString((byte *)pyStr.ToPointer(), strlen(pyStr));
 		}
 			
 		public KodiBridgeABI(IntPtr pySendStringFuncPtr) {
