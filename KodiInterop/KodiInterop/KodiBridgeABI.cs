@@ -24,13 +24,10 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <param name="messageData"></param>
 		/// <returns></returns>
-		public string PySendMessage(string messageData, bool replyExpected = true) {
+		public string PySendMessage(string messageData) {
 			IntPtr pyStr = _delegate(messageData);
 			if (pyStr == IntPtr.Zero) return "";
-			if(replyExpected){
-				return Marshal.PtrToStringAnsi(pyStr);
-			}
-			return string.Empty;
+			return Marshal.PtrToStringAnsi(pyStr);
 		}
 			
 		public KodiBridgeABI(IntPtr pySendStringFuncPtr) {

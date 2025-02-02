@@ -52,7 +52,7 @@ namespace Smx.KodiInterop
 		/// </summary>
 		private void CloseRPC(bool UnloadDll) {
 			PythonExitMessage exitMessage = PythonExitMessage.Create(UnloadDll);
-			SendMessage(exitMessage, replyExpected: false);
+			SendMessage(exitMessage);
 		}
 
 		public bool StopRPC(bool UnloadDll) {
@@ -81,11 +81,11 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <param name="request">message object to send</param>
 		/// <returns></returns>
-		public string SendMessage(RPCMessage message, bool replyExpected = true) {
+		public string SendMessage(RPCMessage message) {
 			string messageString = EncodeNonAsciiCharacters(JsonConvert.SerializeObject(message));
 			string reply;
 			lock (MessageLock) {
-				reply = nativeBridge.PySendMessage(messageString, replyExpected);
+				reply = nativeBridge.PySendMessage(messageString);
 			}
 			return reply;
 		}

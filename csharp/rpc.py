@@ -73,15 +73,15 @@ class RPC(object):
             message = json.loads(data)
         except Exception as exc:
             RPC.on_exception(exc)
-            return RPC.json_error(RPCError.ERROR, exc)
+            return RPC.json_error(RPCError.ERROR, exc).encode('utf-8')
 
         msg_type = message.get('type')
         if not msg_type:
-            return RPC.json_error(RPCError.ERROR)
+            return RPC.json_error(RPCError.ERROR).encode('utf-8')
 
         if msg_type == 'exit':
             g_closed.set()
-            return RPC.json_error(RPCError.SUCCESS)
+            return RPC.json_error(RPCError.SUCCESS).encode('utf-8')
         elif msg_type == 'eval':
             exec_code = message.get('exec_code')
             if exec_code:
@@ -89,7 +89,7 @@ class RPC(object):
                     g_state.eval(exec_code)
                 except Exception as exc:
                     RPC.on_exception(exc)
-                    return RPC.json_error(RPCError.ERROR, exc)
+                    return RPC.json_error(RPCError.ERROR, exc).encode('utf-8')
 
         result = g_state.get_result()
 
@@ -112,4 +112,4 @@ class RPC(object):
             jDict['error'] = repr(e)
             jsonData = json.dumps(jDict)
 
-        return jsonData.encode('ascii')
+        return jsonData.encode('utf-8')
