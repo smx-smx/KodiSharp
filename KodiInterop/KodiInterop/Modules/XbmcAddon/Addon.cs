@@ -34,7 +34,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 		/// </summary>
 		/// <param name="id">id of the addon as specified in addon.xml.
 		/// If not specified, the running addon is used</param>
-		public Addon(string id = null) {
+		public Addon(string? id = null) {
 			Instance.CallAssign(_ctor, id);
 		}
 
@@ -77,7 +77,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 					break;
 
 			}
-			string value = Instance.CallFunction(func, new List<object>{ setting });
+			string value = Instance.CallFunction(func, new List<object?>{ setting });
 			return (T)Convert.ChangeType(value, typeof(T));
 		}
 
@@ -102,7 +102,7 @@ namespace Smx.KodiInterop.Modules.XbmcAddon
 					break;
 		    }
 
-		    Instance.CallFunction(func, new List<object> { setting, value });
+		    Instance.CallFunction(func, new List<object?> { setting, value });
 	    }
 
 	    /// <summary>

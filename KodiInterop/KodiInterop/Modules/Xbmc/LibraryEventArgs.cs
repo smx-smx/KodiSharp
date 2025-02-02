@@ -9,8 +9,8 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <summary>
 		/// Video / music as string
 		/// </summary>
-		public string Library { get; private set; }
-		public LibraryEventArgs(string library = null) {
+		public string? Library { get; private set; }
+		public LibraryEventArgs(string? library = null) {
 			this.Library = library;
 		}
     }

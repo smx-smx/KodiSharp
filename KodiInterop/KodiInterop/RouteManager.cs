@@ -36,11 +36,11 @@ namespace Smx.KodiInterop
 			foreach(var method in addonClass.GetMethods()) {
 				var attributes = method.GetCustomAttributes(typeof(RouteAttribute), false);
 				if(attributes.Length > 0) {
-					RouteAttribute route = attributes[0] as RouteAttribute;
+					RouteAttribute route = (RouteAttribute)attributes[0];
 
 					string url = RemoveTrailingSlash(route.Url);
 					// Delegate from Class instance
-					RouteCallback callback = Delegate.CreateDelegate(typeof(RouteCallback), addon, method) as RouteCallback;
+					RouteCallback callback = (RouteCallback)Delegate.CreateDelegate(typeof(RouteCallback), addon, method);
 					// Delegate from Static method
 					//RouteCallback callback = method.CreateDelegate(typeof(RouteCallback)) as RouteCallback;
 					//RouteCallback callback = Delegate.CreateDelegate(typeof(RouteCallback), method) as RouteCallback;

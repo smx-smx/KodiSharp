@@ -10,7 +10,7 @@ namespace Smx.KodiInterop.Python
 {
 	public class PyVariable: IDisposable, PythonConvertible
 	{
-		public readonly string Basename;
+		public readonly string? Basename;
 		public readonly string PyName;
 		private readonly bool Disposable;
 
@@ -30,7 +30,7 @@ namespace Smx.KodiInterop.Python
 		public dynamic CallFunction(
 			PyFunction function,
 			string argumentsBody,
-			PyVariable target = null
+			PyVariable? target = null
 		) {
 
 			if (target == null)
@@ -43,12 +43,12 @@ namespace Smx.KodiInterop.Python
 
 		public dynamic CallFunction(
 			PyFunction function,
-			List<object> arguments = null,
+			List<object?>? arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
-			PyVariable target = null
+			PyVariable? target = null
 		) {
 			if (arguments == null) {
-				arguments = new List<object>();
+				arguments = new List<object?>();
 			}
 
 			List<string> textArguments = PythonInterop.EscapeArguments(arguments, escapeMethod);
@@ -57,14 +57,14 @@ namespace Smx.KodiInterop.Python
 
 		public dynamic CallFunction(
 			string function,
-			List<object> arguments = null,
+			List<object?>? arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
-			PyVariable target = null
+			PyVariable? target = null
 		) {
 			return CallFunction(PyFunction.ClassFunction(function), arguments, escapeMethod, target: target);
 		}
 
-		public dynamic CallFunction(PyFunction function, params object[] args) {
+		public dynamic CallFunction(PyFunction function, params object?[] args) {
 			return CallFunction(function, args.ToList());
 		}
 
@@ -77,9 +77,9 @@ namespace Smx.KodiInterop.Python
 		/// <returns></returns>
 		public dynamic CallAssign(
 			PyFunction function,
-			List<object> arguments = null,
+			List<object?>? arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
-			PyVariable target = null
+			PyVariable? target = null
 		) {
 			string argumentsText = "";
 			if (arguments != null) {
@@ -100,15 +100,15 @@ namespace Smx.KodiInterop.Python
 
 		public dynamic CallAssign(
 			string function,
-			List<object> arguments = null,
+			List<object?>? arguments = null,
 			EscapeFlags escapeMethod = EscapeFlags.Quotes | EscapeFlags.StripNullItems,
-			PyVariable target = null
+			PyVariable? target = null
 		)
 		{
 			return CallAssign(PyFunction.ClassFunction(function), arguments, escapeMethod, target);
 		}
 
-		public dynamic CallAssign(PyFunction function, params object[] args) {
+		public dynamic CallAssign(PyFunction function, params object?[] args) {
 			return CallAssign(function, args.ToList());
 		}
 
@@ -124,7 +124,7 @@ namespace Smx.KodiInterop.Python
 		/// <param name="isObject">Indicates the variable will store non-serializable data</param>
 		public PyVariable(
 			string evalCode,
-			string basename = null,
+			string? basename = null,
 			bool disposable = true
 		) {
 			this.PyName = evalCode;

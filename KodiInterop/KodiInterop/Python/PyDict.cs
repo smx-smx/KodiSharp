@@ -3,6 +3,7 @@ using Smx.KodiInterop.Python.ValueConverters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace Smx.KodiInterop.Python
         {
             get
             {
-                return Instance.CallFunction("get", new List<object>(){
+                return Instance.CallFunction("get", new List<object?>(){
                     key
                 });
             }
@@ -58,7 +59,7 @@ namespace Smx.KodiInterop.Python
             JArray result = PythonInterop.EvalToResult(string.Format(
                 "list({0}.keys())", Instance.PyName)
             ).Value;
-            Keys = result.ToObject<List<string>>();
+            Keys = result.ToObject<List<string>>() ?? new List<string>();;
         }
 
         public ICollection<string> Values
@@ -85,7 +86,7 @@ namespace Smx.KodiInterop.Python
             }
         }
 
-        public void Add(string key, string evalCode)
+        public void Add(string key, string? evalCode)
         {
             Keys.Add(key);
             if(evalCode != null && evalCode.Length > 0)
@@ -136,7 +137,9 @@ namespace Smx.KodiInterop.Python
             return Remove(item.Key);
         }
 
-        public bool TryGetValue(string key, out string value)
+#pragma warning disable CS8767 // silence null warning
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
+#pragma warning restore CS8767
         {
             if (!ContainsKey(key)) {
                 value = null;

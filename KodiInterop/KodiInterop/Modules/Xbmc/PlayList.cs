@@ -20,7 +20,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public PlayList(PlayListType type) {
 			Instance.CallAssign(
 				_ctor,
-				new List<object> { type.GetString() },
+				new List<object?> { type.GetString() },
 				EscapeFlags.None
 			);
 		}
@@ -58,7 +58,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			Add(url, null);
 		}
 
-		public void Add(string url, ListItem listItem = null) {
+		public void Add(string url, ListItem? listItem = null) {
 			Instance.CallFunction(_add, url, listItem);
 		}
 

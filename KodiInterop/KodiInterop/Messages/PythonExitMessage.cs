@@ -11,11 +11,13 @@ namespace Smx.KodiInterop.Messages
 		/// Unused for now, for future PluginLoader
 		/// </summary>
 		[JsonProperty(PropertyName = "unload_dll")]
-		public bool UnloadDLL { get; set; }
+		public required bool UnloadDLL { get; set; }
 
-		public PythonExitMessage() {
-			this.UnloadDLL = false;
-			this.MessageType = "exit";
+		public static PythonExitMessage Create(bool unloadDll = false){
+			return new PythonExitMessage {
+				MessageType = "exit",
+				UnloadDLL = unloadDll
+			};
 		}
     }
 }

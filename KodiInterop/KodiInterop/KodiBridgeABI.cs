@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Smx.KodiInterop
 {
@@ -26,10 +24,13 @@ namespace Smx.KodiInterop
 		/// </summary>
 		/// <param name="messageData"></param>
 		/// <returns></returns>
-		public string PySendMessage(string messageData) {
+		public string PySendMessage(string messageData, bool replyExpected = true) {
 			IntPtr pyStr = _delegate(messageData);
 			if (pyStr == IntPtr.Zero) return "";
-			return Marshal.PtrToStringAnsi(pyStr);
+			if(replyExpected){
+				return Marshal.PtrToStringAnsi(pyStr);
+			}
+			return string.Empty;
 		}
 			
 		public KodiBridgeABI(IntPtr pySendStringFuncPtr) {
@@ -49,38 +50,68 @@ namespace Smx.KodiInterop
 			new PostEventDelegate(KodiBridge.PostEvent)
 		);
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate int PluginMainDelegate();
 
-		public static MethodInfo FindPluginMain() {
-			Assembly thisAsm = Assembly.GetExecutingAssembly();
-
-			var assemblies = AppDomain.CurrentDomain
-				.GetAssemblies()
-				.Where(asm => asm != thisAsm);
-
-			MethodInfo pluginEntry = null;
-			foreach (Assembly asm in assemblies) {
-				pluginEntry = asm.GetTypes()
+		public static PluginMainDelegate? FindPluginMain(Assembly asm) {
+			var pluginEntry = asm.GetTypes()
 					.SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
 					.Where(m => m.GetCustomAttribute<PluginEntryAttribute>() != null)
 					.FirstOrDefault();
-				if (pluginEntry != null)
-					break;
+			if (pluginEntry == null)
+			{
+				return null;
 			}
-
-			return pluginEntry;
+			return (PluginMainDelegate?)Delegate.CreateDelegate(typeof(PluginMainDelegate), null, pluginEntry);
 		}
 
-		public static IntPtr GetPluginMainFunc(
-			IntPtr sendMessageCallbackPtr,
-			IntPtr exitCallbackPtr,
-			bool enableDebug = false
-		) {
-			KodiBridge.Initialize(sendMessageCallbackPtr, exitCallbackPtr, enableDebug);
+		private static string[] ReadArgv(IntPtr args, int sizeBytes) {
+			int nargs = sizeBytes / IntPtr.Size;
+			string[] argv = new string[nargs];
 
-			MethodInfo pluginEntry = FindPluginMain();
-			return Marshal.GetFunctionPointerForDelegate(pluginEntry.CreateDelegate(typeof(PluginMainDelegate)));
+			for (int i = 0; i < nargs; i++, args += IntPtr.Size) {
+				IntPtr charPtr = Marshal.ReadIntPtr(args);
+				argv[i] = Marshal.PtrToStringAnsi(charPtr);
+			}
+			return argv;
+		}
+
+		private static nint ParsePointer(string str) {
+    		return (nint)Convert.ToUInt64(str, 16);
+		}
+
+		public static int Entry(IntPtr args, int sizeBytes) {
+			string[] argv = ReadArgv(args, sizeBytes);
+			if (argv.Length < 4) {
+				return 1;
+			}
+
+			var assemblyPath = argv[0];
+			var onMessageDelegate = ParsePointer(argv[1]);
+			var onExitDelegate = ParsePointer(argv[2]);
+			var postEventFptr = ParsePointer(argv[3]);
+			var enableDebug = argv.Length > 4 && argv[4] == "1";
+			if (!KodiBridge.Initialize(onMessageDelegate, onExitDelegate, enableDebug))
+			{
+				return 1;
+			}
+			Marshal.WriteIntPtr(
+				postEventFptr,
+				Marshal.GetFunctionPointerForDelegate(new PostEventDelegate(KodiBridge.PostEvent))
+			);
+
+			var asm = Assembly.LoadFrom(assemblyPath);
+			var pluginMain = FindPluginMain(asm);
+			if (pluginMain == null)
+			{
+				Console.Error.WriteLine("PluginMain not found");
+				return 1;
+			}
+			return pluginMain();
+		}
+		
+		public static void Main(string[] args){
+			Console.Error.WriteLine("This Addon can only be ran inside Kodi");
+			Environment.Exit(1);
 		}
 	}
 }

@@ -14,14 +14,6 @@ using System.Threading.Tasks;
 using Smx.KodiInterop.Modules.Xbmc;
 using System.Linq;
 
-
-/**
- * Required for Mono
- **/
-using System.Configuration;
-using System.Web.Configuration;
-using System.Runtime.CompilerServices;
-
 namespace Smx.KodiInterop
 {
 	/// <summary>
@@ -42,9 +34,9 @@ namespace Smx.KodiInterop
 		private static readonly AutoResetEvent addonFinished = new AutoResetEvent(true);
 
 		private static readonly Dictionary<string, KodiAddon> addonRefs = new Dictionary<string, KodiAddon>();
-		private static WeakReference<KodiAddon> runningAddon = new WeakReference<KodiAddon>(null);
+		private static WeakReference<KodiAddon?> runningAddon = new WeakReference<KodiAddon?>(null);
 
-		public static KodiAddon GetPersistentAddon(string addonUrl) {
+		public static KodiAddon? GetPersistentAddon(string addonUrl) {
 			if (addonRefs.TryGetValue(addonUrl, out KodiAddon instance))
 				return instance;
 			return null;
@@ -62,7 +54,7 @@ namespace Smx.KodiInterop
 			}
 		}
 
-		public static void SetRunningAddon(KodiAddon addonInstance) {
+		public static void SetRunningAddon(KodiAddon? addonInstance) {
 			if(addonInstance == null) {
 				// Addon finished running, allow another addon to start
 				addonFinished.Set();
@@ -78,12 +70,20 @@ namespace Smx.KodiInterop
 		/// <summary>
 		/// The currently running addon
 		/// </summary>
-		public static KodiAddon RunningAddon {
+		public static KodiAddon? RunningAddon {
 			get {
-				if (runningAddon.TryGetTarget(out KodiAddon target))
+				if (runningAddon.TryGetTarget(out KodiAddon? target))
 					return target;
 				return null;
 			}
+		}
+
+		public static KodiAddon EnsureRunningAddon(){
+			var addon = RunningAddon;
+			if(addon == null){
+				throw new InvalidOperationException("There is no running addon");
+			}
+			return addon;
 		}
 
 		public static void SaveException(Exception ex){
@@ -106,7 +106,7 @@ namespace Smx.KodiInterop
 
 
 		//http://stackoverflow.com/a/1373295
-		private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args){
+		private static Assembly? LoadFromSameFolder(object sender, ResolveEventArgs args){
 			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
 			if (!File.Exists(assemblyPath)) return null;
@@ -120,7 +120,7 @@ namespace Smx.KodiInterop
 		private static void SetPythonCulture()
 		{
 			// Clone the current Culture, and alter it as needed
-			CultureInfo pythonCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+			CultureInfo pythonCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
 			pythonCulture.NumberFormat.NumberDecimalSeparator = ".";
 			pythonCulture.NumberFormat.NaNSymbol = "nan";
 			pythonCulture.NumberFormat.PositiveInfinitySymbol = "inf";
@@ -146,7 +146,7 @@ namespace Smx.KodiInterop
 		private static IntPtr _pySendStringPtr;
 		private static IntPtr _pyExitPtr;
 
-		public static KodiBridgeInstance GlobalStaticBridge { get; private set; }
+		public static KodiBridgeInstance? GlobalStaticBridge { get; private set; }
 
 
 		private static bool CommonInit() {
@@ -198,10 +198,10 @@ namespace Smx.KodiInterop
 		}
 
 		public static bool PostEvent([MarshalAs(UnmanagedType.LPStr)] string eventMessage){
-			KodiEventMessage ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
+			KodiEventMessage? ev = JsonConvert.DeserializeObject<KodiEventMessage>(eventMessage);
 			Type classType;
 
-			switch (ev.Sender)
+			switch (ev?.Sender)
 			{
 				case "Monitor":
 					classType = typeof(XbmcMonitor);
@@ -213,7 +213,17 @@ namespace Smx.KodiInterop
 					return false;
 			}
 
-			KodiBridgeInstance bridge = RunningAddon.Bridge;
+			var addon = RunningAddon;
+			if (addon == null)
+			{
+				throw new InvalidOperationException("There is no running addon");
+			}
+			KodiBridgeInstance? bridge = addon.Bridge;
+			if (bridge == null)
+			{
+				throw new InvalidOperationException("There is no bridge instance");
+			}
+
 			if (!bridge.EventClasses.ContainsKey(classType))
 			{
 				return false;

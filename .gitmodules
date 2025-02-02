@@ -1,0 +1,3 @@
+[submodule "EzDotnet"]
+	path = EzDotnet
+	url = https://github.com:smx-smx/EzDotnet.git

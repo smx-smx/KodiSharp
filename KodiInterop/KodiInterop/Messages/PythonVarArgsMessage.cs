@@ -8,9 +8,9 @@ namespace Smx.KodiInterop.Messages
     public class PythonVarArgsMessage : RPCMessage
     {
 		[JsonProperty(PropertyName = "args")]
-		public List<string> args { get; set; }
+		public required List<string> args { get; set; }
 
 		[JsonProperty(PropertyName = "kwargs")]
-		public Dictionary<string, string> kwargs { get; set; }
+		public required Dictionary<string, string> kwargs { get; set; }
 	}
 }

@@ -4,10 +4,13 @@ namespace Smx.KodiInterop.Messages
 {
 	public class PythonEvalMessage : RPCMessage {
 		[JsonProperty(PropertyName = "exec_code")]
-		public string Code { get; set; }
-		
-		public PythonEvalMessage() {
-			this.MessageType = "eval";
+		public required string Code { get; set; }
+
+		public static PythonEvalMessage Create(string code) {
+			return new PythonEvalMessage {
+				MessageType = "eval",
+				Code = code
+			};
 		}
 	}
 }

@@ -12,8 +12,8 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="message"></param>
 		/// <param name="duration">length of time in milliseconds</param>
 		/// <param name="iconPath">icon image</param>
-		public static void Notification(string header = "", string message = "", TimeSpan? duration = null, string iconPath = null) {
-			List<string> arguments = new List<string> { header, message };
+		public static void Notification(string header = "", string message = "", TimeSpan? duration = null, string? iconPath = null) {
+			List<string?> arguments = new List<string?> { header, message };
 			if (duration != null)
 				arguments.Add(duration.Value.TotalMilliseconds.ToString());
 			if (iconPath != null)

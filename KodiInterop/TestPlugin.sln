@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{6206804B-2B16-4DB7-81D0-5969A1DF660D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{6206804B-2B16-4DB7-81D0-5969A1DF660D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KodiInterop", "KodiInterop\KodiInterop.csproj", "{74F29D3E-D877-49DF-8195-26CBBE178C32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KodiInterop", "KodiInterop\KodiInterop.csproj", "{74F29D3E-D877-49DF-8195-26CBBE178C32}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLRHost", "CLRHost\CLRHost.vcxproj", "{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeechRecognizerPlugin", "SpeechRecognizerPlugin\SpeechRecognizerPlugin.csproj", "{733517F1-04EA-464A-91F1-B4BE6CB84090}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeechRecognizerPlugin", "SpeechRecognizerPlugin\SpeechRecognizerPlugin.csproj", "{733517F1-04EA-464A-91F1-B4BE6CB84090}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,18 +43,6 @@ Global
 		{74F29D3E-D877-49DF-8195-26CBBE178C32}.Release|x64.Build.0 = Debug|Any CPU
 		{74F29D3E-D877-49DF-8195-26CBBE178C32}.Release|x86.ActiveCfg = Debug|Any CPU
 		{74F29D3E-D877-49DF-8195-26CBBE178C32}.Release|x86.Build.0 = Debug|Any CPU
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|Any CPU.Build.0 = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|x64.ActiveCfg = Debug|x64
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|x64.Build.0 = Debug|x64
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|x86.ActiveCfg = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Debug|x86.Build.0 = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|Any CPU.ActiveCfg = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|Any CPU.Build.0 = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|x64.ActiveCfg = Debug|x64
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|x64.Build.0 = Debug|x64
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|x86.ActiveCfg = Debug|Win32
-		{5E51EF02-B7EB-42E6-9E9A-7063BAC8B376}.Release|x86.Build.0 = Debug|Win32
 		{733517F1-04EA-464A-91F1-B4BE6CB84090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{733517F1-04EA-464A-91F1-B4BE6CB84090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{733517F1-04EA-464A-91F1-B4BE6CB84090}.Debug|x64.ActiveCfg = Debug|Any CPU

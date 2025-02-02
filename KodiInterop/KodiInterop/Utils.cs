@@ -8,7 +8,7 @@ namespace Smx.KodiInterop
 {
     class Utils
     {
-		public static string BuildUrl(string url, NameValueCollection getParams = null) {
+		public static string BuildUrl(string url, NameValueCollection? getParams = null) {
 			if(getParams == null) {
 				getParams = new NameValueCollection();
 			}

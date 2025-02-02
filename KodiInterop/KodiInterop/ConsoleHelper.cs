@@ -60,6 +60,6 @@ namespace Smx.KodiInterop
 		[DllImport("kernel32")]
 		private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
 		[DllImport("kernel32")]
-		static extern bool SetConsoleCtrlHandler(HandlerRoutine HandlerRoutine, bool Add);
+		static extern bool SetConsoleCtrlHandler(HandlerRoutine? HandlerRoutine, bool Add);
 	}
 }

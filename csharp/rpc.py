@@ -2,7 +2,6 @@
 JSON handling
 """
 
-from asyncore import write
 from email import utils
 from faulthandler import dump_traceback
 import json

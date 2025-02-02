@@ -15,23 +15,70 @@ namespace Smx.KodiInterop
 {
 	public abstract class KodiAddon
 	{
+		private string? _parameters;
+
 		public int Handle { get; private set; }
 		public string BaseUrl { get; private set; }
-		public string Parameters { get; private set; }
+		public string Parameters {
+			get {
+				if(_parameters == null){
+					throw new InvalidOperationException("Addon not initialized");
+				}
+				return _parameters;
+			}
+			private set {
+				_parameters = value;
+			}
+		}
 		public bool IsService { get; private set; }
 
 
 		//public XbmcMonitor Monitor { get; private set; }
 
-		public KodiAddonSettings Settings { get; private set; }
-		public Addon Addon { get; private set; }
+		private KodiAddonSettings? _settings;
+
+		public KodiAddonSettings Settings {
+			get {
+				if(_settings == null){
+					throw new InvalidOperationException("Addon not initialized");
+				}
+				return _settings;
+			}
+			private set {
+				_settings = value;
+			}
+		}
+
+		private Addon? _addon;
+		public Addon Addon {
+			get {
+				if(_addon == null){
+					throw new InvalidOperationException("Addon not initialized");
+				}
+				return _addon;
+			}
+			private set {
+				_addon = value;
+			}
+		}
 		public RouteManager Router { get; private set; }
 
-		public KodiBridgeInstance Bridge { get; private set; }
+		private KodiBridgeInstance? _bridge;
+		public KodiBridgeInstance Bridge {
+			get {
+				if(_bridge == null){
+					throw new InvalidOperationException("Addon not initialized");
+				}
+				return _bridge;
+			}
+			private set {
+				_bridge = value;
+			}
+		}
 
 		public readonly PyVariableManager PyVariableManager;
 
-		public string BuildNavUrl(string path, NameValueCollection parameters = null){
+		public string BuildNavUrl(string path, NameValueCollection? parameters = null){
 			if (parameters == null) {
 				parameters = new NameValueCollection();
 			}
@@ -84,6 +131,7 @@ namespace Smx.KodiInterop
 				this.Router = new RouteManager(this);
 			} catch(Exception ex) {
 				KodiBridge.SaveException(ex);
+				throw ex;
 			}
 		}
 
@@ -101,10 +149,10 @@ namespace Smx.KodiInterop
 
 			string BaseUrl = PythonInterop.EvalToResult("sys.argv[0]").Value;
 
-			T instance = null;
+			T? instance = null;
 
 			if (persist) {
-				T previousInstance = (T)KodiBridge.GetPersistentAddon(BaseUrl);
+				T? previousInstance = (T?)KodiBridge.GetPersistentAddon(BaseUrl);
 				if (previousInstance != null) {
 					Console.WriteLine("REUSING PREVIOUS INSTANCE");
 					instance = previousInstance;

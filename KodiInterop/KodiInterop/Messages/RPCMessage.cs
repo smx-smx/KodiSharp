@@ -7,6 +7,6 @@ namespace Smx.KodiInterop.Messages
 		//public string PluginName;
 		//public string MessageType;
 		[JsonProperty(PropertyName = "type")]
-		public string MessageType { get; set; }
+		public required string MessageType { get; set; }
 	}
 }

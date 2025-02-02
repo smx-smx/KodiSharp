@@ -109,7 +109,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="filenameAndPath">filename (including the path)</param>
 		/// <param name="sync">whether to run synchronously</param>
-		public static void TakeScreenshot(string filenameAndPath = null, bool sync = false) {
+		public static void TakeScreenshot(string? filenameAndPath = null, bool sync = false) {
 			PythonInterop.CallBuiltin("TakeScreenshot", filenameAndPath, sync);
 		}
 

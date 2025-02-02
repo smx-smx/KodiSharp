@@ -8,15 +8,15 @@ namespace Smx.KodiInterop.Messages
     public class KodiEventMessage : RPCMessage
     {
 		[JsonProperty(PropertyName = "source")]
-		public string Source { get; set; }
+		public required string Source { get; set; }
 
         [JsonProperty(PropertyName = "sender")]
-        public string Sender { get; set; }
+        public required string Sender { get; set; }
 
         [JsonProperty(PropertyName = "args")]
-		public List<string> EventArgs { get; set; }
+		public required List<string> EventArgs { get; set; }
 
 		[JsonProperty(PropertyName = "kwargs")]
-		public Dictionary<string, string> ExtraArgs { get; set; }
+		public required Dictionary<string, string> ExtraArgs { get; set; }
 	}
 }

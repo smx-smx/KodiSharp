@@ -252,7 +252,7 @@ namespace TestPlugin
 
 		public override int DefaultRoute()
 		{
-			TestPlugin addon = KodiBridge.RunningAddon as TestPlugin;
+			TestPlugin addon = (TestPlugin)KodiBridge.EnsureRunningAddon();
 
 			//ConsoleHelper.CreateConsole();
 			Console.WriteLine("TestPlugin v1.0 - Smx");

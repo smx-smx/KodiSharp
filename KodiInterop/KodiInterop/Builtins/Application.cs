@@ -12,7 +12,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="url">The archive URL.</param>
 		/// <param name="dest">Destination path (optional). </param>
-		public static void Extract(string url, string dest = null) {
+		public static void Extract(string url, string? dest = null) {
 			PythonInterop.CallBuiltin("Extract", url, dest);
 		}
 
@@ -29,7 +29,7 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="sender"></param>
 		/// <param name="data"></param>
 		/// <param name="json"></param>
-		public static void NotifyAll(string sender, string data, string json = null) {
+		public static void NotifyAll(string sender, string data, string? json = null) {
 			PythonInterop.CallBuiltin("NotifyAll", sender, data, json);
 		}
 

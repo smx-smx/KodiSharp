@@ -12,7 +12,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			PythonInterop.CallFunction(
 				new PyFunction(PyModule.XbmcPlugin, "addDirectoryItem"),
 				new List<object> {
-					KodiBridge.RunningAddon.Handle,
+					KodiBridge.EnsureRunningAddon().Handle,
 					item.Url,
 					item.Instance,
 					item.IsFolder
@@ -28,7 +28,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 				PythonInterop.CallFunction(
 					new PyFunction(PyModule.XbmcPlugin, "addDirectoryItems"),
 					new List<object> {
-						KodiBridge.RunningAddon.Handle,
+						KodiBridge.EnsureRunningAddon().Handle,
 						listVar,
 						items.Count
 					}
@@ -40,7 +40,7 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 			PythonInterop.CallFunction(
 				new PyFunction(PyModule.XbmcPlugin, "endOfDirectory"),
 				new List<object> {
-					KodiBridge.RunningAddon.Handle,
+					KodiBridge.EnsureRunningAddon().Handle,
 					succeded, updateListing, cacheToDisc
 				}
 			);

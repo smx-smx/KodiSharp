@@ -82,7 +82,7 @@ namespace Smx.KodiInterop
 				new List<object> { 10000 }
 			);*/
 			PythonInterop.CallFunction(
-				PyModule.Xbmc, "sleep", new List<object> {
+				PyModule.Xbmc, "sleep", new List<object?> {
 					(ulong)time.TotalMilliseconds
 				}
 			);
@@ -91,7 +91,7 @@ namespace Smx.KodiInterop
 		public static bool StartServer(ServerType type, bool bStart, bool? bWait = null) {
 			string typeString = PyModule.Xbmc.GetString() + type.GetString();
 			return Convert.ToBoolean(PythonInterop.CallFunction(
-				PyModule.Xbmc, "startServer", new List<object> {
+				PyModule.Xbmc, "startServer", new List<object?> {
 					typeString, bStart, bWait
 				}
 			));
@@ -99,7 +99,7 @@ namespace Smx.KodiInterop
 
 		public static void PlaySFX(string filename, bool? useCached = null) {
 			PythonInterop.CallFunction(
-				PyModule.Xbmc, "playSFX", new List<object> {
+				PyModule.Xbmc, "playSFX", new List<object?> {
 					filename, useCached
 				}
 			);

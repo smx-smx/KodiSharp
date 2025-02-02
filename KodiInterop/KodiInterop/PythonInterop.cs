@@ -10,6 +10,7 @@ using Smx.KodiInterop.Python;
 using Smx.KodiInterop.Messages;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Smx.KodiInterop
 {
@@ -25,24 +26,24 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region Escape
-		public static string EscapeArgument(object argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+		public static string EscapeArgument(object? argument, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			if (argument == null) {
 				return "None";
 			}
 
 			//If it's a variable, return its unquoted python name
 			if (argument is PyVariable)
-				return (argument as PyVariable).PyName;
+				return ((PyVariable)argument).PyName;
 
 			string text = argument.ToString();
 
 			//TODO: Find a better way
 			//Invokes Enum.GetString<T>(argument)
 			if (argument is Enum) {
-				text = typeof(EnumExtensions)
+				text = (string)typeof(EnumExtensions)
 					.GetMethod("GetString")
 					.MakeGenericMethod(argument.GetType())
-					.Invoke(null, new object[] { argument }) as string;
+					.Invoke(null, new object[] { argument });
 			}
 
 			//Don't escape primitives
@@ -72,12 +73,15 @@ namespace Smx.KodiInterop
 			return text;
 		}
 
-		public static List<string> EscapeArguments(IEnumerable<object> arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
+		public static List<string> EscapeArguments(IEnumerable<object?>? arguments, EscapeFlags escapeMethod = EscapeFlags.Quotes) {
 			List<string> textArguments = new List<string>();
+			if(arguments == null){
+				return textArguments;
+			}
 
 			int count = arguments.Count();
 			if (escapeMethod.HasFlag(EscapeFlags.StripNullItems) && count > 0){
-				List<object> argumentsList = arguments.ToList();
+				List<object?> argumentsList = arguments.ToList();
 				int nulls = 0;
 				// Start from end, go backwards
 				for (int i = count - 1; i >= 0; --i) {
@@ -94,7 +98,7 @@ namespace Smx.KodiInterop
 				arguments = argumentsList;
 			}
 
-			foreach (object argument in arguments) {
+			foreach (object? argument in arguments) {
 				textArguments.Add(EscapeArgument(argument, escapeMethod));
 			}
 
@@ -107,7 +111,7 @@ namespace Smx.KodiInterop
 		#endregion
 
 		#region FunctionCall
-		public static dynamic CallFunction(string functionName, IEnumerable<string> arguments = null) {
+		public static dynamic CallFunction(string functionName, IEnumerable<string>? arguments = null) {
 			string argumentsText = "";
 			if (arguments != null)
 				argumentsText = string.Join(",", arguments.ToArray());
@@ -115,8 +119,8 @@ namespace Smx.KodiInterop
 			return (EvalToResult(string.Format("{0}({1})", functionName, argumentsText))).Value;
 		}
 
-		public static dynamic CallFunction(PyFunction pythonFunction, IEnumerable<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
-			List<string> textArguments = null;
+		public static dynamic CallFunction(PyFunction pythonFunction, IEnumerable<object?>? arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
+			List<string>? textArguments = null;
 			if (arguments != null)
 				 textArguments = EscapeArguments(arguments, flags);
 
@@ -126,16 +130,16 @@ namespace Smx.KodiInterop
 			);
 		}
 
-		public static dynamic CallFunction(PyModule module, string functionName, List<object> arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
+		public static dynamic CallFunction(PyModule module, string functionName, List<object?>? arguments = null, EscapeFlags flags = EscapeFlags.Quotes) {
 			return CallFunction(new PyFunction(module, functionName), arguments, flags);
 		}
 
-		public static dynamic CallFunction(PyFunction pythonFunction, params object[] arguments) {
+		public static dynamic CallFunction(PyFunction pythonFunction, params object?[] arguments) {
 			return CallFunction(pythonFunction, arguments.ToList());
 		}
 
-		public static dynamic CallBuiltin(string builtinName, List<string> arguments = null) {
-			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object> {
+		public static dynamic CallBuiltin(string builtinName, List<string?>? arguments = null) {
+			return CallFunction(PyModule.Xbmc, "executebuiltin", new List<object?> {
 				//Kodi builtins shouldn't have quotes, so we pass a single parameter with the joined parameters
 				string.Format("{0}({1})",
 					builtinName,
@@ -145,36 +149,40 @@ namespace Smx.KodiInterop
 		}
 
 		public static dynamic CallBuiltin(string builtinName) {
-			return CallBuiltin(builtinName, new List<string> { });
+			return CallBuiltin(builtinName, new List<string?> { });
 		}
 
-		public static dynamic CallBuiltin(string builtinName, List<object> arguments) {
-			List<string> textArguments = EscapeArguments(arguments, EscapeFlags.None);
+		public static dynamic CallBuiltin(string builtinName, List<object?>? arguments) {
+			List<string?> textArguments = EscapeArguments(arguments, EscapeFlags.None) as List<string?>;
 			return CallBuiltin(builtinName, textArguments);
 		}
 
-		public static dynamic CallBuiltin(string builtinName, params string[] arguments) {
+		public static dynamic CallBuiltin(string builtinName, params string?[] arguments) {
 			return CallBuiltin(builtinName, arguments.ToList());
 		}
 
-		public static dynamic CallBuiltin(string builtinName, params object[] arguments) {
+		public static dynamic CallBuiltin(string builtinName, params object?[] arguments) {
 			return CallBuiltin(builtinName, arguments.ToList());
 		}
 		#endregion
 
 		#region Eval
 		public static PythonEvalReply Eval(string code) {
-			PythonEvalMessage msg = new PythonEvalMessage {
-				Code = code
-			};
+			PythonEvalMessage msg = PythonEvalMessage.Create(code);
 
-			KodiBridgeInstance bridge = KodiBridge.RunningAddon?.Bridge ?? KodiBridge.GlobalStaticBridge;
+			KodiBridgeInstance? bridge = KodiBridge.RunningAddon?.Bridge ?? KodiBridge.GlobalStaticBridge;
+			if(bridge == null){
+				throw new InvalidOperationException("Cannot eval, no Python Bridge instance");
+			}
 
 			string replyString = bridge.SendMessage(msg);
 
 			Console.Error.WriteLine(replyString);
 
-			PythonEvalReply reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			PythonEvalReply? reply = JsonConvert.DeserializeObject<PythonEvalReply>(replyString);
+			if(reply == null) {
+				throw new InvalidDataException("Cannot deserialize python eval response, malformed JSON object");
+			}
 			if(reply.ExitCode == 1) {
 				throw new InvalidOperationException($"eval of '{code}' failed: '{reply.Error}'");
 			}

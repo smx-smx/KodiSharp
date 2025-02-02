@@ -54,8 +54,8 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="mask">If specified the file browser will only search for the extension specified (.avi,.mp3,.m3u,.png,.bmp,etc.,etc.).
 		/// To use multiple extensions separate them using "|" (minus quotes)</param>
 		/// <param name="folderpath">If specified the file browser will start in that folder</param>
-		public static void SetFile(string setting, string mask = null, string folderpath = null) {
-			List<string> arguments = new List<string> { setting };
+		public static void SetFile(string setting, string? mask = null, string? folderpath = null) {
+			List<string?> arguments = new List<string?> { setting };
 			if (mask != null)
 				arguments.Add(mask);
 			if (folderpath != null)
@@ -70,8 +70,12 @@ namespace Smx.KodiInterop.Builtins
 		/// <param name="setting"></param>
 		/// <param name="masks"></param>
 		/// <param name="folderpath"></param>
-		public static void SetFile(string setting, List<string> masks = null, string folderpath = null) {
-			SetFile(setting, string.Join("|", masks.ToArray()), folderpath);
+		public static void SetFile(string setting, List<string>? masks = null, string? folderpath = null) {
+			SetFile(setting, 
+				masks == null
+					? null
+					: string.Join("|", masks.ToArray()),
+				folderpath);
 		}
 
 
@@ -81,8 +85,8 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="value">If specified the keyboard dialog does not pop up and the image path is set directly.</param>
 		/// <param name="folderpath">If specified the file browser will start in that folder</param>
-		public static void SetImage(string setting, object value = null, string folderpath = null) {
-			List<object> arguments = new List<object> { setting };
+		public static void SetImage(string setting, object? value = null, string? folderpath = null) {
+			List<object?> arguments = new List<object?> { setting };
 			if (value != null)
 				arguments.Add(value);
 			if (folderpath != null)
@@ -96,7 +100,7 @@ namespace Smx.KodiInterop.Builtins
 		/// </summary>
 		/// <param name="value">If specified the keyboard dialog does not pop up and the numeric value is set directly.</param>
 		public static void SetNumeric(object number, object value) {
-			List<object> arguments = new List<object> { number };
+			List<object?> arguments = new List<object?> { number };
 			if (value != null)
 				arguments.Add(value);
 			PythonInterop.CallBuiltin("Skin.SetNumeric", arguments);
@@ -107,8 +111,8 @@ namespace Smx.KodiInterop.Builtins
 		/// via the info tag Skin.String(string).
 		/// </summary>
 		/// <param name="folderpath">If specified the file browser will start in that folder</param>
-		public static void SetPath(string setting, string folderpath = null) {
-			List<string> arguments = new List<string> { setting };
+		public static void SetPath(string setting, string? folderpath = null) {
+			List<string?> arguments = new List<string?> { setting };
 			if (folderpath != null)
 				arguments.Add(folderpath);
 
@@ -120,8 +124,8 @@ namespace Smx.KodiInterop.Builtins
 		/// via the info tag Skin.String(string)
 		/// </summary>
 		/// <param name="value">If specified the keyboard dialog does not pop up and the string is set directly.</param>
-		public static void SetString(string setting, object value = null) {
-			List<object> arguments = new List<object> { setting };
+		public static void SetString(string setting, object? value = null) {
+			List<object?> arguments = new List<object?> { setting };
 			if(value != null) {
 				arguments.Add(value);
 			}

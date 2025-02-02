@@ -8,7 +8,7 @@ namespace Smx.KodiInterop.Python
 	public class PyVariableManager {
 		public static PyVariableManager Get {
 			get {
-				return KodiBridge.RunningAddon.PyVariableManager;
+				return KodiBridge.EnsureRunningAddon().PyVariableManager;
 			}
 		}
 
@@ -37,8 +37,8 @@ namespace Smx.KodiInterop.Python
 		/// </summary>
 		/// <param name="variableName">Name of the variable to add</param>
 		/// <param name="isObject">Indicates the variable will store non-serializable data (like class instances)</param>
-		/// <returns>The newly added variable, or null if the variable already exists</returns>
-		public PyVariable NewVariable(string variableName = null, string evalCode = null) {
+		/// <returns>The newly added variable</returns>
+		public PyVariable NewVariable(string? variableName = null, string? evalCode = null) {
 			if(variableName == null) {
 				variableName = "_var" + variables.Count;
 			}
@@ -46,7 +46,7 @@ namespace Smx.KodiInterop.Python
                 variables.Add(variableName, evalCode);
 				return variables.GetVariable(variableName);
 			}
-			return null;
+			throw new InvalidOperationException($"Variable {variableName} already exists");
 		}
 
 		public string GetFreeVariableName() {
@@ -64,6 +64,9 @@ namespace Smx.KodiInterop.Python
 
 		public void DeleteVariable(PyVariable pyVariable)
 		{
+			if(pyVariable.Basename == null){
+				throw new InvalidOperationException("Variable cannot be removed because it is unnamed");
+			}
 			//pyVariable has absolute path here, dict['var']
 			variables.Remove(pyVariable.Basename);
 		}

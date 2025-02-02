@@ -11,19 +11,19 @@ namespace Smx.KodiInterop.Modules.Xbmc
     {
 		public readonly PyVariable Instance;
 		
-		public event EventHandler<EventArgs> OnAbortRequested;
-		public event EventHandler<LibraryEventArgs> OnCleanStarted;
-		public event EventHandler<LibraryEventArgs> OnCleanFinished;
-		public event EventHandler<DatabaseEventArgs> OnDatabaseScanStarted;
-		public event EventHandler<DatabaseEventArgs> OnDatabaseUpdated;
-		public event EventHandler<EventArgs> OnDPMSActivated;
-		public event EventHandler<EventArgs> OnDPMSDeactivated;
-		public event EventHandler<EventArgs> OnScreensaverActivated;
-		public event EventHandler<EventArgs> OnScreensaverDeactivated;
-		public event EventHandler<LibraryEventArgs> OnScanStarted;
-		public event EventHandler<LibraryEventArgs> OnScanFinished;
-		public event EventHandler<EventArgs> OnSettingsChanged;
-		public event EventHandler<NotificationEventArgs> OnNotification;
+		public event EventHandler<EventArgs>? OnAbortRequested;
+		public event EventHandler<LibraryEventArgs>? OnCleanStarted;
+		public event EventHandler<LibraryEventArgs>? OnCleanFinished;
+		public event EventHandler<DatabaseEventArgs>? OnDatabaseScanStarted;
+		public event EventHandler<DatabaseEventArgs>? OnDatabaseUpdated;
+		public event EventHandler<EventArgs>? OnDPMSActivated;
+		public event EventHandler<EventArgs>? OnDPMSDeactivated;
+		public event EventHandler<EventArgs>? OnScreensaverActivated;
+		public event EventHandler<EventArgs>? OnScreensaverDeactivated;
+		public event EventHandler<LibraryEventArgs>? OnScanStarted;
+		public event EventHandler<LibraryEventArgs>? OnScanFinished;
+		public event EventHandler<EventArgs>? OnSettingsChanged;
+		public event EventHandler<NotificationEventArgs>? OnNotification;
 
 		public bool TriggerEvent(KodiEventMessage e) {
 			switch (e.Source) {
@@ -76,10 +76,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Dispose() {
-			KodiBridge
-				.RunningAddon
-				.Bridge
-				.UnregisterEventClass(this);
+			KodiBridge.RunningAddon?.Bridge.UnregisterEventClass(this);
 			Instance.Dispose();
 		}
 
@@ -88,7 +85,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public bool WaitForAbort(TimeSpan timeSpan) {
-			return Convert.ToBoolean(Instance.CallFunction("waitForAbort", new List<object> {
+			return Convert.ToBoolean(Instance.CallFunction("waitForAbort", new List<object?> {
 				(ulong)timeSpan.TotalSeconds
 			}));
 		}
@@ -98,8 +95,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
 			Console.WriteLine("=> Registering EventClass " + typeof(XbmcMonitor).FullName);
-			KodiBridge
-				.RunningAddon
+			KodiBridge.EnsureRunningAddon()
 				.Bridge
 				.RegisterMonitor(this);
 		}

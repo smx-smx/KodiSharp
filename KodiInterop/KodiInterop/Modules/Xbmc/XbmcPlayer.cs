@@ -18,17 +18,17 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		private int _videoStream;
 		private int _audioStream;
 
-		public event EventHandler<EventArgs> AVStarted;
-		public event EventHandler<EventArgs> AVChanged;
-		public event EventHandler<EventArgs> PlayBackEnded;
-		public event EventHandler<EventArgs> PlayBackPaused;
-		public event EventHandler<EventArgs> PlayBackResumed;
-		public event EventHandler<PlayBackSeekEventArgs> PlayBackSeek;
-		public event EventHandler<PlayBackSeekChapterEventArgs> PlayBackSeekChapter;
-		public event EventHandler<PlayBackSpeedChangedEventArgs> PlayBackSpeedChanged;
-		public event EventHandler<EventArgs> PlayBackStarted;
-		public event EventHandler<EventArgs> PlayBackStopped;
-		public event EventHandler<EventArgs> QueueNextItem;
+		public event EventHandler<EventArgs>? AVStarted;
+		public event EventHandler<EventArgs>? AVChanged;
+		public event EventHandler<EventArgs>? PlayBackEnded;
+		public event EventHandler<EventArgs>? PlayBackPaused;
+		public event EventHandler<EventArgs>? PlayBackResumed;
+		public event EventHandler<PlayBackSeekEventArgs>? PlayBackSeek;
+		public event EventHandler<PlayBackSeekChapterEventArgs>? PlayBackSeekChapter;
+		public event EventHandler<PlayBackSpeedChangedEventArgs>? PlayBackSpeedChanged;
+		public event EventHandler<EventArgs>? PlayBackStarted;
+		public event EventHandler<EventArgs>? PlayBackStopped;
+		public event EventHandler<EventArgs>? QueueNextItem;
 
 		public bool TriggerEvent(KodiEventMessage e) {
 			switch (e.Source) {
@@ -78,11 +78,11 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			// We now register this type so that PostEvent will be able to invoke onMessage in this class
 			Console.WriteLine("=> Registering EventClass " + typeof(XbmcPlayer).FullName);
 
-			KodiBridgeInstance bridge = KodiBridge.RunningAddon.Bridge;
+			KodiBridgeInstance bridge = KodiBridge.EnsureRunningAddon().Bridge;
 			bridge.RegisterPlayer(this);
 		}
 
-		public XbmcPlayer(PyVariable player) {
+		public XbmcPlayer(PyVariable player) : this() {
 			PyVariableManager.Get.CopyVariable(Instance, player);
 		}
 
@@ -92,7 +92,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			}
 			set {
 				_subtitleStream = value;
-				Instance.CallFunction("setSubtitleStream", new List<object> {
+				Instance.CallFunction("setSubtitleStream", new List<object?> {
 					_subtitleStream
 				});
 			}
@@ -104,7 +104,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			}
 			set {
 				_videoStream = value;
-				Instance.CallFunction("setVideoStream", new List<object> {
+				Instance.CallFunction("setVideoStream", new List<object?> {
 					_videoStream
 				});
 			}
@@ -116,7 +116,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 			}
 			set {
 				_audioStream = value;
-				Instance.CallFunction("setAudioStream", new List<object> {
+				Instance.CallFunction("setAudioStream", new List<object?> {
 					_audioStream
 				});
 			}
@@ -201,12 +201,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Play(
-			string item = null,
-			ListItem listItem = null,
+			string? item = null,
+			ListItem? listItem = null,
 			bool? windowed = null,
 			int? startPos = null
 		) {
-			Instance.CallFunction("play", new List<object> {
+			Instance.CallFunction("play", new List<object?> {
 				item,
 				listItem?.Instance,
 				windowed,
@@ -215,12 +215,12 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void Play(
-			PlayList item = null,
-			ListItem listItem = null,
+			PlayList? item = null,
+			ListItem? listItem = null,
 			bool? windowed = null,
 			int? startPos = null
 		) {
-			Instance.CallFunction("play", new List<object> {
+			Instance.CallFunction("play", new List<object?> {
 				item?.Instance,
 				listItem?.Instance,
 				windowed,
@@ -237,11 +237,11 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		}
 
 		public void PlaySelected(int item) {
-			Instance.CallFunction("playselected", new List<object> { item });
+			Instance.CallFunction("playselected", new List<object?> { item });
 		}
 
 		public void Seek(TimeSpan seekTime) {
-			Instance.CallFunction("seekTime", new List<object> {
+			Instance.CallFunction("seekTime", new List<object?> {
 				seekTime.TotalSeconds
 			});
 		}
@@ -249,7 +249,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		public void Dispose()
 		{
 			Instance.Dispose();
-			KodiBridge.RunningAddon.Bridge.UnregisterEventClass(this);
+			KodiBridge.RunningAddon?.Bridge.UnregisterEventClass(this);
 		}
 	}
 }

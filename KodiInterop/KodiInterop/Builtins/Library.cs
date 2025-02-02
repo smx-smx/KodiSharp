@@ -27,7 +27,7 @@ namespace Smx.KodiInterop.Builtins
 	public static class LibraryBuiltins
 	{
 		public static void CleanLibrary(CleanLibraryType type) {
-			PythonInterop.CallBuiltin("cleanlibrary", new List<string> { type.GetString() });
+			PythonInterop.CallBuiltin("cleanlibrary", new List<string?> { type.GetString() });
 		}
 
 		public static void ExportLibrary(

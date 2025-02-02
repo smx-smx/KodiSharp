@@ -16,9 +16,9 @@ namespace Smx.KodiInterop.Builtins
 		[KodiMinApiVersion(13)]
 		public static void StartAndroidActivity(
 			string package,
-			string intent = null,
-			string dataType = null,
-			string dataUri = null
+			string? intent = null,
+			string? dataType = null,
+			string? dataUri = null
 		) {
 			PythonInterop.CallBuiltin("StartAndroidActivity", package, intent, dataType, dataUri);
 		}

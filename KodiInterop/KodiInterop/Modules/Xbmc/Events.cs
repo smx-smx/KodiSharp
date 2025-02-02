@@ -11,31 +11,31 @@ namespace Smx.KodiInterop.Modules.Xbmc
 	public static class GlobalEvents
 	{
 		#region MonitorEvents
-		public static event EventHandler<EventArgs> AbortRequested;
-		public static event EventHandler<LibraryEventArgs> CleanStarted;
-		public static event EventHandler<LibraryEventArgs> CleanFinished;
-		public static event EventHandler<DatabaseEventArgs> DatabaseScanStarted;
-		public static event EventHandler<DatabaseEventArgs> DatabaseUpdated;
-		public static event EventHandler<EventArgs> DPMSActivated;
-		public static event EventHandler<EventArgs> DPMSDeactivated;
-		public static event EventHandler<EventArgs> ScreensaverActivated;
-		public static event EventHandler<EventArgs> ScreensaverDeactivated;
-		public static event EventHandler<LibraryEventArgs> ScanStarted;
-		public static event EventHandler<LibraryEventArgs> ScanFinished;
-		public static event EventHandler<EventArgs> SettingsChanged;
-		public static event EventHandler<NotificationEventArgs> Notification;
+		public static event EventHandler<EventArgs>? AbortRequested;
+		public static event EventHandler<LibraryEventArgs>? CleanStarted;
+		public static event EventHandler<LibraryEventArgs>? CleanFinished;
+		public static event EventHandler<DatabaseEventArgs>? DatabaseScanStarted;
+		public static event EventHandler<DatabaseEventArgs>? DatabaseUpdated;
+		public static event EventHandler<EventArgs>? DPMSActivated;
+		public static event EventHandler<EventArgs>? DPMSDeactivated;
+		public static event EventHandler<EventArgs>? ScreensaverActivated;
+		public static event EventHandler<EventArgs>? ScreensaverDeactivated;
+		public static event EventHandler<LibraryEventArgs>? ScanStarted;
+		public static event EventHandler<LibraryEventArgs>? ScanFinished;
+		public static event EventHandler<EventArgs>? SettingsChanged;
+		public static event EventHandler<NotificationEventArgs>? Notification;
 		#endregion
 
 		#region PlayerEvents
-		public static event EventHandler<EventArgs> PlayBackEnded;
-		public static event EventHandler<EventArgs> PlayBackPaused;
-		public static event EventHandler<EventArgs> PlayBackResumed;
-		public static event EventHandler<PlayBackSeekEventArgs> PlayBackSeek;
-		public static event EventHandler<PlayBackSeekChapterEventArgs> PlayBackSeekChapter;
-		public static event EventHandler<PlayBackSpeedChangedEventArgs> PlayBackSpeedChanged;
-		public static event EventHandler<EventArgs> PlayBackStarted;
-		public static event EventHandler<EventArgs> PlayBackStopped;
-		public static event EventHandler<EventArgs> QueueNextItem;
+		public static event EventHandler<EventArgs>? PlayBackEnded;
+		public static event EventHandler<EventArgs>? PlayBackPaused;
+		public static event EventHandler<EventArgs>? PlayBackResumed;
+		public static event EventHandler<PlayBackSeekEventArgs>? PlayBackSeek;
+		public static event EventHandler<PlayBackSeekChapterEventArgs>? PlayBackSeekChapter;
+		public static event EventHandler<PlayBackSpeedChangedEventArgs>? PlayBackSpeedChanged;
+		public static event EventHandler<EventArgs>? PlayBackStarted;
+		public static event EventHandler<EventArgs>? PlayBackStopped;
+		public static event EventHandler<EventArgs>? QueueNextItem;
 		#endregion
 
 		public static bool DispatchEvent(KodiEventMessage e) {

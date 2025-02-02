@@ -23,7 +23,7 @@ namespace Smx.KodiInterop.Modules.Xbmc
 		/// <param name="defaultText">default text entry.</param>
 		/// <param name="heading">keyboard heading.</param>
 		/// <param name="hidden">True for hidden text entry.</param>
-		public Keyboard(string defaultText = null, string heading = null, bool hidden = false) {
+		public Keyboard(string? defaultText = null, string? heading = null, bool hidden = false) {
 			Instance.CallAssign(
 				new PyFunction(PyModule.Xbmc, "Keyboard"),
 				defaultText, heading, hidden

@@ -8,6 +8,6 @@ namespace Smx.KodiInterop
 {
 	public interface IKodiBridge
 	{
-		string PySendMessage(string messageData);
+		string PySendMessage(string messageData, bool replyExpected);
 	}
 }

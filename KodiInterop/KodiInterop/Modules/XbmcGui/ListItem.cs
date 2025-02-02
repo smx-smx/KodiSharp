@@ -114,14 +114,14 @@ namespace Smx.KodiInterop.Modules.XbmcGui
 		/// <param name="url">The destination url</param>
 		/// <param name="isFolder"></param>
 		public ListItem(
-			string label = null,
-			string label2 = null,
-			string iconImage = null,
-			string thumbnailImage = null,
-			string path = null,
+			string? label = null,
+			string? label2 = null,
+			string? iconImage = null,
+			string? thumbnailImage = null,
+			string? path = null,
 			string url = "",
 			bool isFolder = false,
-			Dictionary<Art, string> art = null
+			Dictionary<Art, string>? art = null
 		) {
 			this.Url = url;
 			this.IsFolder = isFolder;
