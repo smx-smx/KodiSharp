@@ -7,35 +7,30 @@ import sys
 from csharp.bridge import Bridge
 import platform
 
+me = os.path.abspath(os.path.dirname(__file__))
+build_dir = os.path.join(me, 'build', 'out')
+
 def getKodiInterop():
 	return {
-		'config': 'Debug',
-		'fwk': 'net8.0',
-		'dir' : os.path.join('KodiInterop', 'KodiInterop', 'bin'),
+		'dir' : os.path.join(build_dir, 'bin', 'KodiInterop'),
 		'file': 'KodiInterop.dll',
-		'rid': getRid(),
 	}
 
 def getTestPlugin():
 	return {
-		'config': 'Debug',
-		'fwk': 'netstandard2.0',
-		'dir' : os.path.join('KodiInterop', 'TestPlugin', 'bin'),
+		'dir' : os.path.join(build_dir, 'bin', 'TestPlugin'),
 		'file': 'TestPlugin.dll'
 	}
 
 def getSpeechRecognizerPlugin():
 	return {
-		'config': 'Debug',
-		'dir': os.path.join('KodiInterop', 'SpeechRecognizerPlugin', 'bin'),
+		'dir': os.path.join(build_dir, 'bin', 'SpeechRecognizerPlugin'),
 		'file': 'SpeechRecognizerPlugin.dll'
 	}
 
 def getClrHost():
 	return {
-		'arch': 'x64',
-		'config': 'Debug',
-		'dir': os.path.join('KodiInterop', 'CLRHost', 'bin'),
+		'dir': build_dir,
 		'file': 'CLRHost.{}'.format(getNativeLibSuffix())
 	}
 
@@ -53,22 +48,6 @@ def getMonoHost():
 		'dir': os.path.join('KodiInterop', 'Mono', 'build'),
 		'file': 'libMonoHost.{}'.format(getNativeLibSuffix())
 	}
-
-def getRid():
-	# FIXME: validate on windows/macOS/etc.
-	arch = platform.machine()
-	if arch == 'x86_64':
-		arch = 'x64'
-	else:
-		arch = 'x86'
-
-	system = platform.system().lower()
-	if system.startswith('win'):
-		system = 'win'
-	elif system == 'darwin':
-		system = 'osx'
-
-	return f'{system}-{arch}'
 
 def getPath(me, obj):
 	publish = 'publish' if len(obj.get('rid', '')) > 0 else ''
@@ -89,16 +68,13 @@ def getPath(me, obj):
 use_mono = False
 enable_debug = False
 
-me = os.path.abspath(os.path.dirname(__file__))
-
 assembly_path = getPath(me, getTestPlugin())
 #assembly_path = getPath(me, getSpeechRecognizerPlugin())
 
-ezdotnet_bdir = os.path.join(me, 'EzDotnet', 'build')
 if use_mono:
-	lib_path = os.path.join(ezdotnet_bdir, 'Mono', 'libMonoHost.{}'.format(getNativeLibSuffix()))
+	lib_path = os.path.join(build_dir, 'lib', 'libMonoHost.{}'.format(getNativeLibSuffix()))
 else:
-	lib_path = os.path.join(ezdotnet_bdir, 'CoreCLR', 'libcoreclrhost.{}'.format(getNativeLibSuffix()))	
+	lib_path = os.path.join(build_dir, 'lib', 'libcoreclrhost.{}'.format(getNativeLibSuffix()))
 
 interop_path = getPath(me, getKodiInterop())
 
